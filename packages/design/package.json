@@ -10,10 +10,13 @@
     "preview": "vite preview"
   },
   "exports": {
-    ".": "./src/index.js",
-    "./components": "./src/components/index",
-    "./button": "./src/components/ui/button.tsx",
-    "./carousel": "./src/components/ui/carousel.tsx",
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts",
+      "types": "./src/index.ts"
+    },
+    "./components": "./src/components/index.tsx",
+    "./utils": "./src/lib/utils.ts",
     "./config": "./tailwind.config.js"
   },
   "dependencies": {
