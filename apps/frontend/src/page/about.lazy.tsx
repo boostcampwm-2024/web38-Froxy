@@ -1,3 +1,4 @@
+import { Button } from '@froxy/design/button';
 import { createLazyFileRoute } from '@tanstack/react-router';
 
 export const Route = createLazyFileRoute('/about')({
@@ -5,5 +6,10 @@ export const Route = createLazyFileRoute('/about')({
 });
 
 function RouteComponent() {
-  return 'Hello /about!';
+  return (
+    <div>
+      <Button onClick={() => alert('hello')}>Hello</Button>
+      <h1 className="text-red-300">hello world</h1>
+    </div>
+  );
 }
