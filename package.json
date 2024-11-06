@@ -24,10 +24,5 @@
   "packageManager": "pnpm@8.15.6",
   "engines": {
     "node": ">=18"
-  },
-  "dependencies": {
-    "@octokit/rest": "^21.0.2",
-    "nestjs-octokit": "^0.2.0",
-    "octokit": "^4.0.2"
   }
 }
