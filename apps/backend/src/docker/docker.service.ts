@@ -41,7 +41,6 @@ export class DockerService {
     // 컨테이너 생성
     const container = await docker.createContainer({
       Image: 'node:latest',
-      // Cmd: ['sleep', 'infinity'],
       Tty: false,
       OpenStdin: true,
       AttachStdout: true,
@@ -76,18 +75,23 @@ export class DockerService {
   
     //desciption: 실행 결과를 캡처하기 위한 Exec 생성
     const exec = await container.exec({
+      AttachStdin: true,
       AttachStdout: true,
       AttachStderr: true,
       Tty: false,
       Cmd: ['node', mainFileName],
-      Container: container.id,
-    });
+    }); 
   
-    const stream = await exec.start();
+    const stream = await exec.start({hijack: true,stdin: true});
     let output = '';
-
+    const inputs = ["처음", "둘", "셋","넷","다섯"]; // 입력값 배열
+    for (const input of inputs) {
+      stream.write(input + '\n'); // 각 입력을 컨테이너에 전송
+    }
+    stream.end();
     //desciption: 스트림에서 데이터 수집
     stream.on('data', (chunk) => {
+      console.log(chunk.toString())
       output += chunk.toString();
     });
     //desciption: 스트림 종료 후 결과 반환
@@ -119,4 +123,6 @@ export class DockerService {
       throw new Error('Failed to fetch Gist files');
     }
   }
+
+
 }
