@@ -84,9 +84,11 @@ export class DockerService {
   
     const stream = await exec.start({hijack: true,stdin: true});
     let output = '';
-    const inputs = ["처음", "둘", "셋","넷","다섯"]; // 입력값 배열
+    const inputContent = "처음\n둘\n셋\n넷\n다섯"; // 입력값 배열
+    const inputs = inputContent.split("\n")
     for (const input of inputs) {
-      stream.write(input + '\n'); // 각 입력을 컨테이너에 전송
+      await this.delay(50);//각 입력 term
+      stream.write(input + '\r\n');
     }
     stream.end();
     //desciption: 스트림에서 데이터 수집
@@ -124,5 +126,7 @@ export class DockerService {
     }
   }
 
-
+  delay(ms = 1000) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 }
