@@ -13,19 +13,20 @@ import './github.css';
 type MarkdownProps = {
   markdown?: string;
   theme?: 'github-light' | 'github-dark';
+  components?: Record<string, React.ComponentType>;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-export function Markdown({ markdown, theme = 'github-light', ...props }: MarkdownProps) {
+export function Markdown({ markdown, theme = 'github-light', components, ...props }: MarkdownProps) {
   const [content, setContent] = React.useState<React.ReactNode>(null);
 
   React.useEffect(() => {
-    processMarkdown({ markdown, theme }).then(setContent);
-  }, [markdown, theme]);
+    processMarkdown({ markdown, theme, components }).then(setContent);
+  }, [markdown, theme, components]);
 
   return <div {...props}>{content}</div>;
 }
 
-const processMarkdown = async ({ markdown, theme }: MarkdownProps) => {
+const processMarkdown = async ({ markdown, theme, components }: MarkdownProps) => {
   const processor = unified()
     .use(remarkParse)
     .use(remarkGfm)
@@ -39,7 +40,8 @@ const processMarkdown = async ({ markdown, theme }: MarkdownProps) => {
       Fragment,
       jsx,
       jsxs,
-      jsxDEV
+      jsxDEV,
+      components
     });
 
   return processor.process(markdown).then((file) => file.result);
