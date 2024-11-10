@@ -9,23 +9,23 @@
 
     /* Bundler mode */
     "moduleResolution": "Bundler",
-    "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "moduleDetection": "force",
-    "noEmit": true,
     "jsx": "react-jsx",
+    "declaration": true, // 타입 선언 파일을 생성하도록 설정
+    "declarationDir": "dist", // 선언 파일을 저장할 디렉터리 지정
+    "outDir": "./dist", // 빌드 결과물을 저장할 디렉터리
 
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
 
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     }
   },
-  "include": ["src", "src/widget/.gitkeep"]
+  "include": ["src"]
 }

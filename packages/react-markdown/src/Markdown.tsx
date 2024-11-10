@@ -8,7 +8,7 @@ import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
 
-import '@/index.css';
+import './github.css';
 
 type MarkdownProps = {
   markdown?: string;
