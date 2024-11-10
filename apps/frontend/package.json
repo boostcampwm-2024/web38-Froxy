@@ -10,6 +10,12 @@
     "preview": "vite preview",
     "test": "vitest"
   },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
   "dependencies": {
     "@froxy/design": "workspace:^",
     "@froxy/react-markdown": "workspace:^",
