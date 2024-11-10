@@ -10,8 +10,13 @@ export class GistController {
     return this.gistService.getAllGists();
   }
 
+  @Get(['/:id'])
+  findOne(@Param('id') id: string) {
+    return this.gistService.getGistById(id);
+  }
+
   @Get(['/commits/:id', '/commits/:id/:pageIdx'])
-  findOne(@Param('id') id: string, @Param('pageIdx') pageIdx: number) {
+  findCommits(@Param('id') id: string, @Param('pageIdx') pageIdx: number) {
     return this.gistService.getCommitsForAGist(id, pageIdx ? pageIdx : 1);
   }
 }
