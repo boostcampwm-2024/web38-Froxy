@@ -17,6 +17,10 @@
   display: block;
 }
 
+code {
+  counter-reset: line;
+}
+
 code > [data-line]:not([data-highlighted-line-id])::before {
   counter-increment: line;
   content: counter(line);

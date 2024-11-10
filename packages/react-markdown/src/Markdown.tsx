@@ -13,16 +13,16 @@ import './github.css';
 type MarkdownProps = {
   markdown?: string;
   theme?: 'github-light' | 'github-dark';
-};
+} & React.HTMLAttributes<HTMLDivElement>;
 
-export function Markdown({ markdown, theme = 'github-light' }: MarkdownProps) {
+export function Markdown({ markdown, theme = 'github-light', ...props }: MarkdownProps) {
   const [content, setContent] = React.useState<React.ReactNode>(null);
 
   React.useEffect(() => {
     processMarkdown({ markdown, theme }).then(setContent);
   }, [markdown, theme]);
 
-  return <div>{content}</div>;
+  return <div {...props}>{content}</div>;
 }
 
 const processMarkdown = async ({ markdown, theme }: MarkdownProps) => {
