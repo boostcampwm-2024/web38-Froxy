@@ -1,3 +1,4 @@
+import { Button } from '@froxy/design/components';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { CodeView } from '@/feature/CodeView';
 

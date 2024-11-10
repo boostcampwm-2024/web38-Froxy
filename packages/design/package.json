@@ -19,6 +19,12 @@
     "./utils": "./src/lib/utils.ts",
     "./config": "./tailwind.config.js"
   },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.0",
     "class-variance-authority": "^0.7.0",
