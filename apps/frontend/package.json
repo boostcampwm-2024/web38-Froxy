@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@froxy/design": "workspace:^",
+    "@froxy/react-markdown": "workspace:^",
     "@tanstack/react-query": "^5.59.19",
     "@tanstack/react-router": "^1.78.3",
     "react": "^18.3.1",
