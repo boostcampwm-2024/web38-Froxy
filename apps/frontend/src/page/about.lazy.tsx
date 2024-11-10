@@ -1,4 +1,4 @@
-import { Button } from '@froxy/design/button';
+import { Button } from '@froxy/design/components';
 import { createLazyFileRoute } from '@tanstack/react-router';
 
 export const Route = createLazyFileRoute('/about')({
