@@ -6,7 +6,7 @@ const LotusDummyData: LotusType = {
   title: 'Understanding TypeScript',
   logo: '/public/image/exampleImage.jpeg',
   date: new Date('2024-11-10'),
-  tags: ['typescript', 'programming', 'tutorial'],
+  tags: ['aaa', 'bbb', 'ccc'],
   author: {
     id: 1,
     nickname: '개구리',
@@ -20,12 +20,20 @@ export function LotusCardList() {
       {new Array(10).fill(0).map((_, index) => (
         <Lotus lotus={LotusDummyData} key={index}>
           <Lotus.Link className="max-w-[24rem] p-5 border-2 border-[#D9D9D9] rounded-[1rem]">
-            <Lotus.Title className="font-bold text-base text-[#1C1D22]" />
-            <Lotus.Author className="text-sm text-[rgba(28,29,34,0.5)]" />
-            <div className="mt-[2rem] w-full flex justify-between items-end">
-              <Lotus.CreateDate className="text-sm font-bold text-[#888DA7] bg-[rgba(136,141,167,0.1)] px-[1rem] py-[0.5rem] rounded-3xl" />
+            <Lotus.Title className="text-[#1C1D22]" />
+            <Lotus.Author className="text-[rgba(28,29,34,0.5)]" />
+            <div className="w-full flex justify-between items-end">
+              <Lotus.CreateDate className="text-xs font-bold text-[#888DA7] bg-[rgba(136,141,167,0.1)] px-[1rem] py-[0.5rem] rounded-3xl" />
               <Lotus.Logo />
             </div>
+            {LotusDummyData?.tags?.length ? (
+              <>
+                <div className="mt-[1rem] w-full border-b-2 border-[#D9D9D9]" />
+                <Lotus.TagList className="pt-[1rem] min-h-[2rem]" variant={'default'} />
+              </>
+            ) : (
+              <></>
+            )}
           </Lotus.Link>
         </Lotus>
       ))}

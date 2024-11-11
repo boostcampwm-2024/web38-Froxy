@@ -13,3 +13,5 @@ export interface LotusType {
   author: AuthorType;
   isPublic?: boolean;
 }
+
+export type BadgeVariantType = 'default' | 'secondary' | 'destructive' | 'outline' | null | undefined;

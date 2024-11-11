@@ -1,6 +1,8 @@
 import { HTMLProps, createContext, useContext } from 'react';
+import { Badge, Text } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
-import { LotusType } from '@/feature/Lotus/type';
+import { BadgeVariantType, LotusType } from '@/feature/Lotus/type';
+import { Time } from '@/shared/components/Time';
 
 const lotusContext = createContext<LotusType | null>(null);
 
@@ -12,12 +14,16 @@ export const useLotusContext = () => {
   return lotus;
 };
 
-type LotusTitleProps = HTMLProps<HTMLHeadingElement>;
+type LotusTitleProps = HTMLProps<HTMLParagraphElement>;
 
 export function LotusTitle(props: LotusTitleProps) {
   const { title } = useLotusContext();
 
-  return <h1 {...props}>{title}</h1>;
+  return (
+    <Text size="md" variant="bold">
+      <p {...props}>{title}</p>
+    </Text>
+  );
 }
 
 type LotusAuthorProps = HTMLProps<HTMLParagraphElement>;
@@ -25,7 +31,30 @@ type LotusAuthorProps = HTMLProps<HTMLParagraphElement>;
 export function LotusAuthor(props: LotusAuthorProps) {
   const { author } = useLotusContext();
 
-  return <p {...props}>{author.nickname}</p>;
+  // TODO: 해당 사용자의 마이페이지로 이동하기
+  return (
+    <Text size="md">
+      <p {...props}>{author.nickname}</p>
+    </Text>
+  );
+}
+
+type LotusTagListProps = HTMLProps<HTMLDivElement> & {
+  variant?: BadgeVariantType;
+};
+
+export function LotusTagList({ className, variant = 'default', ...props }: LotusTagListProps) {
+  const { tags } = useLotusContext();
+
+  return (
+    <div className={cn('flex flex-wrap items-center gap-[0.5rem]', className)} {...props}>
+      {tags.map((tag, index) => (
+        <Badge key={`${index}_${tag}`} className="mb-[0.25rem] text-xs" variant={variant}>
+          {tag}
+        </Badge>
+      ))}
+    </div>
+  );
 }
 
 type LotusCreateDateProps = HTMLProps<HTMLParagraphElement>;
@@ -33,7 +62,7 @@ type LotusCreateDateProps = HTMLProps<HTMLParagraphElement>;
 export function LotusCreateDate(props: LotusCreateDateProps) {
   const { date } = useLotusContext();
 
-  return <p {...props}>{date.toISOString()}</p>;
+  return <Time date={date} format="YYYY-MM-DD" {...props} />;
 }
 
 type LotusLinkProps = HTMLProps<HTMLAnchorElement>;
@@ -53,7 +82,7 @@ type LotusLogoProps = HTMLProps<HTMLImageElement>;
 export function LotusLogo({ className, ...props }: LotusLogoProps) {
   const { logo, title } = useLotusContext();
 
-  return <img src={logo} alt={title} className={cn('w-20 h-20 rounded-full', className)} {...props} />;
+  return <img src={logo} alt={title} className={cn('w-16 h-16 rounded-full', className)} {...props} />;
 }
 
 export function LotusProvider({ children, lotus }: { children: React.ReactNode; lotus: LotusType }) {
