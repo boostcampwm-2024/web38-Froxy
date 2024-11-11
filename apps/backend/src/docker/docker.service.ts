@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import * as Docker from 'dockerode';
 import * as tar from 'tar-stream';
+import * as path from 'path';
+import { promises as fs } from 'fs';
 
 interface GistFileAttributes {
   filename: string;
@@ -19,11 +21,12 @@ interface GistFile {
 
 @Injectable()
 export class DockerService {
+  docker =new Docker();
 
-  async getDocker(gistId: string, mainFileName: string): Promise<string>{
+  async getDocker(gitToken:string, gistId: string, mainFileName: string): Promise<string>{
     const gistUrl = 'https://gist.github.com/username/gistid';
   
-    return this.runGistFiles(gistId, mainFileName)
+    return this.runGistFiles(gitToken,gistId, mainFileName)
       .then((result) => {
         console.log('Execution Result:', result)
         return result
@@ -34,17 +37,21 @@ export class DockerService {
       });
   }
 
-  async runGistFiles(gistId: string, mainFileName: string): Promise<string> {
+  async runGistFiles(gitToken:string, gistId: string, mainFileName: string): Promise<string> {
     const docker = new Docker();
-    const files = await this.fetchGistFiles(gistId);
+    const files = await this.fetchGistFiles(gitToken,gistId);
     
     // 컨테이너 생성
     const container = await docker.createContainer({
       Image: 'node:latest',
-      Tty: false,
+      Tty: true,//통합스트림
       OpenStdin: true,
       AttachStdout: true,
       AttachStderr: true,
+      Env: [
+        'NODE_DISABLE_COLORS=true',  // 색상 비활성화
+        'TERM=dumb',                 // dumb 터미널로 설정하여 색상 비활성화
+      ],
     });
   
     //desciption: 컨테이너 시작
@@ -78,7 +85,7 @@ export class DockerService {
       AttachStdin: true,
       AttachStdout: true,
       AttachStderr: true,
-      Tty: false,
+      Tty: true,
       Cmd: ['node', mainFileName],
     }); 
   
@@ -87,33 +94,42 @@ export class DockerService {
     const inputContent = "처음\n둘\n셋\n넷\n다섯"; // 입력값 배열
     const inputs = inputContent.split("\n")
     for (const input of inputs) {
-      await this.delay(50);//각 입력 term
-      stream.write(input + '\r\n');
+      await stream.write(input + '\n');
+      await this.delay(100);//각 입력 term
     }
     stream.end();
+    
     //desciption: 스트림에서 데이터 수집
     stream.on('data', (chunk) => {
-      console.log(chunk.toString())
+      console.log("===========================");
+      console.log(chunk.toString());
+
       output += chunk.toString();
     });
     //desciption: 스트림 종료 후 결과 반환
     return new Promise((resolve, reject) => {
       stream.on('end',async () => {
-        //todo: await container.stop({force: true}); exited상태(log 남음)
-        //todo: await container.remove({force: true}); 아예 삭제(log 안남음)
-        resolve(output.trim())
+        await container.remove({force: true});
+        const result = output.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F\r]/g, '').replaceAll("\n)","\n").trim();
+        console.log(JSON.stringify(result));
+        resolve(result);
+
       });
       stream.on('error', reject);
     });
   }
 
-  async fetchGistFiles(gistId:string): Promise<{ name: string; content: string }[]> {
+  async fetchGistFiles(gitToken:string, gistId:string): Promise<{ name: string; content: string }[]> {
     try {
       const response = await fetch(`https://api.github.com/gists/${gistId}`,{
+        headers:{
+          Authorization: `Bearer ${gitToken}`
+        },
         method:"GET"
       });
       const json = await response.json();
       const files: GistFile = json.files;
+      
 
       const fileData: { name: string; content: string }[] = [];
       for (const [fileName, file] of Object.entries(files)) {
