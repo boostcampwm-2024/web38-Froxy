@@ -8,12 +8,13 @@ export class DockerController {
 
   @Get('get')
   async getDockersTest(): Promise<string>{
-    const mainFileName = 'main.js';
+    const mainFileName = 'FunctionDivide.js';
     // const gitToken = this.configService.get<string>('STATIC_GIST_ID');
     const gistId = this.configService.get<string>('DYNAMIC_GIST_ID');
     const gitToken = this.configService.get<string>('GIT_TOKEN');
     console.log(gitToken);
-    const value = await this.dockerService.getDocker(gitToken, gistId, mainFileName);
+    const inputs = ["1 1 1 1","1 1 1 1","1 1 1 1","1 1 1 1"];
+    const value = await this.dockerService.getDocker(gitToken, gistId, mainFileName,inputs);
     return value
   }
 }
