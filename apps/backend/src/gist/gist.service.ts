@@ -18,15 +18,7 @@ export class GistService {
         per_page: perPage.toString()
       };
       const queryParam = new URLSearchParams(params).toString();
-      const response = await fetch(`https://api.github.com/gists?${queryParam}`, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/vnd.github+json',
-          Authorization: `Bearer ${this.gittoken}`,
-          'X-GitHub-Api-Version': '2022-11-28'
-        }
-      });
-      const data = await response.json();
+      const data = await this.gistReq('GET', `https://api.github.com/gists`, queryParam);
 
       if (data.length === 0) {
         break;
@@ -62,15 +54,7 @@ export class GistService {
   }
 
   async getGistById(id: string): Promise<GistApiFileListDto> {
-    const response = await fetch(`https://api.github.com/gists/${id}`, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/vnd.github+json',
-        Authorization: `Bearer ${this.gittoken}`,
-        'X-GitHub-Api-Version': '2022-11-28'
-      }
-    });
-    const data = await response.json();
+    const data = await this.gistReq('GET', `https://api.github.com/gists/${id}`);
 
     const fileArr: GistApiFileDto[] = Object.keys(data.files).map((key) => ({
       file_name: key,
@@ -135,7 +119,7 @@ export class GistService {
   //   return result;
   // }
 
-  async getCommitsForAGist(gist_id: string, pageIdx = 1) {
+  async getCommitsForAGist(gist_id: string, pageIdx = 1): Promise<any> {
     const page = pageIdx;
     const perPage = 5;
     const params = {
@@ -143,8 +127,14 @@ export class GistService {
       per_page: perPage.toString()
     };
     const queryParam = new URLSearchParams(params).toString();
-    const response = await fetch(`https://api.github.com/gists/${gist_id}/commits?${queryParam}`, {
-      method: 'GET',
+    const response = await this.gistReq('GET', `https://api.github.com/gists/${gist_id}/commits`, queryParam);
+    return await response;
+  }
+
+  async gistReq(method: string, commend: string, queryParam: string = ''): Promise<any> {
+    const commendURL = queryParam ? commend + '?' + queryParam : commend;
+    const response = await fetch(commendURL, {
+      method: method,
       headers: {
         Accept: 'application/vnd.github+json',
         Authorization: `Bearer ${this.gittoken}`,
