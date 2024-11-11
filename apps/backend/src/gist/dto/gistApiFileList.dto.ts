@@ -6,4 +6,5 @@ export class GistApiFileListDto {
   description: string;
   files: GistApiFileDto[];
   owner: UserDto;
+  public: boolean;
 }

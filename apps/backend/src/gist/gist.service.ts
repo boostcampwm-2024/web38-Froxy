@@ -20,35 +20,44 @@ export class GistService {
       };
       const queryParam = new URLSearchParams(params).toString();
       const data = await this.gistReq('GET', `https://api.github.com/gists`, queryParam);
-
       if (data.length === 0) {
         break;
       }
       page++;
-      const gistFiles: GistApiFileListDto[] = data
-        .filter((gistfiltering: GistApiFileListDto) => {
-          return gistfiltering.id && gistfiltering.description && gistfiltering.files && gistfiltering.owner;
-        })
-        .map((gist: GistApiFileListDto) => {
-          const fileArr: GistApiFileDto[] = Object.keys(gist.files).map((key) => ({
-            file_name: key,
-            raw_url: gist.files[key].raw_url,
-            type: gist.files[key].type,
-            language: gist.files[key].language,
-            size: gist.files[key].size
-          }));
+      const gistFiles: GistApiFileListDto[] = await Promise.all(
+        data
+          .filter((gistfiltering: GistApiFileListDto) => {
+            return gistfiltering.id && gistfiltering.description && gistfiltering.files && gistfiltering.owner;
+          })
+          .map(async (gist: GistApiFileListDto) => {
+            const fileArr: GistApiFileDto[] = await Promise.all(
+              Object.keys(gist.files).map(async (key) => {
+                const content = await this.getFileContent(gist.files[key].raw_url);
 
-          return {
-            id: gist.id,
-            description: gist.description,
-            files: fileArr,
-            owner: {
-              login: gist.owner.login,
-              id: gist.owner.id,
-              avatar_url: gist.owner.avatar_url
-            }
-          };
-        });
+                return {
+                  file_name: key,
+                  raw_url: gist.files[key].raw_url,
+                  type: gist.files[key].type,
+                  language: gist.files[key].language,
+                  size: gist.files[key].size,
+                  content: content
+                };
+              })
+            );
+
+            return {
+              id: gist.id,
+              description: gist.description,
+              files: fileArr,
+              public: gist.public,
+              owner: {
+                login: gist.owner.login,
+                id: gist.owner.id,
+                avatar_url: gist.owner.avatar_url
+              }
+            };
+          })
+      );
       gistList.push(...gistFiles);
     }
     return gistList;
@@ -57,18 +66,26 @@ export class GistService {
   async getGistById(id: string): Promise<GistApiFileListDto> {
     const data = await this.gistReq('GET', `https://api.github.com/gists/${id}`);
 
-    const fileArr: GistApiFileDto[] = Object.keys(data.files).map((key) => ({
-      file_name: key,
-      raw_url: data.files[key].raw_url,
-      type: data.files[key].type,
-      language: data.files[key].language,
-      size: data.files[key].size
-    }));
+    const fileArr: GistApiFileDto[] = await Promise.all(
+      Object.keys(data.files).map(async (key) => {
+        const content = await this.getFileContent(data.files[key].raw_url);
+
+        return {
+          file_name: key,
+          raw_url: data.files[key].raw_url,
+          type: data.files[key].type,
+          language: data.files[key].language,
+          size: data.files[key].size,
+          content: content
+        };
+      })
+    );
 
     const gist: GistApiFileListDto = {
       id: data.id,
       description: data.description,
       files: fileArr,
+      public: data.public,
       owner: {
         login: data.owner.login,
         id: data.owner.id,
@@ -91,18 +108,25 @@ export class GistService {
     }
     const mostRecentData = response[0];
 
-    const fileArr: GistApiFileDto[] = Object.keys(mostRecentData.files).map((key) => ({
-      file_name: key,
-      raw_url: mostRecentData.files[key].raw_url,
-      type: mostRecentData.files[key].type,
-      language: mostRecentData.files[key].language,
-      size: mostRecentData.files[key].size
-    }));
+    const fileArr: GistApiFileDto[] = await Promise.all(
+      Object.keys(mostRecentData.files).map(async (key) => {
+        const content = await this.getFileContent(mostRecentData.files[key].raw_url);
 
+        return {
+          file_name: key,
+          raw_url: mostRecentData.files[key].raw_url,
+          type: mostRecentData.files[key].type,
+          language: mostRecentData.files[key].language,
+          size: mostRecentData.files[key].size,
+          content: content
+        };
+      })
+    );
     const gist: GistApiFileListDto = {
       id: mostRecentData.id,
       description: mostRecentData.description,
       files: fileArr,
+      public: mostRecentData.public,
       owner: {
         login: mostRecentData.owner.login,
         id: mostRecentData.owner.id,
@@ -136,6 +160,19 @@ export class GistService {
       login: userData.login
     };
     return result;
+  }
+
+  async getFileContent(raw_url: string) {
+    const response = await fetch(raw_url, {
+      headers: {
+        Authorization: `Bearer ${this.gittoken}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error('404');
+    }
+    const data = await response.text();
+    return data;
   }
 
   async gistReq(method: string, commend: string, queryParam: string = ''): Promise<any> {

@@ -4,4 +4,5 @@ export class GistApiFileDto {
   type?: string;
   language?: string;
   size?: number;
+  content?: string;
 }
