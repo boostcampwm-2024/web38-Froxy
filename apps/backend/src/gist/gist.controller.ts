@@ -10,6 +10,11 @@ export class GistController {
     return this.gistService.getAllGists();
   }
 
+  @Get('/Last')
+  findLast() {
+    return this.gistService.getMostRecentGistInUser();
+  }
+
   @Get(['/:id'])
   findOne(@Param('id') id: string) {
     return this.gistService.getGistById(id);

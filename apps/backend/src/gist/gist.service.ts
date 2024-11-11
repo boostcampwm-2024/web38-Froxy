@@ -77,47 +77,40 @@ export class GistService {
     return gist;
   }
 
-  // async getMostRecentGistInUser(): Promise<any> {
-  //   const page = 1;
-  //   const perPage = 1;
-  //   const octokit = new Octokit({
-  //     auth: ''
-  //   });
-  //   const response = await octokit.request('GET /gists', {
-  //     headers: {
-  //       'X-GitHub-Api-Version': '2022-11-28'
-  //     },
-  //     page: page,
-  //     per_page: perPage
-  //   });
-  //   if (response.data.length === 0) {
-  //     return null;
-  //   }
-  //   const mostRecentData = response.data[0];
-  //   const fileKeyArr = Object.keys(mostRecentData.files);
-  //   const fileArr: GistFile[] = [];
-  //   fileKeyArr.forEach((key) => {
-  //     fileArr.push({
-  //       file_name: key,
-  //       raw_url: mostRecentData.files[key].raw_url,
-  //       type: mostRecentData.files[key].type,
-  //       language: mostRecentData.files[key].language,
-  //       size: mostRecentData.files[key].size
-  //     });
-  //   });
-  //   const result = {
-  //     id: mostRecentData.id,
-  //     description: mostRecentData.description,
-  //     files: [...fileArr],
-  //     user: {
-  //       userName: mostRecentData.owner.login,
-  //       id: mostRecentData.owner.id,
-  //       avatar_url: mostRecentData.owner.avatar_url
-  //     }
-  //   };
-  //   console.log(result);
-  //   return result;
-  // }
+  async getMostRecentGistInUser(): Promise<GistApiFileListDto> {
+    const params = {
+      page: '1',
+      per_page: '1'
+    };
+    const queryParam = new URLSearchParams(params).toString();
+    const response = await this.gistReq('GET', 'https://api.github.com/gists', queryParam);
+
+    if (!response.length) {
+      throw new Error('404');
+    }
+    const mostRecentData = response[0];
+
+    const fileArr: GistApiFileDto[] = Object.keys(mostRecentData.files).map((key) => ({
+      file_name: key,
+      raw_url: mostRecentData.files[key].raw_url,
+      type: mostRecentData.files[key].type,
+      language: mostRecentData.files[key].language,
+      size: mostRecentData.files[key].size
+    }));
+
+    const gist: GistApiFileListDto = {
+      id: mostRecentData.id,
+      description: mostRecentData.description,
+      files: fileArr,
+      owner: {
+        login: mostRecentData.owner.login,
+        id: mostRecentData.owner.id,
+        avatar_url: mostRecentData.owner.avatar_url
+      }
+    };
+
+    return gist;
+  }
 
   async getCommitsForAGist(gist_id: string, pageIdx = 1): Promise<any> {
     const page = pageIdx;
