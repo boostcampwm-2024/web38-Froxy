@@ -10,6 +10,7 @@ function RootComponent() {
     <React.Fragment>
       <div>Hello "__root"!</div>
       <Link to={'/about'}>about</Link>
+      <Link to={'/lotus'}>lotus</Link>
       <Outlet />
     </React.Fragment>
   );
