@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { GistApiFileListDto } from './dto/gistApiFileList.dto';
 import { GistApiFileDto } from './dto/gistApiFile.dto';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class GistService {
@@ -122,6 +123,19 @@ export class GistService {
     const queryParam = new URLSearchParams(params).toString();
     const response = await this.gistReq('GET', `https://api.github.com/gists/${gist_id}/commits`, queryParam);
     return await response;
+  }
+
+  async getUserData(): Promise<UserDto> {
+    const userData = await this.gistReq('GET', 'https://api.github.com/user');
+    if (!userData.id || !userData.avatar_url || !userData.login) {
+      throw new Error('404');
+    }
+    const result: UserDto = {
+      id: userData.id,
+      avatar_url: userData.avatar_url,
+      login: userData.login
+    };
+    return result;
   }
 
   async gistReq(method: string, commend: string, queryParam: string = ''): Promise<any> {

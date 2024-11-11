@@ -15,13 +15,18 @@ export class GistController {
     return this.gistService.getMostRecentGistInUser();
   }
 
-  @Get(['/:id'])
-  findOne(@Param('id') id: string) {
-    return this.gistService.getGistById(id);
+  @Get('/user')
+  findUser() {
+    return this.gistService.getUserData();
   }
 
   @Get(['/commits/:id', '/commits/:id/:pageIdx'])
   findCommits(@Param('id') id: string, @Param('pageIdx') pageIdx: number) {
     return this.gistService.getCommitsForAGist(id, pageIdx ? pageIdx : 1);
+  }
+
+  @Get(['/:id'])
+  findOne(@Param('id') id: string) {
+    return this.gistService.getGistById(id);
   }
 }
