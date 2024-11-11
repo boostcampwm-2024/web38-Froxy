@@ -1,0 +1,152 @@
+/* 공통 레이아웃 스타일 */
+[data-rehype-pretty-code-figure] {
+  margin: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-radius: 6px;
+  font-family: Consolas, 'Courier New', monospace;
+}
+
+[data-rehype-pretty-code-figure] pre {
+  margin: 0;
+  padding: 1.5rem;
+  background-color: #f6f8fa;
+}
+
+[data-rehype-pretty-code-figure] [data-line] {
+  display: block;
+}
+
+code {
+  counter-reset: line;
+}
+
+code > [data-line]:not([data-highlighted-line-id])::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 2rem;
+  margin-right: 1rem;
+  text-align: right;
+  font-size: 0.875rem;
+}
+
+code span[data-highlighted-line-id='add'] {
+  border-left: 3px solid #28a745;
+  display: block;
+  background-color: rgba(40, 167, 69, 0.1);
+}
+
+code span[data-highlighted-line-id='rm'] {
+  border-left: 3px solid #d73a49;
+  display: block;
+  background-color: rgba(215, 58, 73, 0.1);
+}
+
+[data-highlighted-line-id='add']::before {
+  content: '+';
+}
+
+[data-highlighted-line-id='rm']::before {
+  content: '-';
+}
+
+[data-rehype-pretty-code-title] {
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  border-bottom: none;
+}
+
+/* 테마 색상 관련 스타일 */
+[data-theme='github-light'] {
+  --background-color: #f6f8fa;
+  --line-number-color: #6a737d;
+  --text-color: #24292e;
+  --title-color: #586069;
+  --highlight-add-bg: rgba(40, 167, 69, 0.1);
+  --highlight-rm-bg: rgba(215, 58, 73, 0.1);
+  --highlight-char-bg: rgba(156, 163, 175, 0.2);
+}
+
+[data-theme='github-light'] [data-rehype-pretty-code-figure] {
+  background-color: var(--background-color);
+}
+
+[data-theme='github-light'] [data-rehype-pretty-code-figure] pre {
+  background-color: var(--background-color);
+}
+
+[data-theme='github-light'] code > [data-line]:not([data-highlighted-line-id])::before {
+  color: var(--line-number-color);
+}
+
+[data-theme='github-light'] code,
+[data-theme='github-light'] code span {
+  color: var(--text-color);
+}
+
+[data-theme='github-light'] [data-rehype-pretty-code-title] {
+  background-color: var(--background-color);
+  color: var(--title-color);
+}
+
+[data-theme='github-light'] code span[data-highlighted-line-id='add'] {
+  background-color: var(--highlight-add-bg);
+}
+
+[data-theme='github-light'] code span[data-highlighted-line-id='rm'] {
+  background-color: var(--highlight-rm-bg);
+}
+
+[data-theme='github-light'] [data-highlighted-chars] {
+  background-color: var(--highlight-char-bg);
+}
+
+/* 다크모드 코드블럭 스타일 */
+[data-theme='github-dark'] {
+  --background-color: #2d333b;
+  --line-number-color: #768390;
+  --text-color: #adbac7;
+  --title-color: #768390;
+  --highlight-add-bg: rgba(87, 171, 90, 0.15);
+  --highlight-rm-bg: rgba(229, 83, 75, 0.15);
+  --highlight-char-bg: rgba(166, 174, 183, 0.2);
+}
+
+[data-theme='github-dark'] [data-rehype-pretty-code-figure] {
+  background-color: var(--background-color);
+}
+
+[data-theme='github-dark'] [data-rehype-pretty-code-figure] pre {
+  background-color: var(--background-color);
+}
+
+[data-theme='github-dark'] code > [data-line]:not([data-highlighted-line-id])::before {
+  color: var(--line-number-color);
+}
+
+[data-theme='github-dark'] code,
+[data-theme='github-dark'] code span {
+  color: var(--text-color);
+}
+
+[data-theme='github-dark'] code span[data-highlighted-line-id='add'] {
+  border-left: 3px solid #57ab5a;
+  background-color: var(--highlight-add-bg);
+}
+
+[data-theme='github-dark'] code span[data-highlighted-line-id='rm'] {
+  border-left: 3px solid #e5534b;
+  background-color: var(--highlight-rm-bg);
+}
+
+[data-theme='github-dark'] [data-rehype-pretty-code-title] {
+  background-color: var(--background-color);
+  color: var(--title-color);
+}
+
+[data-theme='github-dark'] [data-highlighted-chars] {
+  background-color: var(--highlight-char-bg);
+}
