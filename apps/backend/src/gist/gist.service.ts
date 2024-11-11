@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { GistApiFileListDto } from './dto/gistApiFileList.dto';
 import { GistApiFileDto } from './dto/gistApiFile.dto';
 import { UserDto } from './dto/user.dto';
+import { CommentDto } from './dto/comment.dto';
 
 @Injectable()
 export class GistService {
@@ -173,6 +174,21 @@ export class GistService {
     }
     const data = await response.text();
     return data;
+  }
+
+  async getComments(gist_id: string): Promise<CommentDto[]> {
+    const data = await this.gistReq('GET', `https://api.github.com/gists/${gist_id}/comments`);
+    const comments: CommentDto[] = data.map((comment) => ({
+      id: comment.id,
+      updated_at: comment.updated_at,
+      body: comment.body,
+      owner: {
+        id: comment.user.id,
+        login: comment.user.login,
+        avatar_url: comment.user.avatar_url
+      }
+    }));
+    return comments;
   }
 
   async gistReq(method: string, commend: string, queryParam: string = ''): Promise<any> {

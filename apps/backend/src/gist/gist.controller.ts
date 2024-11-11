@@ -20,6 +20,11 @@ export class GistController {
     return this.gistService.getUserData();
   }
 
+  @Get('/comments/:gist_id')
+  findComments(@Param('gist_id') gist_id: string) {
+    return this.gistService.getComments(gist_id);
+  }
+
   @Get(['/commits/:id', '/commits/:id/:pageIdx'])
   findCommits(@Param('id') id: string, @Param('pageIdx') pageIdx: number) {
     return this.gistService.getCommitsForAGist(id, pageIdx ? pageIdx : 1);
