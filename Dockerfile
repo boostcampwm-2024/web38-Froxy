@@ -4,9 +4,11 @@ WORKDIR /app
 
 
 COPY package*.json ./
-RUN npm install -g pnpm && pnpm install
+RUN npm install -g pnpm
 
 COPY . .
+
+RUN pnpm install
 
 RUN pnpm lint --filter=backend && pnpm turbo run build --filter=backend
 
