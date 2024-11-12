@@ -29,11 +29,11 @@ jobs:
           echo "${{ secrets.BE_ENV }}" > .env
       - name: Build Docker image
         run: |
-          docker build -t froxy-server:demo .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest .
           
       - name: Push Docker image to Docker Hub
         run: |
-          docker push froxy-server:demo
+          docker push froxy-server:latest
 
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.3
@@ -42,7 +42,7 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no mun@211.188.48.24 "docker pull docker-server:demo && \
+          ssh -o StrictHostKeyChecking=no mun@211.188.48.24 "docker pull docker-server:latest && \
             docker stop froxy-container || true && \
             docker rm froxy-container || true && \
-            docker run -d --name froxy-container docker-server:demo}"  # 서버에 Docker 이미지 다운로드 후 실행
+            docker run -d --name froxy-container docker-server:latest}"  # 서버에 Docker 이미지 다운로드 후 실행
