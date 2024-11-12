@@ -24,16 +24,21 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}  # DockerHub 사용자 이름
           password: ${{ secrets.DOCKER_PASSWORD }}  # DockerHub 비밀번호
+
+      #이미지 이름 저장
+      - name: Set Docker image tag as a variable
+        run: echo "DOCKER_TAG=${{ secrets.DOCKER_USERNAME }}/froxy-server:latest" >> $GITHUB_ENV
+      
       - name: Create .env file
         run: |
           echo "${{ secrets.BE_ENV }}" > .env
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest .
+          docker build -t $DOCKER_TAG .
           
       - name: Push Docker image to Docker Hub
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest
+          docker push DOCKER_TAG
 
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.3
@@ -42,7 +47,7 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no mun@211.188.48.24 "docker pull docker-server:latest && \
+          ssh -o StrictHostKeyChecking=no mun@211.188.48.24 "docker pull DOCKER_TAG && \
             docker stop froxy-container || true && \
             docker rm froxy-container || true && \
-            docker run -d --name froxy-container docker-server:latest}"  # 서버에 Docker 이미지 다운로드 후 실행
+            docker run -d --name froxy-container DOCKER_TAG}"  # 서버에 Docker 이미지 다운로드 후 실행
