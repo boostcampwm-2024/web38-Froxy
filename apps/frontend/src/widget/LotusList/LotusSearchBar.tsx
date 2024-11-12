@@ -1,9 +1,9 @@
-import { Button, Heading, Text } from '@froxy/design/components';
+import { Heading, Text } from '@froxy/design/components';
 import { LotusSearch } from '@/feature/LotusSearch';
 
 export function LotusSearchBar() {
   return (
-    <div className="flex justify-between items-center w-full p-6 border-2 border-[#D9D9D9] rounded-[0.75rem] shadow-sm">
+    <div className="flex justify-between items-center w-full p-6 border-2 border-[#E2E8F0] rounded-[0.75rem] shadow-sm">
       <div>
         <Heading size="lg" variant="bold" className="pb-1 text-[#020617]">
           Lotus
@@ -15,10 +15,8 @@ export function LotusSearchBar() {
       <div className="flex items-center gap-2">
         <LotusSearch>
           <LotusSearch.SearchInput />
+          <LotusSearch.SearchButton />
         </LotusSearch>
-        <Button variant={'secondary'} className="px-8">
-          검색하기
-        </Button>
       </div>
     </div>
   );

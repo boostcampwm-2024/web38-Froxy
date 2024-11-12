@@ -9,7 +9,7 @@ export const Route = createLazyFileRoute('/lotus')({
 
 function RouteComponent() {
   return (
-    <div>
+    <div className="flex flex-col gap-4 px-5">
       <Button onClick={() => alert('Lotus')}>Lotus</Button>
       <h1 className="text-red-300">Lotus world</h1>
       <LotusSearchBar />
