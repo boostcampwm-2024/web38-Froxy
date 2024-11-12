@@ -1,4 +1,5 @@
-import { HTMLProps, createContext, useContext } from 'react';
+import { ComponentProps, HTMLProps, createContext, useContext } from 'react';
+import { Heading, Text } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
 import { FormatDateKey, Time } from '@/shared/components/Time';
 
@@ -31,24 +32,24 @@ export function HistoryProvider({ children, value }: HistoryProviderProps) {
   return <HistoryContext.Provider value={value}>{children}</HistoryContext.Provider>;
 }
 
-type HistoryTitleProps = HTMLProps<HTMLHeadingElement>;
+type HistoryTitleProps = ComponentProps<typeof Heading>;
 
 export function HistoryTitle({ className, ...props }: HistoryTitleProps) {
   const { title } = useHistoryContext();
 
   return (
-    <h1 className={cn('', className)} {...props}>
+    <Heading size="sm" className={cn('', className)} {...props}>
       {title}
-    </h1>
+    </Heading>
   );
 }
 
-type HistoryBodyProps = HTMLProps<HTMLParagraphElement>;
+type HistoryBodyProps = ComponentProps<typeof Text>;
 
 export function HistoryBody(props: HistoryBodyProps) {
   const { body } = useHistoryContext();
 
-  return <p {...props}>{body}</p>;
+  return <Text {...props}>{body}</Text>;
 }
 
 type HistoryStatusIconProps = { current?: boolean } & HTMLProps<HTMLDivElement>;
@@ -68,26 +69,30 @@ export function HistoryStatusIcon({ className, current, ...props }: HistoryStatu
   );
 }
 
-type HistoryStatusLabelProps = HTMLProps<HTMLSpanElement>;
+type HistoryStatusLabelProps = ComponentProps<typeof Text>;
 
 export function HistoryStatusLabel({ className, ...props }: HistoryStatusLabelProps) {
   const { status } = useHistoryContext();
 
   return (
-    <span className={cn('text-sm opacity-60 text-gray-500', className)} {...props}>
+    <Text size="sm" variant="muted" className={cn(className)} {...props}>
       {status ? 'success' : 'error'}
-    </span>
+    </Text>
   );
 }
 
 type HistoryDateProps = {
   format?: FormatDateKey;
-} & HTMLProps<HTMLSpanElement>;
+} & ComponentProps<typeof Text>;
 
 export function HistoryDate({ className, ...props }: HistoryDateProps) {
   const { date } = useHistoryContext();
 
-  return <Time date={date} format="YYYY.MM.DD." className={cn('text-gray-400 text-sm', className)} {...props} />;
+  return (
+    <Text size="sm" variant="muted" className={className} asChild {...props}>
+      <Time date={date} format="YYYY.MM.DD." />
+    </Text>
+  );
 }
 
 export const History = Object.assign(HistoryProvider, {

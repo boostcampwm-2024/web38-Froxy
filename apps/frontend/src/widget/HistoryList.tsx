@@ -1,4 +1,4 @@
-import { Button } from '@froxy/design/components';
+import { Button, Heading } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
 import { Fragment } from 'react/jsx-runtime';
 import { History, HistoryType } from '@/feature/History';
@@ -13,7 +13,7 @@ export function HistoryList({ historyList, className }: HistoryListProps) {
   return (
     <div className={cn('shadow-md p-5 m-5 rounded-lg w-1/3', className)}>
       <div className="flex items-baseline justify-between mb-10">
-        <h1 className="text-2xl font-bold">Run History</h1>
+        <Heading size="lg">Run History</Heading>
         <Button size={'sm'} variant={'link'}>
           더 보러가기
         </Button>
