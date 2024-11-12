@@ -44,14 +44,13 @@ jobs:
         uses: webfactory/ssh-agent@v0.5.3
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          
+
       - name: Deploy
         run: |
-          echo "DOCKER_TAG: $DOCKER_TAG"
           ssh -o StrictHostKeyChecking=no mun@211.188.48.24 "
-            if [ \$(sudo docker ps -a -q -f name=froxy-container) ]; then
-              sudo docker stop froxy-container
-              sudo docker rm froxy-container
+            if [ \$(docker ps -a -q -f name=froxy-container) ]; then
+              docker stop froxy-container
+              docker rm froxy-container
             fi
             docker pull $DOCKER_TAG && \
-            docker run -d --name froxy-container $DOCKER_TAG}"  # 서버에 Docker 이미지 다운로드 후 실행
+            docker run -d --name froxy-container ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest"  # 서버에 Docker 이미지 다운로드 후 실행
