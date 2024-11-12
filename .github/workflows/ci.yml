@@ -21,9 +21,11 @@ jobs:
         with:
           node-version: '20'  # 적절한 Node.js 버전으로 설정
           cache: 'pnpm'       # pnpm 캐싱 활성화
+          
       - name: Create .env file
-          run: |
+        run: |
             echo "${{ secrets.BE_ENV }}" > ./apps/backend/.env
+
       - name: Install pnpm #pnpm설치
         run: |
           npm install -g pnpm
