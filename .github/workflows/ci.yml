@@ -35,8 +35,9 @@ jobs:
         run: |
           pnpm install
 
-      - name: Run Turbo build
+      - name: Run lint & Turbo build
         run: |
+          pnpm lint --filter=backend
           pnpm turbo run build --filter=backend
         #FE CI : pnpm turbo run build --filter=frontend
         #전역 CI : pnpm turbo run build
