@@ -1,0 +1,216 @@
+/* General Styles */
+.github {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol';
+  font-size: 16px;
+  line-height: 1.6;
+  color: #24292e;
+  background-color: #ffffff;
+  padding: 1em;
+}
+
+/* Headings */
+.github h1,
+.github h2,
+.github h3,
+.github h4,
+.github h5,
+.github h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  color: #2c3e50;
+  margin-top: 24px;
+  margin-bottom: 16px;
+  scroll-margin-top: 60px;
+}
+
+.github h1 {
+  font-size: 2.25em;
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.3em;
+}
+.github h2 {
+  font-size: 1.75em;
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.3em;
+}
+.github h3 {
+  font-size: 1.5em;
+}
+.github h4 {
+  font-size: 1.25em;
+}
+.github h5 {
+  font-size: 1em;
+}
+.github h6 {
+  font-size: 0.875em;
+  color: #6a737d;
+}
+
+/* Paragraphs */
+.github p {
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: #333;
+}
+
+/* Lists */
+.github ul,
+.github ol {
+  padding-left: 2em;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.github ul ul,
+.github ul ol,
+.github ol ol,
+.github ol ul {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.github li {
+  word-wrap: break-word;
+  margin-bottom: 4px;
+}
+
+.github ul {
+  list-style-type: disc;
+}
+
+.github ol {
+  list-style-type: decimal;
+}
+
+.github li > p {
+  margin: 0;
+}
+
+/* Links */
+.github a {
+  color: #0366d6;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.github a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+/* Code Blocks */
+.github pre {
+  background-color: #f6f8fa;
+  border-radius: 6px;
+  padding: 16px;
+  overflow: auto;
+  font-size: 0.85em;
+  line-height: 1.45;
+  margin: 16px 0;
+}
+
+.github code {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  padding: 2px 4px;
+  font-size: 0.9em;
+  color: #e83e8c;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+}
+
+.github pre code {
+  background-color: transparent;
+  padding: 0;
+  color: #24292e;
+}
+
+/* Tables */
+.github table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  display: block;
+  width: 100%;
+  overflow: auto;
+  margin-bottom: 16px;
+}
+
+.github table th {
+  font-weight: 600;
+  background-color: #f6f8fa;
+  padding: 8px;
+}
+
+.github table th,
+.github table td {
+  padding: 6px 13px;
+  border: 1px solid #dfe2e5;
+  text-align: left;
+}
+
+.github table tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+.github table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+/* Images */
+.github img {
+  max-width: 100%;
+  height: auto;
+  box-sizing: content-box;
+  background-color: #fff;
+  margin: 16px 0;
+  border-radius: 4px;
+}
+
+/* Blockquotes */
+.github blockquote {
+  padding: 0.5em 1em;
+  color: #6a737d;
+  border-left: 0.25em solid #dfe2e5;
+  margin: 16px 0;
+  background-color: #f9f9f9;
+}
+
+.github blockquote p {
+  margin: 0;
+}
+
+/* Horizontal Rule */
+.github hr {
+  height: 0.25em;
+  padding: 0;
+  margin: 24px 0;
+  background-color: #e1e4e8;
+  border: 0;
+  opacity: 0.8;
+}
+
+/* Inline Code */
+.github code {
+  background: rgba(27, 31, 35, 0.05);
+  border-radius: 3px;
+  font-size: 85%;
+  padding: 0.2em 0.4em;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+}
+
+/* Inline Math */
+.github .math-inline {
+  font-family: 'Cambria Math', 'STIX Math', 'Avenir Next', sans-serif;
+  font-size: 1em;
+  background: #fafbfc;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+/* Code Spacing */
+.github pre code {
+  font-size: 1em;
+  line-height: 1.4;
+}
