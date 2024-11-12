@@ -38,7 +38,7 @@ jobs:
           
       - name: Push Docker image to Docker Hub
         run: |
-          docker push DOCKER_TAG
+          docker push $DOCKER_TAG
 
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.3
@@ -47,7 +47,7 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no mun@211.188.48.24 "docker pull DOCKER_TAG && \
+          ssh -o StrictHostKeyChecking=no mun@211.188.48.24 "sudo docker pull $DOCKER_TAG && \
             docker stop froxy-container || true && \
             docker rm froxy-container || true && \
-            docker run -d --name froxy-container DOCKER_TAG}"  # 서버에 Docker 이미지 다운로드 후 실행
+            docker run -d --name froxy-container $DOCKER_TAG}"  # 서버에 Docker 이미지 다운로드 후 실행
