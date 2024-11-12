@@ -34,4 +34,9 @@ export class GistController {
   findOne(@Param('id') id: string) {
     return this.gistService.getGistById(id);
   }
+
+  @Post('/comment/:gist_id')
+  postComment(@Param('gist_id') gist_id: string, @Body('comment') comment: string) {
+    return this.gistService.createComments(gist_id, comment);
+  }
 }

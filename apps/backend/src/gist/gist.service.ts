@@ -20,7 +20,7 @@ export class GistService {
         per_page: perPage.toString()
       };
       const queryParam = new URLSearchParams(params).toString();
-      const data = await this.gistReq('GET', `https://api.github.com/gists`, queryParam);
+      const data = await this.gistGetReq(`https://api.github.com/gists`, queryParam);
       if (data.length === 0) {
         break;
       }
@@ -65,7 +65,7 @@ export class GistService {
   }
 
   async getGistById(id: string): Promise<GistApiFileListDto> {
-    const data = await this.gistReq('GET', `https://api.github.com/gists/${id}`);
+    const data = await this.gistGetReq(`https://api.github.com/gists/${id}`);
 
     const fileArr: GistApiFileDto[] = await Promise.all(
       Object.keys(data.files).map(async (key) => {
@@ -102,7 +102,7 @@ export class GistService {
       per_page: '1'
     };
     const queryParam = new URLSearchParams(params).toString();
-    const response = await this.gistReq('GET', 'https://api.github.com/gists', queryParam);
+    const response = await this.gistGetReq('https://api.github.com/gists', queryParam);
 
     if (!response.length) {
       throw new Error('404');
@@ -146,12 +146,12 @@ export class GistService {
       per_page: perPage.toString()
     };
     const queryParam = new URLSearchParams(params).toString();
-    const response = await this.gistReq('GET', `https://api.github.com/gists/${gist_id}/commits`, queryParam);
+    const response = await this.gistGetReq(`https://api.github.com/gists/${gist_id}/commits`, queryParam);
     return await response;
   }
 
   async getUserData(): Promise<UserDto> {
-    const userData = await this.gistReq('GET', 'https://api.github.com/user');
+    const userData = await this.gistGetReq('https://api.github.com/user');
     if (!userData.id || !userData.avatar_url || !userData.login) {
       throw new Error('404');
     }
@@ -177,7 +177,7 @@ export class GistService {
   }
 
   async getComments(gist_id: string): Promise<CommentDto[]> {
-    const data = await this.gistReq('GET', `https://api.github.com/gists/${gist_id}/comments`);
+    const data = await this.gistGetReq(`https://api.github.com/gists/${gist_id}/comments`);
     const comments: CommentDto[] = data.map((comment) => ({
       id: comment.id,
       updated_at: comment.updated_at,
@@ -191,15 +191,45 @@ export class GistService {
     return comments;
   }
 
-  async gistReq(method: string, commend: string, queryParam: string = ''): Promise<any> {
+  async createComments(gist_id: string, detail: string): Promise<CommentDto> {
+    const data = await this.gistPostReq(`https://api.github.com/gists/${gist_id}/comments`, '', detail);
+    const comment: CommentDto = {
+      id: data.id,
+      updated_at: data.updated_at,
+      body: data.body,
+      owner: {
+        id: data.user.id,
+        login: data.user.login,
+        avatar_url: data.user.avatar_url
+      }
+    };
+    return comment;
+  }
+
+  async gistGetReq(commend: string, queryParam: string = ''): Promise<any> {
     const commendURL = queryParam ? commend + '?' + queryParam : commend;
     const response = await fetch(commendURL, {
-      method: method,
+      method: 'GET',
       headers: {
         Accept: 'application/vnd.github+json',
         Authorization: `Bearer ${this.gittoken}`,
         'X-GitHub-Api-Version': '2022-11-28'
       }
+    });
+    return await response.json();
+  }
+
+  async gistPostReq(commend: string, queryParam: string = '', body: string = null): Promise<any> {
+    const commendURL = queryParam ? commend + '?' + queryParam : commend;
+    const response = await fetch(commendURL, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/vnd.github+json',
+        Authorization: `Bearer ${this.gittoken}`,
+        'X-GitHub-Api-Version': '2022-11-28',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ body: body })
     });
     return await response.json();
   }
