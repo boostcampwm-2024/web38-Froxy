@@ -33,7 +33,7 @@ jobs:
           
       - name: Push Docker image to Docker Hub
         run: |
-          docker push froxy-server:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest
 
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.3
