@@ -22,8 +22,8 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}  # DockerHub 사용자 이름
           password: ${{ secrets.DOCKER_PASSWORD }}  # DockerHub 비밀번호
       - name: Create .env file
-          run: |
-            echo "${{ secrets.BE_ENV }}" > ./apps/backend/.env
+        run: |
+          echo "${{ secrets.BE_ENV }}" > .env
       - name: Build Docker image
         run: |
           docker build -t froxy-server:demo .
