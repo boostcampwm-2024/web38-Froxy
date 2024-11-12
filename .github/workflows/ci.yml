@@ -11,7 +11,7 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-20.04
-    if: contains(github.event.pull_request.labels.*.name, 'BE')
+    if: contains(github.event.pull_request.labels.*.name, '💻 Be')
 
     steps:
       - name: Checkout repository
