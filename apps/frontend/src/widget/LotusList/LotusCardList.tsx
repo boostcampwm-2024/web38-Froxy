@@ -4,13 +4,13 @@ import { LotusType } from '@/feature/Lotus/type';
 const LotusDummyData: LotusType = {
   link: 'https://example.com',
   title: 'Understanding TypeScript',
-  logo: '/public/image/exampleImage.jpeg',
+  logo: '/image/exampleImage.jpeg',
   date: new Date('2024-11-10'),
   tags: ['aaa', 'bbb', 'ccc'],
   author: {
     id: 1,
     nickname: '개구리',
-    profile: '/public/image/exampleImage.jpeg'
+    profile: '/image/exampleImage.jpeg'
   }
 };
 
