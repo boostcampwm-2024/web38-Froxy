@@ -1,4 +1,4 @@
-import { HTMLProps, createContext, useContext } from 'react';
+import { ComponentProps, HTMLProps, createContext, useContext } from 'react';
 import { Badge, Text } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
 import { BadgeVariantType, LotusType } from '@/feature/Lotus/type';
@@ -14,27 +14,27 @@ export const useLotusContext = () => {
   return lotus;
 };
 
-type LotusTitleProps = HTMLProps<HTMLParagraphElement>;
+type LotusTitleProps = ComponentProps<typeof Text>;
 
 export function LotusTitle(props: LotusTitleProps) {
   const { title } = useLotusContext();
 
   return (
-    <Text size="md" variant="bold">
-      <p {...props}>{title}</p>
+    <Text size="md" variant="bold" {...props}>
+      {title}
     </Text>
   );
 }
 
-type LotusAuthorProps = HTMLProps<HTMLParagraphElement>;
+type LotusAuthorProps = ComponentProps<typeof Text>;
 
 export function LotusAuthor(props: LotusAuthorProps) {
   const { author } = useLotusContext();
 
   // TODO: 해당 사용자의 마이페이지로 이동하기
   return (
-    <Text size="md">
-      <p {...props}>{author.nickname}</p>
+    <Text size="md" {...props}>
+      {author.nickname}
     </Text>
   );
 }
