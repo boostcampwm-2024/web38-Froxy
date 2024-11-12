@@ -53,4 +53,5 @@ jobs:
               docker rm froxy-container
             fi
             docker pull $DOCKER_TAG && \
-            docker run -d --name froxy-container ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest"  # 서버에 Docker 이미지 다운로드 후 실행
+            docker run -d --name froxy-container -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest"
+            docker image prune -f
