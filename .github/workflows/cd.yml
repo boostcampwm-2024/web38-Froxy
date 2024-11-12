@@ -47,6 +47,7 @@ jobs:
 
       - name: Deploy
         run: |
+          echo "DOCKER_TAG: $DOCKER_TAG"
           ssh -o StrictHostKeyChecking=no mun@211.188.48.24 "docker pull $DOCKER_TAG && \
             docker stop froxy-container || true && \
             docker rm froxy-container || true && \
