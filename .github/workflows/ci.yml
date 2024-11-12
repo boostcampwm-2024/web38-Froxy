@@ -16,6 +16,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -25,10 +30,6 @@ jobs:
       - name: Create .env file
         run: |
           echo "${{ secrets.BE_ENV }}" > ./apps/backend/.env
-
-      - name: Install pnpm #pnpm설치
-        run: |
-          npm install -g pnpm
 
       - name: Install dependencies #라이브러리설치
         run: |

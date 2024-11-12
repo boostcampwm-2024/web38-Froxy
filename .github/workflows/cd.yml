@@ -3,8 +3,10 @@ name: froxy Continuous Delivery
 on:
   push:
     branches:
-      - feature-#35-BE-cicd
       - release  # release 브랜치에 푸시될 때 실행
+  pull_request:
+    branches:
+      - main 
 
 jobs:
   build_and_deploy:
