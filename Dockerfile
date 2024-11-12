@@ -2,8 +2,10 @@ FROM node:20
 
 WORKDIR /app
 
+RUN npm install -g pnpm
+
 COPY package*.json ./
-RUN npm install -g pnpm && pnpm install
+RUN pnpm install
 
 COPY . .
 
