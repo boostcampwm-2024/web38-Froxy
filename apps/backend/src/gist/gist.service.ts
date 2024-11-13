@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { GistApiFileListDto } from './dto/gistApiFileList.dto';
-import { GistApiFileDto } from './dto/gistApiFile.dto';
-import { UserDto } from './dto/user.dto';
 import { CommentDto } from './dto/comment.dto';
 import { CommitDto } from './dto/commit.dto';
+import { GistApiFileDto } from './dto/gistApiFile.dto';
+import { GistApiFileListDto } from './dto/gistApiFileList.dto';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class GistService {
@@ -35,29 +35,24 @@ export class GistService {
             const fileArr: GistApiFileDto[] = await Promise.all(
               Object.keys(gist.files).map(async (key) => {
                 const content = await this.getFileContent(gist.files[key].raw_url);
-
-                return {
-                  file_name: key,
-                  raw_url: gist.files[key].raw_url,
-                  type: gist.files[key].type,
-                  language: gist.files[key].language,
-                  size: gist.files[key].size,
-                  content: content
-                };
+                return new GistApiFileDto(
+                  key,
+                  gist.files[key].raw_url,
+                  gist.files[key].type,
+                  gist.files[key].language,
+                  gist.files[key].size,
+                  content
+                );
               })
             );
 
-            return {
-              id: gist.id,
-              description: gist.description,
-              files: fileArr,
-              public: gist.public,
-              owner: {
-                login: gist.owner.login,
-                id: gist.owner.id,
-                avatar_url: gist.owner.avatar_url
-              }
-            };
+            return new GistApiFileListDto(
+              gist.id,
+              gist.description,
+              fileArr,
+              new UserDto(gist.owner.login, gist.owner.id, gist.owner.avatar_url),
+              gist.public
+            );
           })
       );
       gistList.push(...gistFiles);
@@ -71,29 +66,24 @@ export class GistService {
     const fileArr: GistApiFileDto[] = await Promise.all(
       Object.keys(data.files).map(async (key) => {
         const content = await this.getFileContent(data.files[key].raw_url);
-
-        return {
-          file_name: key,
-          raw_url: data.files[key].raw_url,
-          type: data.files[key].type,
-          language: data.files[key].language,
-          size: data.files[key].size,
-          content: content
-        };
+        return new GistApiFileDto(
+          key,
+          data.files[key].raw_url,
+          data.files[key].type,
+          data.files[key].language,
+          data.files[key].size,
+          content
+        );
       })
     );
 
-    const gist: GistApiFileListDto = {
-      id: data.id,
-      description: data.description,
-      files: fileArr,
-      public: data.public,
-      owner: {
-        login: data.owner.login,
-        id: data.owner.id,
-        avatar_url: data.owner.avatar_url
-      }
-    };
+    const gist: GistApiFileListDto = new GistApiFileListDto(
+      data.id,
+      data.description,
+      fileArr,
+      new UserDto(data.owner.login, data.owner.id, data.owner.avatar_url),
+      data.public
+    );
     return gist;
   }
 
@@ -114,27 +104,23 @@ export class GistService {
       Object.keys(mostRecentData.files).map(async (key) => {
         const content = await this.getFileContent(mostRecentData.files[key].raw_url);
 
-        return {
-          file_name: key,
-          raw_url: mostRecentData.files[key].raw_url,
-          type: mostRecentData.files[key].type,
-          language: mostRecentData.files[key].language,
-          size: mostRecentData.files[key].size,
-          content: content
-        };
+        return new GistApiFileDto(
+          key,
+          mostRecentData.files[key].raw_url,
+          mostRecentData.files[key].type,
+          mostRecentData.files[key].language,
+          mostRecentData.files[key].size,
+          content
+        );
       })
     );
-    const gist: GistApiFileListDto = {
-      id: mostRecentData.id,
-      description: mostRecentData.description,
-      files: fileArr,
-      public: mostRecentData.public,
-      owner: {
-        login: mostRecentData.owner.login,
-        id: mostRecentData.owner.id,
-        avatar_url: mostRecentData.owner.avatar_url
-      }
-    };
+    const gist: GistApiFileListDto = new GistApiFileListDto(
+      mostRecentData.id,
+      mostRecentData.description,
+      fileArr,
+      new UserDto(mostRecentData.owner.login, mostRecentData.owner.id, mostRecentData.owner.avatar_url),
+      mostRecentData.public
+    );
 
     return gist;
   }
@@ -148,10 +134,7 @@ export class GistService {
     };
     const queryParam = new URLSearchParams(params).toString();
     const data = await this.gistGetReq(`https://api.github.com/gists/${gist_id}/commits`, queryParam);
-    const commits: CommitDto[] = data.map((commit) => ({
-      committed_at: commit.committed_at,
-      url: commit.url
-    }));
+    const commits: CommitDto[] = data.map((commit) => new CommitDto(commit.committed_at, commit.url));
     return commits;
   }
 
@@ -163,32 +146,29 @@ export class GistService {
 
   async getFilesFromCommit(commit_url: string) {
     const data = await this.getFileContent(commit_url);
-    const data2 = JSON.parse(data);
+    const dataJson = JSON.parse(data);
     const fileArr: GistApiFileDto[] = await Promise.all(
-      Object.keys(data2.files).map(async (key) => {
-        const content = await this.getFileContent(data2.files[key].raw_url);
+      Object.keys(dataJson.files).map(async (key) => {
+        const content = await this.getFileContent(dataJson.files[key].raw_url);
 
-        return {
-          file_name: key,
-          raw_url: data2.files[key].raw_url,
-          type: data2.files[key].type,
-          language: data2.files[key].language,
-          size: data2.files[key].size,
-          content: content
-        };
+        return new GistApiFileDto(
+          key,
+          dataJson.files[key].raw_url,
+          dataJson.files[key].type,
+          dataJson.files[key].language,
+          dataJson.files[key].size,
+          content
+        );
       })
     );
-    const gist: GistApiFileListDto = {
-      id: data2.id,
-      description: data2.description,
-      files: fileArr,
-      public: data2.public,
-      owner: {
-        login: data2.owner.login,
-        id: data2.owner.id,
-        avatar_url: data2.owner.avatar_url
-      }
-    };
+    const gist: GistApiFileListDto = new GistApiFileListDto(
+      dataJson.id,
+      dataJson.description,
+      fileArr,
+      new UserDto(dataJson.owner.login, dataJson.owner.id, dataJson.owner.avatar_url),
+      dataJson.public
+    );
+
     return gist;
   }
 
@@ -197,11 +177,7 @@ export class GistService {
     if (!userData.id || !userData.avatar_url || !userData.login) {
       throw new Error('404');
     }
-    const result: UserDto = {
-      id: userData.id,
-      avatar_url: userData.avatar_url,
-      login: userData.login
-    };
+    const result: UserDto = new UserDto(userData.login, userData.id, userData.avatar_url);
     return result;
   }
 
@@ -220,45 +196,46 @@ export class GistService {
 
   async getComments(gist_id: string): Promise<CommentDto[]> {
     const data = await this.gistGetReq(`https://api.github.com/gists/${gist_id}/comments`);
-    const comments: CommentDto[] = data.map((comment) => ({
-      id: comment.id,
-      created_at: comment.created_at,
-      body: comment.body,
-      owner: {
-        id: comment.user.id,
-        login: comment.user.login,
-        avatar_url: comment.user.avatar_url
-      }
-    }));
+    const comments: CommentDto[] = data.map(
+      (comment) =>
+        new CommentDto(
+          comment.id,
+          comment.created_at,
+          comment.body,
+          new UserDto(comment.user.login, comment.user.id, comment.user.avatar_url)
+        )
+    );
     return comments;
   }
 
   async createComments(gist_id: string, detail: string): Promise<CommentDto> {
     const data = await this.gistPostReq(`https://api.github.com/gists/${gist_id}/comments`, '', detail);
-    const comment: CommentDto = {
-      id: data.id,
-      created_at: data.created_at,
-      body: data.body,
-      owner: {
-        id: data.user.id,
-        login: data.user.login,
-        avatar_url: data.user.avatar_url
-      }
-    };
+    const comment: CommentDto = new CommentDto(
+      data.id,
+      data.created_at,
+      data.body,
+      new UserDto(data.user.login, data.user.id, data.user.avatar_url)
+    );
     return comment;
   }
 
   async updateComment(gist_id: string, comment_id: string, detail: string): Promise<boolean> {
     const data = await this.gistPatchReq(`https://api.github.com/gists/${gist_id}/comments/${comment_id}`, '', detail);
+    if (!data.ok) {
+      throw new Error('404');
+    }
     return true;
   }
 
   async deleteComment(gist_id: string, comment_id: string): Promise<boolean> {
     const data = await this.gistDeleteReq(`https://api.github.com/gists/${gist_id}/comments/${comment_id}`);
+    if (!data.ok) {
+      throw new Error('404');
+    }
     return true;
   }
 
-  async gistGetReq(commend: string, queryParam: string = ''): Promise<any> {
+  async gistGetReq(commend: string, queryParam = ''): Promise<any> {
     const commendURL = queryParam ? commend + '?' + queryParam : commend;
     const response = await fetch(commendURL, {
       method: 'GET',
@@ -271,7 +248,7 @@ export class GistService {
     return await response.json();
   }
 
-  async gistPostReq(commend: string, queryParam: string = '', body: string = null): Promise<any> {
+  async gistPostReq(commend: string, queryParam = '', body: string = null): Promise<any> {
     const commendURL = queryParam ? commend + '?' + queryParam : commend;
     const response = await fetch(commendURL, {
       method: 'POST',
@@ -286,7 +263,7 @@ export class GistService {
     return await response.json();
   }
 
-  async gistPatchReq(commend: string, queryParam: string = '', body: string = null): Promise<any> {
+  async gistPatchReq(commend: string, queryParam = '', body: string = null): Promise<any> {
     const commendURL = queryParam ? commend + '?' + queryParam : commend;
     const response = await fetch(commendURL, {
       method: 'PATCH',
@@ -298,10 +275,10 @@ export class GistService {
       },
       body: JSON.stringify({ body: body })
     });
-    return await response.json();
+    return response;
   }
 
-  async gistDeleteReq(commend: string, queryParam: string = ''): Promise<any> {
+  async gistDeleteReq(commend: string, queryParam = ''): Promise<any> {
     const commendURL = queryParam ? commend + '?' + queryParam : commend;
     const response = await fetch(commendURL, {
       method: 'DELETE',
