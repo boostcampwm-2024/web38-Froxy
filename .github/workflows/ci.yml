@@ -34,7 +34,7 @@ jobs:
 
       - name: Install dependencies #라이브러리설치
         run: |
-          pnpm install
+          pnpm install --no-frozen-lockfile
 
       - name: Run lint & Turbo build
         run: |
