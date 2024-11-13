@@ -20,12 +20,12 @@ export class GistController {
     return this.gistService.getUserData();
   }
 
-  @Get('/comments/:gist_id')
+  @Get('/:gist_id/comments')
   findComments(@Param('gist_id') gist_id: string) {
     return this.gistService.getComments(gist_id);
   }
 
-  @Get(['/commits/:id', '/commits/:id/:pageIdx'])
+  @Get(['/:id/commits', '/:id/commits/:pageIdx'])
   findCommits(@Param('id') id: string, @Param('pageIdx') pageIdx: number) {
     return this.gistService.getCommitsForAGist(id, pageIdx ? pageIdx : 1);
   }
@@ -35,8 +35,27 @@ export class GistController {
     return this.gistService.getGistById(id);
   }
 
-  @Post('/comment/:gist_id')
+  @Patch('/:gist_id/comment/:comment_id')
+  patchComment(
+    @Param('gist_id') gist_id: string,
+    @Param('comment_id') comment_id: string,
+    @Body('comment') comment: string
+  ) {
+    return this.gistService.updateComment(gist_id, comment_id, comment);
+  }
+
+  @Post('/:gist_id/comment')
   postComment(@Param('gist_id') gist_id: string, @Body('comment') comment: string) {
     return this.gistService.createComments(gist_id, comment);
+  }
+
+  @Delete('/:gist_id/comment/:comment_id')
+  deleteComment(@Param('gist_id') gist_id: string, @Param('comment_id') comment_id: string) {
+    return this.gistService.deleteComment(gist_id, comment_id);
+  }
+
+  @Get(':gist_id/commit/:id')
+  getCommitFile(@Param('gist_id') gist_id: string, @Param('id') commit_id: number) {
+    return this.gistService.getCommit(gist_id, commit_id);
   }
 }
