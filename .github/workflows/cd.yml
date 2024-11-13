@@ -1,0 +1,54 @@
+name: froxy Continuous Delivery
+
+on:
+  push:
+    branches:
+      - release  # release 브랜치에 푸시될 때 실행
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-20.04  # 빌드가 진행될 환경 설정
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}  # DockerHub 사용자 이름
+          password: ${{ secrets.DOCKER_PASSWORD }}  # DockerHub 비밀번호
+
+      #이미지 이름 저장
+      - name: Set Docker image tag as a variable
+        run: echo "DOCKER_TAG=${{ secrets.DOCKER_USERNAME }}/froxy-server:latest" >> $GITHUB_ENV
+      
+      - name: Create .env file
+        run: |
+          echo "${{ secrets.BE_ENV }}" > .env
+      - name: Build Docker image
+        run: |
+          docker build -t $DOCKER_TAG .
+          
+      - name: Push Docker image to Docker Hub
+        run: |
+          docker push $DOCKER_TAG
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no mun@211.188.48.24 "
+            if [ \$(docker ps -a -q -f name=froxy-container) ]; then
+              docker stop froxy-container
+              docker rm froxy-container
+            fi
+            docker pull $DOCKER_TAG && \
+            docker run -d --name froxy-container -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest"
+            docker image prune -f

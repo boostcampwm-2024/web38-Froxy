@@ -1,0 +1,49 @@
+name: Froxy Continuous Integration
+
+on:
+  push:
+    branches:
+      - main 
+  pull_request:
+    branches:
+      - main 
+
+jobs:
+  ci:
+    runs-on: ubuntu-20.04
+    if: contains(github.event.pull_request.labels.*.name, '💻 Be')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'  # 적절한 Node.js 버전으로 설정
+          cache: 'pnpm'       # pnpm 캐싱 활성화
+
+      - name: Create .env file
+        run: |
+          echo "${{ secrets.BE_ENV }}" > ./apps/backend/.env
+
+      - name: Install dependencies #라이브러리설치
+        run: |
+          pnpm install
+
+      - name: Run lint & Turbo build
+        run: |
+          pnpm lint --filter=backend
+          pnpm turbo run build --filter=backend
+        #FE CI : pnpm turbo run build --filter=frontend
+        #전역 CI : pnpm turbo run build
+
+      #테스트코드 빌드는 테스트코드를 추가할때 사용
+      #- name: Run Turbo tests
+      #  run: |
+      #    pnpm turbo run test --filter=be

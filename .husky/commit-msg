@@ -1,1 +1,27 @@
+#!/bin/sh
+
+# 브랜치 이름과 커밋 메시지 파일 가져오기
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+COMMIT_FILE=$1
+
+# 브랜치 이름에서 커밋 번호 추출
+if [[ $BRANCH_NAME =~ [Ff]eature-#([0-9]+) ]]; then
+  COMMIT_NUMBER=${BASH_REMATCH[1]}
+  
+  # 기존 커밋 메시지 불러오기
+  MESSAGE=$(cat "$COMMIT_FILE")
+  
+  # 커밋 메시지에서 타입과 나머지 내용 추출 (예: Chore: 환경설정)
+  if [[ $MESSAGE =~ ^([A-Za-z]+):\s*(.*)$ ]]; then
+    COMMIT_TYPE=${BASH_REMATCH[1]}
+    COMMIT_CONTENT=${BASH_REMATCH[2]}
+
+    # 커밋 번호가 메시지에 없는 경우 추가
+    if [[ ! $COMMIT_CONTENT =~ \(#$COMMIT_NUMBER\) ]]; then
+      echo "$COMMIT_TYPE(#$COMMIT_NUMBER): $COMMIT_CONTENT" > "$COMMIT_FILE"
+    fi
+  fi
+fi
+
+# 커밋 메시지 유효성 검사
 npx --no-install commitlint --edit "$1"
