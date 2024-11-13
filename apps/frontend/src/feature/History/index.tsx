@@ -3,12 +3,24 @@ import { Heading, Text } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
 import { FormatDateKey, Time } from '@/shared/components/Time';
 
+export const HISTORY_STATUS = {
+  SUCCESS: 'SUCCESS',
+  ERROR: 'ERROR',
+  PENDING: 'PENDING'
+} as const;
+
+export const HISTORY_STATUS_COLOR = {
+  [HISTORY_STATUS.SUCCESS]: 'bg-green-500',
+  [HISTORY_STATUS.ERROR]: 'bg-orange-500',
+  [HISTORY_STATUS.PENDING]: 'bg-sky-500'
+} as const;
+
+type HistoryStatus = (typeof HISTORY_STATUS)[keyof typeof HISTORY_STATUS];
 export interface HistoryType {
   id: string;
   title: string;
-  body: string;
   date: Date;
-  status: boolean;
+  status: HistoryStatus;
 }
 
 const HistoryContext = createContext<HistoryType | null>(null);
@@ -44,20 +56,12 @@ export function HistoryTitle({ className, ...props }: HistoryTitleProps) {
   );
 }
 
-type HistoryBodyProps = ComponentProps<typeof Text>;
-
-export function HistoryBody(props: HistoryBodyProps) {
-  const { body } = useHistoryContext();
-
-  return <Text {...props}>{body}</Text>;
-}
-
 type HistoryStatusIconProps = { current?: boolean } & HTMLProps<HTMLDivElement>;
 
 export function HistoryStatusIcon({ className, current, ...props }: HistoryStatusIconProps) {
   const { status } = useHistoryContext();
 
-  const color = status ? 'bg-green-500' : 'bg-orange-500';
+  const color = HISTORY_STATUS_COLOR[status];
 
   return (
     <div className={cn('relative flex h-5 w-5', className)} {...props}>
@@ -76,7 +80,7 @@ export function HistoryStatusLabel({ className, ...props }: HistoryStatusLabelPr
 
   return (
     <Text size="sm" variant="muted" className={cn(className)} {...props}>
-      {status ? 'success' : 'error'}
+      {status.toLocaleLowerCase()}
     </Text>
   );
 }
@@ -97,7 +101,6 @@ export function HistoryDate({ className, ...props }: HistoryDateProps) {
 
 export const History = Object.assign(HistoryProvider, {
   Title: HistoryTitle,
-  Body: HistoryBody,
   StatusIcon: HistoryStatusIcon,
   StatusLabel: HistoryStatusLabel,
   Date: HistoryDate
