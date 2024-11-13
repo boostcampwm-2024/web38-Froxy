@@ -16,6 +16,7 @@ import { Route as rootRoute } from './../../page/__root';
 import { Route as LotusRouteImport } from './../../page/lotus/route';
 import { Route as IndexImport } from './../../page/index';
 import { Route as LotusIndexImport } from './../../page/lotus/index';
+import { Route as LotusUserIndexImport } from './../../page/lotus/user/index';
 import { Route as LotusDetailIndexImport } from './../../page/lotus/detail/index';
 
 // Create Virtual Routes
@@ -45,6 +46,12 @@ const IndexRoute = IndexImport.update({
 const LotusIndexRoute = LotusIndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => LotusRouteRoute
+} as any);
+
+const LotusUserIndexRoute = LotusUserIndexImport.update({
+  id: '/user/',
+  path: '/user/',
   getParentRoute: () => LotusRouteRoute
 } as any);
 
@@ -93,6 +100,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LotusDetailIndexImport;
       parentRoute: typeof LotusRouteImport;
     };
+    '/lotus/user/': {
+      id: '/lotus/user/';
+      path: '/user';
+      fullPath: '/lotus/user';
+      preLoaderRoute: typeof LotusUserIndexImport;
+      parentRoute: typeof LotusRouteImport;
+    };
   }
 }
 
@@ -101,11 +115,13 @@ declare module '@tanstack/react-router' {
 interface LotusRouteRouteChildren {
   LotusIndexRoute: typeof LotusIndexRoute;
   LotusDetailIndexRoute: typeof LotusDetailIndexRoute;
+  LotusUserIndexRoute: typeof LotusUserIndexRoute;
 }
 
 const LotusRouteRouteChildren: LotusRouteRouteChildren = {
   LotusIndexRoute: LotusIndexRoute,
-  LotusDetailIndexRoute: LotusDetailIndexRoute
+  LotusDetailIndexRoute: LotusDetailIndexRoute,
+  LotusUserIndexRoute: LotusUserIndexRoute
 };
 
 const LotusRouteRouteWithChildren = LotusRouteRoute._addFileChildren(LotusRouteRouteChildren);
@@ -116,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutLazyRoute;
   '/lotus/': typeof LotusIndexRoute;
   '/lotus/detail': typeof LotusDetailIndexRoute;
+  '/lotus/user': typeof LotusUserIndexRoute;
 }
 
 export interface FileRoutesByTo {
@@ -123,6 +140,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutLazyRoute;
   '/lotus': typeof LotusIndexRoute;
   '/lotus/detail': typeof LotusDetailIndexRoute;
+  '/lotus/user': typeof LotusUserIndexRoute;
 }
 
 export interface FileRoutesById {
@@ -132,14 +150,15 @@ export interface FileRoutesById {
   '/about': typeof AboutLazyRoute;
   '/lotus/': typeof LotusIndexRoute;
   '/lotus/detail/': typeof LotusDetailIndexRoute;
+  '/lotus/user/': typeof LotusUserIndexRoute;
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/lotus' | '/about' | '/lotus/' | '/lotus/detail';
+  fullPaths: '/' | '/lotus' | '/about' | '/lotus/' | '/lotus/detail' | '/lotus/user';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/about' | '/lotus' | '/lotus/detail';
-  id: '__root__' | '/' | '/lotus' | '/about' | '/lotus/' | '/lotus/detail/';
+  to: '/' | '/about' | '/lotus' | '/lotus/detail' | '/lotus/user';
+  id: '__root__' | '/' | '/lotus' | '/about' | '/lotus/' | '/lotus/detail/' | '/lotus/user/';
   fileRoutesById: FileRoutesById;
 }
 
@@ -175,7 +194,8 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
       "filePath": "lotus/route.tsx",
       "children": [
         "/lotus/",
-        "/lotus/detail/"
+        "/lotus/detail/",
+        "/lotus/user/"
       ]
     },
     "/about": {
@@ -187,6 +207,10 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     },
     "/lotus/detail/": {
       "filePath": "lotus/detail/index.tsx",
+      "parent": "/lotus"
+    },
+    "/lotus/user/": {
+      "filePath": "lotus/user/index.tsx",
       "parent": "/lotus"
     }
   }

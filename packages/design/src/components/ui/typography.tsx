@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { Slot } from '@radix-ui/react-slot';
 
 const TypographyVariants = {
+  semiBold: 'font-semibold',
   bold: 'font-bold',
   muted: 'text-gray-500',
   destructive: 'text-red-500',
@@ -31,6 +32,8 @@ export function Heading({ asChild, size = 'md', variant = 'none', className, ...
 }
 
 const TextSize = {
+  '3xl': 'text-3xl',
+  '2xl': 'text-2xl',
   xl: 'text-xl',
   lg: 'text-lg',
   md: 'text-base',
