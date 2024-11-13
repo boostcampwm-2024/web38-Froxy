@@ -23,8 +23,11 @@ export class Lotus {
   @Column()
   title: string;
 
+  @Column()
+  input: string;
+
   @Column({ name: 'is_public' })
-  name: boolean;
+  isPublic: boolean;
 
   @Column({ name: 'gistRepositoryId' })
   gistRepositoryId: string;
@@ -36,13 +39,13 @@ export class Lotus {
   @JoinColumn({ name: 'user_id' }) // 외래키 이름 설정
   user: User;
 
-  @OneToMany(() => Comment, (comment) => comment.lotus)
+  @OneToMany(() => Comment, (comment) => comment.lotus, { cascade: ['remove'] })
   comments: Comment[];
 
-  @OneToMany(() => History, (history) => history.lotus)
+  @OneToMany(() => History, (history) => history.lotus, { cascade: ['remove'] })
   historys: History[];
 
-  @ManyToMany(() => Tag)
+  @ManyToMany(() => Tag, { cascade: ['remove'] })
   @JoinTable({
     name: 'lotus_tags', // 교차 테이블 이름 지정
     joinColumn: {

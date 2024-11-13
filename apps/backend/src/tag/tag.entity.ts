@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Lotus } from '@/lotus/lotus.entity';
 import { User } from '@/user/user.entity';
 
@@ -13,4 +13,7 @@ export class Tag {
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
+
+  @ManyToMany(() => Lotus, (lotus) => lotus.category)
+  lotuses: Lotus[];
 }
