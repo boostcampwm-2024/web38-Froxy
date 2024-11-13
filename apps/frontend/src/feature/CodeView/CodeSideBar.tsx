@@ -6,19 +6,19 @@ import { useCodeViewActionContext, useCodeViewContext } from './useCodeViewConte
 type CodeSideBarProps = HTMLProps<HTMLDivElement>;
 
 export function CodeSideBar({ className, ...props }: CodeSideBarProps) {
-  const { value } = useCodeViewContext();
+  const { value, current } = useCodeViewContext();
   const setCurrentCode = useCodeViewActionContext();
 
   return (
-    <div className={cn('flex flex-col rounded-lg shadow-md m-2 py-2 h-full', className)} {...props}>
+    <div className={cn('flex flex-col rounded-lg shadow-md py-2 h-full', className)} {...props}>
       {value.map((v, i) => (
         <Button
           variant={'link'}
-          className={cn('flex items-start p-1 px-4')}
-          key={v.fileName}
+          className={cn('flex justify-start', current === i && 'bg-gray-100')}
+          key={v.filename}
           onClick={() => setCurrentCode(i)}
         >
-          {v.fileName}
+          {v.filename}
         </Button>
       ))}
     </div>

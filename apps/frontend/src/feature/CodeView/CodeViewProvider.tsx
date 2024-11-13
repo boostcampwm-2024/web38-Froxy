@@ -5,10 +5,11 @@ import { CodeViewActionContext, CodeViewContext } from './useCodeViewContext';
 type CodeViewProviderProps = {
   value: CodeViewValue[];
   children: React.ReactNode;
+  current?: number;
 };
 
-export function CodeViewProvider({ value, children }: CodeViewProviderProps) {
-  const [current, setCurrent] = useState(0);
+export function CodeViewProvider({ value, children, current: currentIndex = 0 }: CodeViewProviderProps) {
+  const [current, setCurrent] = useState(currentIndex);
   const setCurrentCode = (index: number) => setCurrent(index);
 
   return (
