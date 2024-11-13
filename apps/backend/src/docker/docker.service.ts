@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import * as Docker from 'dockerode';
 import { Container } from 'dockerode';
-import * as tar from 'tar-stream';
-import * as path from 'path';
 import { promises as fs } from 'fs';
+import * as path from 'path';
+import * as tar from 'tar-stream';
 
 interface GistFileAttributes {
   filename: string;
