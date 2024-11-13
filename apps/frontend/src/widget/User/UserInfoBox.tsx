@@ -19,11 +19,11 @@ export function UserInfoBox() {
           </Text>
         </div>
         <div className="flex flex-col gap-4">
-          <UserEditableInfo label="닉네임" initialValue="froxy" editValue={(value) => console.log('편집: ', value)} />
+          <UserEditableInfo label="닉네임" initialValue="froxy" onEditValue={(value) => console.log('편집: ', value)} />
           <UserEditableInfo
             label="주소"
             initialValue="/github/gist/froxy"
-            editValue={(value) => console.log('편집: ', value)}
+            onEditValue={(value) => console.log('편집: ', value)}
           />
           <Text size="3xl" className="font-semibold">
             12
