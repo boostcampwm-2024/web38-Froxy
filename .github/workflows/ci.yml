@@ -3,10 +3,10 @@ name: Froxy Continuous Integration
 on:
   push:
     branches:
-      - main 
+      - main
   pull_request:
     branches:
-      - main 
+      - main
 
 jobs:
   ci:
@@ -25,8 +25,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'  # 적절한 Node.js 버전으로 설정
-          cache: 'pnpm'       # pnpm 캐싱 활성화
+          node-version: '20' # 적절한 Node.js 버전으로 설정
+          cache: 'pnpm' # pnpm 캐싱 활성화
 
       - name: Create .env file
         run: |
@@ -34,7 +34,7 @@ jobs:
 
       - name: Install dependencies #라이브러리설치
         run: |
-          pnpm install
+          pnpm install --no-frozen-lockfile
 
       - name: Run lint & Turbo build
         run: |
