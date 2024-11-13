@@ -19,7 +19,7 @@ export function UserEditableInfo({ label = '', initialValue, editValue }: UserEd
       {isEdit ? (
         <div className="flex items-center gap-2">
           <Input
-            className={'min-w-[21rem] mr-4'}
+            className={'min-w-80 mr-4'}
             value={value}
             onChange={onChangeValue}
             placeholder={`${label} 입력해주세요.`}
@@ -32,7 +32,7 @@ export function UserEditableInfo({ label = '', initialValue, editValue }: UserEd
         </div>
       ) : (
         <div className="flex items-center gap-10">
-          <Text size="3xl" variant="semiBold">
+          <Text size="3xl" className="font-semibold">
             {initialValue}
           </Text>
           <GoPencil className="w-6 h-6" onClick={() => toggleEdit(true)} />

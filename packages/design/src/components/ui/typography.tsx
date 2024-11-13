@@ -2,7 +2,6 @@ import { cn } from '@/lib/utils';
 import { Slot } from '@radix-ui/react-slot';
 
 const TypographyVariants = {
-  semiBold: 'font-semibold',
   bold: 'font-bold',
   muted: 'text-gray-500',
   destructive: 'text-red-500',

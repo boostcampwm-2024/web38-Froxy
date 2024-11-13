@@ -22,7 +22,7 @@ export function LotusCardList() {
       <div className="w-full grid grid-cols-3 gap-[2rem]">
         {new Array(10).fill(0).map((_, index) => (
           <Lotus lotus={LotusDummyData} key={index}>
-            <Lotus.Link className="max-w-[24rem] p-5 border-2 border-[#E2E8F0] rounded-[0.75rem]">
+            <Lotus.Link className="max-w-[24rem] p-5 border-2 border-slate-200 rounded-[0.75rem]">
               <Lotus.Title className="text-[#1C1D22]" />
               <Lotus.Author className="text-[rgba(28,29,34,0.5)]" />
               <div className="w-full flex justify-between items-end">
@@ -31,7 +31,7 @@ export function LotusCardList() {
               </div>
               {LotusDummyData?.tags?.length ? (
                 <>
-                  <div className="mt-[1rem] w-full border-b-2 border-[#E2E8F0]" />
+                  <div className="mt-[1rem] w-full border-b-2 border-slate-200" />
                   <Lotus.TagList className="pt-[1rem] min-h-[2rem]" variant={'default'} />
                 </>
               ) : (

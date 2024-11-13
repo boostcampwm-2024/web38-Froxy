@@ -6,9 +6,9 @@ export function LotusSearchBar() {
   const { search, onChangeSearch, onClickSearchLotus, onSearchInputKeyDown } = useLotusSearch();
 
   return (
-    <div className="flex justify-between items-center w-full p-6 border-2 border-[#E2E8F0] rounded-[0.75rem] shadow-sm">
+    <div className="flex justify-between items-center w-full p-6 border-2 border-slate-200 rounded-[0.75rem] shadow-sm">
       <div>
-        <Heading size="lg" variant="bold" className="pb-1 text-[#020617]">
+        <Heading size="lg" variant="bold" className="pb-1">
           Lotus
         </Heading>
         <Text size="sm" variant="muted">
