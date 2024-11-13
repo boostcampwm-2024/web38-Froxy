@@ -1,5 +1,5 @@
 import {
-  Pagination,
+  Pagination as PaginationBox,
   PaginationContent,
   PaginationEllipsis,
   PaginationItem,
@@ -9,13 +9,13 @@ import {
 } from '@froxy/design/components';
 import { usePagination } from '@/feature/Pagination/usePagination';
 
-interface LotusPaginationProps {
+interface PaginationProps {
   totalPages: number;
   initialPage?: number;
   onChangePage?: (page: number) => void;
 }
 
-export function LotusPagination({ totalPages, initialPage = 1, onChangePage }: LotusPaginationProps) {
+export function Pagination({ totalPages, initialPage = 1, onChangePage }: PaginationProps) {
   const { currentPage, onClickPage, onClickPrevious, onClickNext, getPaginationItems } = usePagination({
     totalPages,
     initialPage,
@@ -23,7 +23,7 @@ export function LotusPagination({ totalPages, initialPage = 1, onChangePage }: L
   });
 
   return (
-    <Pagination>
+    <PaginationBox>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious onClick={onClickPrevious} />
@@ -31,7 +31,7 @@ export function LotusPagination({ totalPages, initialPage = 1, onChangePage }: L
         {getPaginationItems().map((item, index) => (
           <PaginationItem key={index}>
             {typeof item === 'number' ? (
-              <PaginationLink onClick={() => onClickPage(item)} isActive={item === currentPage}>
+              <PaginationLink onClick={() => item !== currentPage && onClickPage(item)} isActive={item === currentPage}>
                 {item}
               </PaginationLink>
             ) : (
@@ -43,6 +43,6 @@ export function LotusPagination({ totalPages, initialPage = 1, onChangePage }: L
           <PaginationNext onClick={onClickNext} />
         </PaginationItem>
       </PaginationContent>
-    </Pagination>
+    </PaginationBox>
   );
 }
