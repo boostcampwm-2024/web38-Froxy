@@ -5,9 +5,9 @@ import { CodeViewProvider } from './CodeViewProvider';
 import '@froxy/react-markdown/github.css';
 
 export interface CodeViewValue {
-  fileName: string;
-  ext: string;
-  code: string;
+  filename: string;
+  language: string;
+  content: string;
 }
 
 export const CodeView = Object.assign(CodeViewProvider, { SideBar: CodeSideBar, Viewer: CodeViewer });
