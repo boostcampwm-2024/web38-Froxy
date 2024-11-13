@@ -32,19 +32,7 @@ export class GistService {
             return gistfiltering.id && gistfiltering.description && gistfiltering.files && gistfiltering.owner;
           })
           .map(async (gist: GistApiFileListDto) => {
-            const fileArr: GistApiFileDto[] = await Promise.all(
-              Object.keys(gist.files).map(async (key) => {
-                const content = await this.getFileContent(gist.files[key].raw_url);
-                return new GistApiFileDto(
-                  key,
-                  gist.files[key].raw_url,
-                  gist.files[key].type,
-                  gist.files[key].language,
-                  gist.files[key].size,
-                  content
-                );
-              })
-            );
+            const fileArr: GistApiFileDto[] = [];
 
             return new GistApiFileListDto(
               gist.id,
@@ -260,6 +248,7 @@ export class GistService {
       },
       body: JSON.stringify({ body: body })
     });
+    console.log(response);
     return await response.json();
   }
 
