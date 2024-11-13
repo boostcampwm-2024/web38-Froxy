@@ -25,7 +25,6 @@ export function usePagination({ totalPages, initialPage = 1, onChangePage }: Use
 
   // "첫 페이지 ... 현재 페이지와 앞뒤 1페이지 ... 마지막 페이지 "로 구성되도록 구현함
   const getPaginationItems = () => {
-    console.log('실행!: ', currentPage);
     const items: (number | 'ellipsis')[] = [];
     const showStartEllipsis = currentPage > 4;
     const showEndEllipsis = currentPage < totalPages - 3;
