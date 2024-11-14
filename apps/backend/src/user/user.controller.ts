@@ -1,6 +1,5 @@
 import { Controller, Get, Query, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserCreateDto } from './dto/user.dto';
 import { UserService } from './user.service';
 
 @Controller('/user')
@@ -32,21 +31,7 @@ export class UserController {
         })
       });
       const tokenData = await tokenResponse.json();
-      const accessToken = tokenData.access_token;
-      const userResponse = await fetch('https://api.github.com/user', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`
-        }
-      });
-
-      const user = await userResponse.json();
-
-      res.json({ user, accessToken });
-
-      if (!(await this.userService.findOne(user.id))) {
-        console.log('new user');
-        await this.userService.saveUser(new UserCreateDto(user, accessToken));
-      }
+      res.json(await this.userService.loginUser(tokenData));
     } catch (error) {
       console.error('GitHub OAuth 오류:', error);
       res.status(500).send('GitHub 인증에 실패했습니다.');
