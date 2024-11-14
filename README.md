@@ -15,7 +15,7 @@ Gist에서 코드를 복제하고 실행 환경을 설정하는 번거로움 없
 ## To Be
 - 스터디 그룹원의 코드를 clone하지 않고 체크포인트를 점검할 수 있다.
 - 여러 캠퍼들의 결과들을 실행시키지 않고도 확인하여 코드리뷰 역량이 향상되기를 바란다.
-![image](https://github.com/user-attachments/assets/bd0b3f0c-908b-4d1e-91fc-86cf0433e425)
+
 
 
 
@@ -23,16 +23,23 @@ Gist에서 코드를 복제하고 실행 환경을 설정하는 번거로움 없
 
 <table>
   <tr>
-    <td><img src="https://avatars.githubusercontent.com/u/125727432?s=64&v=4" alt="김민우" width="100"></td>
-    <td><img src="https://avatars.githubusercontent.com/u/126762281?s=64&v=4" alt="김현지" width="100"></td>
-    <td><img src="https://avatars.githubusercontent.com/u/50985929?s=64&v=4" alt="문준호" width="100"></td>
-    <td><img src="https://avatars.githubusercontent.com/u/93020785?s=64&v=4" alt="이나경" width="100"></td>
+    <td><img src="https://github.com/user-attachments/assets/16d8c713-8cb1-45d0-b737-758191db6e95?s=64&v=4" alt="김민우" width="100"></td>
+    <td><img src="https://github.com/user-attachments/assets/cb090f5e-5d7a-419e-92c9-f63fa6e3e1f0?s=64&v=4" alt="이나경" width="100"></td>
+    <td><img src="https://github.com/user-attachments/assets/01719095-beaa-42f2-814e-8314dc184ca6?s=64&v=4" alt="김현지" width="100"></td>
+    <td><img src="https://github.com/user-attachments/assets/bd0b3f0c-908b-4d1e-91fc-86cf0433e425?s=64&v=4" alt="문준호" width="100"></td>
   </tr>
   <tr>
-    <td><a href="https://github.com/ATeals">김민우</a></td>
-    <td><a href="https://github.com/kimhji">김현지</a></td>
-    <td><a href="https://github.com/mjh000526">문준호</a></td>
-    <td><a href="https://github.com/naarang">이나경</a></td>
+    <td align="center"><a href="https://github.com/ATeals">김민우</a></td>
+    <td align="center"><a href="https://github.com/kimhji">김현지</a></td>
+    <td align="center"><a href="https://github.com/mjh000526">문준호</a></td>
+    <td align="center"><a href="https://github.com/naarang">이나경</a></td>
+  </tr>
+  
+  <tr>
+    <td align="center">FE</td>
+    <td align="center">FE</td>
+    <td align="center">BE</td>
+    <td align="center">BE</td>
   </tr>
 </table>
 
