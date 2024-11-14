@@ -12,7 +12,7 @@ type HistoryListProps = {
 export function HistoryList({ historyList, className }: HistoryListProps) {
   return (
     <div className={cn('shadow-md p-5 rounded-lg w-1/3', className)}>
-      <div className="flex items-baseline justify-between mb-10">
+      <div className="flex items-baseline justify-between mb-2">
         <Heading size="lg">Run History</Heading>
         <Button size={'sm'} variant={'link'}>
           더 보러가기

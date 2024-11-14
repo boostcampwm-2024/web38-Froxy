@@ -7,9 +7,9 @@ export const Route = createLazyFileRoute('/(main)')({
 
 function RouteComponent() {
   return (
-    <div className="flex justify-center min-h-screen">
+    <div className="w-full flex flex-col items-center min-h-screen">
+      <Header />
       <div className="w-full max-w-screen-xl pb-20 px-4 sm:px-6 lg:px-8">
-        <Header />
         <Outlet />
       </div>
     </div>

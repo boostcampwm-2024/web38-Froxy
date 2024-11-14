@@ -50,9 +50,9 @@ export function HistoryTitle({ className, ...props }: HistoryTitleProps) {
   const { title } = useHistoryContext();
 
   return (
-    <Heading size="sm" className={cn('', className)} {...props}>
+    <Text size="md" className={cn('', className)} {...props}>
       {title}
-    </Heading>
+    </Text>
   );
 }
 

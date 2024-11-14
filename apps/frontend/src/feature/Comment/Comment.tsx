@@ -7,7 +7,7 @@ type CommentViewerProps = {
 } & HTMLProps<HTMLDivElement>;
 
 export function CommentViewer({ className, children, ...props }: CommentViewerProps) {
-  return <Markdown className={cn('p-4', className)} markdown={children} {...props} />;
+  return <Markdown className={cn('pt-6', className)} markdown={children} {...props} />;
 }
 
 type CommentEditorProps = {} & HTMLProps<HTMLTextAreaElement>;

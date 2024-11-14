@@ -16,7 +16,6 @@ import { Route as rootRoute } from './../../page/__root';
 
 // Create Virtual Routes
 
-const AboutLazyImport = createFileRoute('/about')();
 const mainRouteLazyImport = createFileRoute('/(main)')();
 const IndexLazyImport = createFileRoute('/')();
 const mainUserIndexLazyImport = createFileRoute('/(main)/user/')();
@@ -25,12 +24,6 @@ const mainLotusCreateIndexLazyImport = createFileRoute('/(main)/lotus/create/')(
 const mainLotusLotusIdIndexLazyImport = createFileRoute('/(main)/lotus/$lotusId/')();
 
 // Create/Update Routes
-
-const AboutLazyRoute = AboutLazyImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRoute
-} as any).lazy(() => import('./../../page/about.lazy').then((d) => d.Route));
 
 const mainRouteLazyRoute = mainRouteLazyImport
   .update({
@@ -96,13 +89,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof mainRouteLazyImport;
       parentRoute: typeof rootRoute;
     };
-    '/about': {
-      id: '/about';
-      path: '/about';
-      fullPath: '/about';
-      preLoaderRoute: typeof AboutLazyImport;
-      parentRoute: typeof rootRoute;
-    };
     '/(main)/lotus/': {
       id: '/(main)/lotus/';
       path: '/lotus';
@@ -154,7 +140,6 @@ const mainRouteLazyRouteWithChildren = mainRouteLazyRoute._addFileChildren(mainR
 
 export interface FileRoutesByFullPath {
   '/': typeof mainRouteLazyRouteWithChildren;
-  '/about': typeof AboutLazyRoute;
   '/lotus': typeof mainLotusIndexLazyRoute;
   '/user': typeof mainUserIndexLazyRoute;
   '/lotus/$lotusId': typeof mainLotusLotusIdIndexLazyRoute;
@@ -163,7 +148,6 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof mainRouteLazyRouteWithChildren;
-  '/about': typeof AboutLazyRoute;
   '/lotus': typeof mainLotusIndexLazyRoute;
   '/user': typeof mainUserIndexLazyRoute;
   '/lotus/$lotusId': typeof mainLotusLotusIdIndexLazyRoute;
@@ -174,7 +158,6 @@ export interface FileRoutesById {
   __root__: typeof rootRoute;
   '/': typeof IndexLazyRoute;
   '/(main)': typeof mainRouteLazyRouteWithChildren;
-  '/about': typeof AboutLazyRoute;
   '/(main)/lotus/': typeof mainLotusIndexLazyRoute;
   '/(main)/user/': typeof mainUserIndexLazyRoute;
   '/(main)/lotus/$lotusId/': typeof mainLotusLotusIdIndexLazyRoute;
@@ -183,14 +166,13 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/about' | '/lotus' | '/user' | '/lotus/$lotusId' | '/lotus/create';
+  fullPaths: '/' | '/lotus' | '/user' | '/lotus/$lotusId' | '/lotus/create';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/about' | '/lotus' | '/user' | '/lotus/$lotusId' | '/lotus/create';
+  to: '/' | '/lotus' | '/user' | '/lotus/$lotusId' | '/lotus/create';
   id:
     | '__root__'
     | '/'
     | '/(main)'
-    | '/about'
     | '/(main)/lotus/'
     | '/(main)/user/'
     | '/(main)/lotus/$lotusId/'
@@ -201,13 +183,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute;
   mainRouteLazyRoute: typeof mainRouteLazyRouteWithChildren;
-  AboutLazyRoute: typeof AboutLazyRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
-  mainRouteLazyRoute: mainRouteLazyRouteWithChildren,
-  AboutLazyRoute: AboutLazyRoute
+  mainRouteLazyRoute: mainRouteLazyRouteWithChildren
 };
 
 export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
@@ -219,8 +199,7 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/(main)",
-        "/about"
+        "/(main)"
       ]
     },
     "/": {
@@ -234,9 +213,6 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
         "/(main)/lotus/$lotusId/",
         "/(main)/lotus/create/"
       ]
-    },
-    "/about": {
-      "filePath": "about.lazy.tsx"
     },
     "/(main)/lotus/": {
       "filePath": "(main)/lotus/index.lazy.tsx",
