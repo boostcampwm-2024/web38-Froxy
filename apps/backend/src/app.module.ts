@@ -12,7 +12,7 @@ import { GistModule } from './gist/gist.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: path.resolve(__dirname, '../../.env')
+      envFilePath: path.resolve(__dirname, '../.env')
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
