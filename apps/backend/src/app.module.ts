@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { typeORMConfig } from './config/typeorm.config';
 import { DockerModule } from './docker/docker.module';
 import { GistModule } from './gist/gist.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { GistModule } from './gist/gist.module';
       useFactory: typeORMConfig
     }),
     DockerModule,
-    GistModule
+    GistModule,
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService]
