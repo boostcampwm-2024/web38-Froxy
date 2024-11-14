@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
+import { Controller, Get, Query, Redirect, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from './user.service';
 
@@ -10,9 +10,10 @@ export class UserController {
   private OAUTH_LOGIN_CALLBACK_URL = this.configService.get<string>('OAUTH_LOGIN_CALLBACK_URL');
 
   @Get('login')
+  @Redirect()
   getGithubLoginPage() {
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${this.OAUTH_CLIENT_ID}&redirect_uri=${this.OAUTH_LOGIN_CALLBACK_URL}&scope=gist`;
-    return { url: githubAuthUrl };
+    return { url: githubAuthUrl, statusCode: 301 };
   }
 
   @Get('login/callback')
