@@ -25,21 +25,17 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}  # DockerHub 사용자 이름
           password: ${{ secrets.DOCKER_PASSWORD }}  # DockerHub 비밀번호
-
-      #이미지 이름 저장
-      - name: Set Docker image tag as a variable
-        run: echo "DOCKER_TAG=${{ secrets.DOCKER_USERNAME }}/froxy-server:latest" >> $GITHUB_ENV
       
       - name: Create .env file
         run: |
           echo "${{ secrets.BE_ENV }}" > .env
       - name: Build Docker image
         run: |
-          docker build -t $DOCKER_TAG .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest .
           
       - name: Push Docker image to Docker Hub
         run: |
-          docker push $DOCKER_TAG
+          docker push ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest
 
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.3
@@ -53,6 +49,6 @@ jobs:
               docker stop froxy-container
               docker rm froxy-container
             fi
-            docker pull $DOCKER_TAG && \
+            docker pull ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest && \
             docker run -d --name froxy-container -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest"
             docker image prune -f
