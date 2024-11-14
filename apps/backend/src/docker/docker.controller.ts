@@ -13,7 +13,6 @@ export class DockerController {
     // const gistId = this.configService.get<string>('DYNAMIC_GIST_ID');
     const gistId = '0fd9d1999eae1c272bd071dc95f96f99';
     const gitToken = this.configService.get<string>('GIT_TOKEN');
-    console.log(gitToken);
     const inputs = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
     const value = await this.dockerService.getDocker(gitToken, gistId, mainFileName, inputs);
     return value;
