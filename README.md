@@ -11,7 +11,7 @@ Gist에서 코드를 복제하고 실행 환경을 설정하는 번거로움 없
 
 <br/><br/>
 
-## 주제 선정 동기
+## ⭐️ 주제 선정 동기
 
 - 베이직, 챌린지에서 미션 수행 결과를 gist에 업로드하고 서로의 gist를 리뷰하면서 매번 clone해서 테스트해보는 것에서 번거로움을 느꼈었다.
 ⇒ 따라서 쉽게 gist의 실행결과를 확인할 수 있는 서비스가 도움이 될 것이라고 생각했다.
@@ -19,17 +19,17 @@ Gist에서 코드를 복제하고 실행 환경을 설정하는 번거로움 없
 
 <br/><br/>
 
-## To Be
+## ⭐️ To Be
 - 스터디 그룹원의 코드를 clone하지 않고 체크포인트를 점검할 수 있다.
 - 여러 캠퍼들의 결과들을 실행시키지 않고도 확인하여 코드리뷰 역량이 향상되기를 바란다.
 
 <br/><br/>
 
-## 프로젝트 아키텍처
+## 🔧 프로젝트 아키텍처
 ![image](https://github.com/user-attachments/assets/3b99d8b7-84e7-4555-a397-25757a067f2e)
 
 
-## 팀원
+## 👥 팀원
 
 <table>
   <tr>
@@ -53,4 +53,4 @@ Gist에서 코드를 복제하고 실행 환경을 설정하는 번거로움 없
   </tr>
 </table>
 
-## [팀 노션](https://freckle-calliandra-79a.notion.site/Team38-F-Rog-12d9038c617380509fbdf4eb928e4238)
+## [📚 팀 노션](https://freckle-calliandra-79a.notion.site/Team38-F-Rog-12d9038c617380509fbdf4eb928e4238)
