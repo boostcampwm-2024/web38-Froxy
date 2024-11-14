@@ -6,6 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install -g pnpm
 
+COPY .env /app/apps/backend/.env
 COPY . .
 
 RUN pnpm install
