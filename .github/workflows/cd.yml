@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - release  # release 브랜치에 푸시될 때 실행
+  pull_request:
+    branches:
+      - main 
+  
 
 jobs:
   build_and_deploy:

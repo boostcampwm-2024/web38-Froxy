@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as Docker from 'dockerode';
 import { Container } from 'dockerode';
-import { promises as fs } from 'fs';
-import * as path from 'path';
 import * as tar from 'tar-stream';
 
 interface GistFileAttributes {
@@ -45,14 +43,11 @@ export class DockerService {
     const container = await this.docker.createContainer({
       //todo: image version맞춰야함
       Image: 'node:latest',
-      Tty: true, //통합스트림
+      Tty: true,
       OpenStdin: true,
       AttachStdout: true,
       AttachStderr: true,
-      Env: [
-        'NODE_DISABLE_COLORS=true', // 색상 비활성화
-        'TERM=dumb' // dumb 터미널로 설정하여 색상 비활성화
-      ]
+      Env: ['NODE_DISABLE_COLORS=true', 'TERM=dumb']
     });
 
     //desciption: 컨테이너 시작
@@ -117,7 +112,6 @@ export class DockerService {
         });
       }
 
-      //desciption: 아카이브 완료
       pack.finalize();
 
       //desciption: Buffer로 변환
