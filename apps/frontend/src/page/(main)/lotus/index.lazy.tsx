@@ -1,8 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createLazyFileRoute } from '@tanstack/react-router';
 import { LotusCardList } from '@/widget/LotusList/LotusCardList';
 import { LotusSearchBar } from '@/widget/LotusList/LotusSearchBar';
 
-export const Route = createFileRoute('/lotus/')({
+export const Route = createLazyFileRoute('/(main)/lotus/')({
   component: RouteComponent
 });
 

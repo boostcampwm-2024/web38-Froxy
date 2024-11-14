@@ -1,7 +1,7 @@
-import { Outlet, createFileRoute } from '@tanstack/react-router';
+import { Outlet, createLazyFileRoute } from '@tanstack/react-router';
 import { Header } from '@/widget/Header';
 
-export const Route = createFileRoute('/lotus')({
+export const Route = createLazyFileRoute('/(main)')({
   component: RouteComponent
 });
 

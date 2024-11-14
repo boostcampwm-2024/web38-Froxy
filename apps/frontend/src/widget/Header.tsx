@@ -1,4 +1,4 @@
-import { Button, Heading } from '@froxy/design/components';
+import { Button, Heading, Text } from '@froxy/design/components';
 
 export function Header() {
   // TODO: 로그인 여부 확인하는 로직 추가 필요
@@ -13,7 +13,9 @@ export function Header() {
       <div className="flex items-center gap-4">
         {isLogin ? (
           <>
-            <Button variant={'outline'}>create Lotus</Button>
+            <Button variant={'ghost'}>
+              <Text variant="muted">create Lotus</Text>
+            </Button>
             <img className="w-10 h-10 rounded-full" src="/image/exampleImage.jpeg" alt="프로필 사진" />
           </>
         ) : (
