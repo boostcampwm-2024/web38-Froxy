@@ -32,7 +32,8 @@ export class UserController {
         })
       });
       const tokenData = await tokenResponse.json();
-      res.json(await this.userService.loginUser(tokenData));
+      const token = await this.userService.loginUser(tokenData);
+      res.json({ token });
     } catch (error) {
       console.error('GitHub OAuth 오류:', error);
       res.status(500).send('GitHub 인증에 실패했습니다.');
