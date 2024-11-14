@@ -48,6 +48,9 @@ export class DockerService {
       AttachStdout: true,
       AttachStderr: true,
       Env: ['NODE_DISABLE_COLORS=true', 'TERM=dumb']
+      // HostConfig: {
+      //   NetworkMode: 'bridge',  // bridge 네트워크 모드 설정
+      // },
     });
 
     //desciption: 컨테이너 시작
