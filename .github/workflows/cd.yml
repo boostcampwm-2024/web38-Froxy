@@ -28,7 +28,7 @@ jobs:
       
       - name: Create .env file
         run: |
-          echo "${{ secrets.BE_ENV }}" > /app/apps/backend/.env
+          echo "${{ secrets.BE_ENV }}" > ./apps/backend/.env
       - name: Build Docker image
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest .
