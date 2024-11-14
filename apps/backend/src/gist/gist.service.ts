@@ -28,7 +28,7 @@ export class GistService {
     const gists = currentGistPage.map((gist) => {
       return new ResponseGistDto(gist);
     });
-    return ResponseAllGistsDto.of(gists, page, per_page, hasNextPage);
+    return ResponseAllGistsDto.of(gists, page, hasNextPage);
   }
 
   async gistPageData(gitToken: string, page: number, per_page: number): Promise<any[]> {
@@ -38,6 +38,7 @@ export class GistService {
     };
     const queryParam = new URLSearchParams(params).toString();
     const gistsData = await this.gistGetReq(`https://api.github.com/gists`, queryParam, gitToken);
+    // console.log(gistsData);
     return gistsData;
   }
 

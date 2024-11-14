@@ -5,11 +5,11 @@ export class ResponseAllGistsDto {
   page: number;
   size: number;
   hasNextPage: boolean;
-  static of(gists: ResponseGistDto[], page: number, size: number, hasNextPage: boolean) {
+  static of(gists: ResponseGistDto[], page: number, hasNextPage: boolean) {
     return {
       gists: gists,
       page: page,
-      size: size,
+      size: gists.length,
       hasNextPage: hasNextPage
     };
   }

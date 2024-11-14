@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Headers, HttpCode, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Headers, HttpCode, Param, Patch, Post, Query } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GistService } from './gist.service';
 
@@ -8,14 +8,14 @@ export class GistController {
 
   @Get('gists')
   @HttpCode(200)
-  getGistPage(@Headers('Authorization') token: string, @Body() body) {
+  getGistPage(
+    @Headers('Authorization') token: string,
+    @Query('page') page: number,
+    @Query('per_page') per_page: number
+  ) {
     //todo: token extract
     const gitToken = this.configService.get<string>('GIT_TOKEN');
-
-    // const {page, size} = body;
-    const page = 1;
-    const per_page = 5;
-    return this.gistService.getGistList(gitToken, page, per_page);
+    return this.gistService.getGistList(gitToken, Number(page), Number(per_page));
   }
 
   @Get('/Last')
