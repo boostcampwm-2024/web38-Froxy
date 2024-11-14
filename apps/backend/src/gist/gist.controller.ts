@@ -1,13 +1,21 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Headers, HttpCode, Param, Patch, Post } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { GistService } from './gist.service';
 
-@Controller('gist')
+@Controller('user')
 export class GistController {
-  constructor(private readonly gistService: GistService) {}
+  constructor(private readonly gistService: GistService, private readonly configService: ConfigService) {}
 
-  @Get()
-  findAll() {
-    return this.gistService.getAllGists();
+  @Get('gists')
+  @HttpCode(200)
+  getGistPage(@Headers('Authorization') token: string, @Body() body) {
+    //todo: token extract
+    const gitToken = this.configService.get<string>('GIT_TOKEN');
+
+    // const {page, size} = body;
+    const page = 1;
+    const per_page = 5;
+    return this.gistService.getGistList(gitToken, page, per_page);
   }
 
   @Get('/Last')
