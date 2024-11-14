@@ -13,10 +13,10 @@ import { GistModule } from './gist/gist.module';
       isGlobal: true,
       envFilePath: '.env'
     }),
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: typeORMConfig
-    }),
+    // TypeOrmModule.forRootAsync({
+    //   inject: [ConfigService],
+    //   useFactory: typeORMConfig
+    // }),
     DockerModule,
     GistModule
   ],
