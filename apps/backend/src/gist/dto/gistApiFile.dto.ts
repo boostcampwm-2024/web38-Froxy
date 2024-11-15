@@ -1,17 +1,19 @@
 export class GistApiFileDto {
-  file_name?: string;
-  raw_url?: string;
+  fileName?: string;
+  rawUrl?: string;
   type?: string;
   language?: string;
   size?: number;
   content?: string;
 
-  constructor(file_name: string, raw_url: string, type: string, language: string, size: number, content: string) {
-    this.file_name = file_name;
-    this.raw_url = raw_url;
-    this.type = type;
-    this.language = language;
-    this.size = size;
-    this.content = content;
+  static of(fileName: string, data: any, content: string): GistApiFileDto {
+    return {
+      fileName: fileName,
+      rawUrl: data.files[fileName].raw_url,
+      type: data.files[fileName].type,
+      language: data.files[fileName].language,
+      size: data.files[fileName].size,
+      content: content
+    };
   }
 }

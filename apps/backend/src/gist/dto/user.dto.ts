@@ -1,11 +1,13 @@
 export class UserDto {
   login: string;
   id: number;
-  avatar_url: string;
+  avatarUrl: string;
 
-  constructor(login: string, id: number, avatar_url) {
-    this.login = login;
-    this.id = id;
-    this.avatar_url = avatar_url;
+  static of(gistOwner: any): UserDto {
+    return {
+      login: gistOwner.login,
+      id: gistOwner.id,
+      avatarUrl: gistOwner.avatar_url
+    };
   }
 }

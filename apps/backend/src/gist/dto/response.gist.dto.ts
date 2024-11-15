@@ -2,9 +2,12 @@ export class ResponseGistDto {
   gist_id: string;
   title: string;
   nickname: string;
-  constructor(gist: any) {
-    this.gist_id = gist.id;
-    this.title = gist.description;
-    this.nickname = gist.owner.login;
+
+  static of(gist: any): ResponseGistDto {
+    return {
+      gist_id: gist.id,
+      title: gist.description,
+      nickname: gist.owner.login
+    };
   }
 }
