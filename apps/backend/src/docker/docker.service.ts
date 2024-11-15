@@ -129,17 +129,27 @@ export class DockerService {
       AttachStdin: true,
       AttachStdout: true,
       AttachStderr: true,
-      Tty: true,
+      Tty: true, //
       Cmd: ['node', mainFileName]
     });
 
     //todo: 입력값이 없으면 스킵
-    const stream = await exec.start({ hijack: true, stdin: true });
+    const stream = await exec.start({ hijack: true, stdin: true }); //httpDuflex
+    //todo: pipe 직접 연결시도
+    //todo: loggin 추가
+    //todo: api server docker-compose
+
+    //metadata:
+    //Map <intput,output>
+    //gist.js 초반에 stdin prcess() => readline
+
     for (const input of inputs) {
       await stream.write(input + '\n');
       await this.delay(100); //각 입력 term
     }
+
     stream.end();
+    //end => container. write값 처리 저한테보내고 // docekr.end();
     return stream;
   }
 
