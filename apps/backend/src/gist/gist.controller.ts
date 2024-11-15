@@ -5,12 +5,12 @@ import { GistService } from './gist.service';
 export class GistController {
   constructor(private readonly gistService: GistService) {}
 
-  @Get()
+  @Get('')
   findAll() {
     return this.gistService.getAllGists();
   }
 
-  @Get('/Last')
+  @Get('')
   findLast() {
     return this.gistService.getMostRecentGistInUser();
   }

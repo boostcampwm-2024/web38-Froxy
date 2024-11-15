@@ -14,6 +14,9 @@ export class History {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
+  @Column({ name: 'exec_filename' })
+  execFilename: string;
+
   @Column()
   input: string;
 

@@ -49,7 +49,9 @@ export class GistService {
   }
 
   async getGistById(id: string): Promise<GistApiFileListDto> {
+    console.log(`https://api.github.com/gists/${id}`);
     const data = await this.gistGetReq(`https://api.github.com/gists/${id}`);
+    console.log(data);
 
     const fileArr: GistApiFileDto[] = await Promise.all(
       Object.keys(data.files).map(async (key) => {

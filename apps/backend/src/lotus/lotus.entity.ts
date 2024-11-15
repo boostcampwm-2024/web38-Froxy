@@ -9,8 +9,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm';
-import { History } from '@/ history/history.entity';
 import { Comment } from '@/comment/comment.entity';
+import { History } from '@/history/history.entity';
 import { Tag } from '@/tag/tag.entity';
 import { User } from '@/user/user.entity';
 
