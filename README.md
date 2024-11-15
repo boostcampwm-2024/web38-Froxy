@@ -28,6 +28,9 @@ Gist에서 코드를 복제하고 실행 환경을 설정하는 번거로움 없
 ## 🔧 프로젝트 아키텍처
 ![image](https://github.com/user-attachments/assets/3b99d8b7-84e7-4555-a397-25757a067f2e)
 
+## 프로젝트 Flow
+![flow](https://github.com/user-attachments/assets/bfacc0fb-505f-43a1-b295-f9981939fa5c)
+
 
 ## 👥 팀원
 
