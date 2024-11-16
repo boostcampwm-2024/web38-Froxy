@@ -6,10 +6,7 @@ import { User } from '@/user/user.entity';
 export class History {
   //@PrimaryGeneratedColumn('uuid', { type: 'bigint' })
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
-  history_id: number;
-
-  @Column({ name: 'commit_id' })
-  commitId: string;
+  history_id: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -20,7 +17,7 @@ export class History {
   @Column()
   input: string;
 
-  @Column()
+  @Column({ nullable: true })
   result: string;
 
   @Column()

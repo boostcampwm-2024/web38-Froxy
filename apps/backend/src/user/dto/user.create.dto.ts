@@ -2,7 +2,7 @@ import { Comment } from '@/comment/comment.entity';
 import { Lotus } from '@/lotus/lotus.entity';
 
 export class UserCreateDto {
-  userId: number;
+  userId: string;
   nickname: string;
   profilePath: string;
   gitToken: string;

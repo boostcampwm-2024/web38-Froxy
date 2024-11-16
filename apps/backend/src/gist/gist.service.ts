@@ -45,7 +45,6 @@ export class GistService {
   }
 
   async getGistById(id: string): Promise<GistApiFileListDto> {
-    console.log(`${this.gitBaseUrl}gists/${id}`);
     const response = await this.gistReq('GET', `${this.gitBaseUrl}gists/${id}`, this.gittoken);
     const data = await response.json();
 
@@ -66,7 +65,6 @@ export class GistService {
     }
     const mostRecentData = response[0];
     const fileArr: GistApiFileDto[] = await this.parseGistApiFiles(mostRecentData);
-    console.log(mostRecentData);
     return GistApiFileListDto.of(mostRecentData, fileArr);
   }
 
@@ -79,15 +77,14 @@ export class GistService {
     };
     const queryParam = new URLSearchParams(params).toString();
     const response = await this.gistReq('GET', `${this.gitBaseUrl}gists/${gist_id}/commits`, this.gittoken, queryParam);
-
     const data = await response.json();
     const commits: CommitDto[] = data.map((history) => CommitDto.of(history));
     return commits;
   }
 
-  async getCommit(gist_id: string, commit_id: number) {
-    const commits = await this.getCommitsForAGist(gist_id);
-    const response = await this.getFilesFromCommit(commits[commit_id].url);
+  async getCommit(gistId: string, commitId: string): Promise<GistApiFileListDto> {
+    const commits = await this.getCommitsForAGist(gistId);
+    const response = await this.getFilesFromCommit(commits.find((commit) => commit.commitId === commitId).url);
     return response;
   }
 
@@ -100,7 +97,7 @@ export class GistService {
   }
 
   async getUserData(): Promise<UserDto> {
-    const response = await this.gistReq('GET', '${this.gitBaseUrl}user', this.gittoken);
+    const response = await this.gistReq('GET', `${this.gitBaseUrl}user`, this.gittoken);
     const userData = await response.json();
     if (!userData.id || !userData.avatar_url || !userData.login) {
       throw new Error('404');
@@ -181,7 +178,7 @@ export class GistService {
     }
     const response = await fetch(commendURL, requestInit);
     if (!response.ok) {
-      throw new Error('404');
+      // throw new Error('404');
     }
     return response;
   }

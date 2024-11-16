@@ -18,18 +18,18 @@ import { User } from '@/user/user.entity';
 export class Lotus {
   //@PrimaryGeneratedColumn('uuid', { type: 'bigint' })
   @PrimaryGeneratedColumn('increment', { type: 'bigint', name: 'lotus_id' })
-  lotusId: number;
+  lotusId: string;
 
   @Column()
   title: string;
 
-  @Column()
-  input: string;
+  @Column({ name: 'commit_id', nullable: true })
+  commitId: string;
 
-  @Column({ name: 'is_public' })
+  @Column({ name: 'is_public', default: false })
   isPublic: boolean;
 
-  @Column({ name: 'gistRepositoryId' })
+  @Column({ name: 'gist_repository_id', nullable: true })
   gistRepositoryId: string;
 
   @CreateDateColumn({ name: 'created_at' })

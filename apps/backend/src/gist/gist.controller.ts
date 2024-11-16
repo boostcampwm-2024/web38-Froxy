@@ -59,7 +59,7 @@ export class GistController {
   }
 
   @Get(':gist_id/commit/:id')
-  getCommitFile(@Param('gist_id') gist_id: string, @Param('id') commit_id: number) {
+  getCommitFile(@Param('gist_id') gist_id: string, @Param('id') commit_id: string) {
     return this.gistService.getCommit(gist_id, commit_id);
   }
 }

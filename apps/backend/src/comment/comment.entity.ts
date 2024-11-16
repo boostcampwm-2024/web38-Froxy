@@ -6,7 +6,7 @@ import { User } from '@/user/user.entity';
 export class Comment {
   //@PrimaryGeneratedColumn('uuid', { type: 'bigint' })
   @PrimaryGeneratedColumn('increment', { type: 'bigint', name: 'comment_id' })
-  commentId: number;
+  commentId: string;
 
   @Column({ name: 'comment_content' })
   commentContent: string;
