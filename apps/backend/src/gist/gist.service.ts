@@ -178,7 +178,7 @@ export class GistService {
     }
     const response = await fetch(commendURL, requestInit);
     if (!response.ok) {
-      // throw new Error('404');
+      throw new Error('404');
     }
     return response;
   }
