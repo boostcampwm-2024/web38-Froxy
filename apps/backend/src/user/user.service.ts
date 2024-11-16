@@ -22,7 +22,6 @@ export class UserService {
     const inputUser = await userResponse.json();
     let user = await this.findOne(inputUser.id);
     if (!user) {
-      console.log('new user');
       await this.saveUser(new UserCreateDto(inputUser, accessToken));
       user = await this.findOne(inputUser.id);
     }
