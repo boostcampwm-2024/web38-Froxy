@@ -6,7 +6,7 @@ import { User } from '@/user/user.entity';
 export class History {
   //@PrimaryGeneratedColumn('uuid', { type: 'bigint' })
   @PrimaryGeneratedColumn('increment', { type: 'bigint' })
-  history_id: string;
+  historyId: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

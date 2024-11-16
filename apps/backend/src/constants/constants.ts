@@ -6,3 +6,9 @@ export const GIST_AUTH_HEADER = (gitToken: string = null) => {
     'Content-Type': 'application/json'
   };
 };
+
+export enum HISTORY_STATUS {
+  PENDING = 'PENDING',
+  ERROR = 'ERROR',
+  SUCCESS = 'SUCCESS'
+}
