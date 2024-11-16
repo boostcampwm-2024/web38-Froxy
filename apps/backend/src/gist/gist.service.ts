@@ -3,6 +3,8 @@ import { CommentDto } from './dto/comment.dto';
 import { CommitDto } from './dto/commit.dto';
 import { GistApiFileDto } from './dto/gistApiFile.dto';
 import { GistApiFileListDto } from './dto/gistApiFileList.dto';
+import { ResponseAllGistsDto } from './dto/response.allGists.dto';
+import { ResponseGistDto } from './dto/response.gist.dto';
 import { UserDto } from './dto/user.dto';
 
 @Injectable()
@@ -11,41 +13,33 @@ export class GistService {
   constructor() {
     this.gittoken = '';
   }
-  async getAllGists(): Promise<GistApiFileListDto[]> {
-    let page = 1;
-    const perPage = 100;
-    const gistList: GistApiFileListDto[] = [];
-    while (true) {
-      const params = {
-        page: page.toString(),
-        per_page: perPage.toString()
-      };
-      const queryParam = new URLSearchParams(params).toString();
-      const data = await this.gistGetReq(`https://api.github.com/gists`, queryParam);
-      if (data.length === 0) {
-        break;
-      }
-      page++;
-      const gistFiles: GistApiFileListDto[] = await Promise.all(
-        data
-          .filter((gistfiltering: GistApiFileListDto) => {
-            return gistfiltering.id && gistfiltering.description && gistfiltering.files && gistfiltering.owner;
-          })
-          .map(async (gist: GistApiFileListDto) => {
-            const fileArr: GistApiFileDto[] = [];
+  async getGistList(gitToken: string, page: number, per_page: number): Promise<ResponseAllGistsDto> {
+    let hasNextPage = true;
+    const currentGistPage = await this.gistPageData(gitToken, page, per_page);
+    const nextGistPage = await this.gistPageData(gitToken, page + 1, per_page);
 
-            return new GistApiFileListDto(
-              gist.id,
-              gist.description,
-              fileArr,
-              new UserDto(gist.owner.login, gist.owner.id, gist.owner.avatar_url),
-              gist.public
-            );
-          })
-      );
-      gistList.push(...gistFiles);
+    if (nextGistPage.length === 0) {
+      hasNextPage = false;
     }
-    return gistList;
+
+    if (currentGistPage.length === 0) {
+      throw new Error('data없음');
+    }
+    const gists = currentGistPage.map((gist) => {
+      return new ResponseGistDto(gist);
+    });
+    return ResponseAllGistsDto.of(gists, page, hasNextPage);
+  }
+
+  async gistPageData(gitToken: string, page: number, per_page: number): Promise<any[]> {
+    const params = {
+      page: page.toString(),
+      per_page: per_page.toString()
+    };
+    const queryParam = new URLSearchParams(params).toString();
+    const gistsData = await this.gistGetReq(`https://api.github.com/gists`, queryParam, gitToken);
+    // console.log(gistsData);
+    return gistsData;
   }
 
   async getGistById(id: string): Promise<GistApiFileListDto> {
@@ -223,13 +217,13 @@ export class GistService {
     return true;
   }
 
-  async gistGetReq(commend: string, queryParam = ''): Promise<any> {
+  async gistGetReq(commend: string, queryParam = '', gitToken: string = null): Promise<any> {
     const commendURL = queryParam ? commend + '?' + queryParam : commend;
     const response = await fetch(commendURL, {
       method: 'GET',
       headers: {
         Accept: 'application/vnd.github+json',
-        Authorization: `Bearer ${this.gittoken}`,
+        Authorization: `Bearer ${gitToken}`,
         'X-GitHub-Api-Version': '2022-11-28'
       }
     });
