@@ -8,14 +8,10 @@ export class GistController {
 
   @Get('gists')
   @HttpCode(200)
-  getGistPage(
-    @Headers('Authorization') token: string,
-    @Query('page') page: number,
-    @Query('per_page') per_page: number
-  ) {
+  getGistPage(@Headers('Authorization') token: string, @Query('page') page: number, @Query('perPage') perPage: number) {
     //todo: token extract
     const gitToken = this.configService.get<string>('GIT_TOKEN');
-    return this.gistService.getGistList(gitToken, Number(page), Number(per_page));
+    return this.gistService.getGistList(gitToken, Number(page), Number(perPage));
   }
 
   @Get('/Last')
@@ -43,13 +39,13 @@ export class GistController {
     return this.gistService.getGistById(id);
   }
 
-  @Patch('/:gist_id/comment/:comment_id')
+  @Patch('/:gistId/comment/:commentId')
   patchComment(
-    @Param('gist_id') gist_id: string,
-    @Param('comment_id') comment_id: string,
+    @Param('gistId') gistId: string,
+    @Param('commentId') commentId: string,
     @Body('comment') comment: string
   ) {
-    return this.gistService.updateComment(gist_id, comment_id, comment);
+    return this.gistService.updateComment(gistId, commentId, comment);
   }
 
   @Post('/:gist_id/comment')
