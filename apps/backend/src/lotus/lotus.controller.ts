@@ -36,12 +36,11 @@ export class LotusController {
     return this.lotusService.deleteLotus(lotusId);
   }
 
-  @Get('/:lotusId')
-  getLotusDetail(@Param('lotusId') lotusId: string): Promise<LotusDetailDto> {
-    const gitToken = this.configService.get<string>('GIT_TOKEN');
-    return this.lotusService.getLotusFile(gitToken, lotusId);
+  @Get('/user')
+  getUserLotus(@Query('page') page: number, @Query('size') size: number): Promise<LotusPublicDto> {
+    const userId = '1';
+    return this.lotusService.getUserLotus(userId, page, size);
   }
-
   @Get()
   getPublicLotus(
     @Query('page') page: number,
@@ -49,5 +48,11 @@ export class LotusController {
     @Query('search') search: string
   ): Promise<LotusPublicDto> {
     return this.lotusService.getPublicLotus(page, size, search);
+  }
+
+  @Get('/:lotusId')
+  getLotusDetail(@Param('lotusId') lotusId: string): Promise<LotusDetailDto> {
+    const gitToken = this.configService.get<string>('GIT_TOKEN');
+    return this.lotusService.getLotusFile(gitToken, lotusId);
   }
 }

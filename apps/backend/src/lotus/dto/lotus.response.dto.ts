@@ -4,7 +4,7 @@ import { Lotus } from '@/lotus/lotus.entity';
 
 export class LotusResponseDto {
   id: string;
-  user: SimpleUserResponseDto;
+  author: SimpleUserResponseDto;
   title: string;
   isPublic: boolean;
   createAt: Date;
@@ -13,7 +13,7 @@ export class LotusResponseDto {
   static ofSpreadData(user: SimpleUserResponseDto, lotus: Lotus): LotusResponseDto {
     return {
       id: lotus.lotusId,
-      user,
+      author: user,
       title: lotus.title,
       isPublic: lotus.isPublic,
       createAt: lotus.createdAt,
@@ -25,7 +25,7 @@ export class LotusResponseDto {
     const simpleUser = SimpleUserResponseDto.ofUserDto(lotus.user);
     return {
       id: lotus.lotusId,
-      user: simpleUser,
+      author: simpleUser,
       title: lotus.title,
       isPublic: lotus.isPublic,
       createAt: lotus.createdAt,
