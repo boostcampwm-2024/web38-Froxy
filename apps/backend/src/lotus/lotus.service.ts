@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { LotusDto } from './dto/lotus.dto';
 import { LotusResponseDto } from './dto/lotus.response.dto';
+import { MessageDto } from './dto/message.dto';
 import { SimpleUserResponseDto } from './dto/simple.user.response.dto';
 import { Lotus } from './lotus.entity';
 import { LotusRepository } from './lotus.repository';
@@ -45,8 +46,15 @@ export class LotusService {
       where: { lotusId },
       relations: ['user']
     });
-    if (!updateLotus) throw new HttpException('invalid lotusId', HttpStatus.BAD_REQUEST);
+    if (!updateLotus) throw new HttpException('invalid lotusId', HttpStatus.NOT_FOUND);
     return LotusResponseDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(updateLotus.user), updateLotus);
+  }
+
+  async deleteLotus(lotusId: string): Promise<MessageDto> {
+    const result = await this.lotusRepository.delete({ lotusId });
+    if (!result.affected) throw new HttpException('no match data', HttpStatus.NOT_FOUND);
+
+    return new MessageDto('ok');
   }
 
   async checkAlreadyExist(gistUuid: string, commitId: string) {

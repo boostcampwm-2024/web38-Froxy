@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Patch, Post, Query } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LotusResponseDto } from './dto/lotus.response.dto';
+import { MessageDto } from './dto/message.dto';
 import { LotusService } from './lotus.service';
 
 @Controller('lotus')
@@ -27,5 +28,10 @@ export class LotusController {
   ): Promise<LotusResponseDto> {
     const gitToken = this.configService.get<string>('GIT_TOKEN');
     return this.lotusService.updateLotus(lotusId, title, tag, isPublic);
+  }
+
+  @Delete()
+  deleteLotus(@Query('lotusId') lotusId: string): Promise<MessageDto> {
+    return this.lotusService.deleteLotus(lotusId);
   }
 }
