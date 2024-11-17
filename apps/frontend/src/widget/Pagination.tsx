@@ -23,7 +23,7 @@ export function Pagination({ totalPages, initialPage = 1, onChangePage }: Pagina
   });
 
   return (
-    <PaginationBox>
+    <PaginationBox className="pt-12">
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious onClick={onClickPrevious} />
