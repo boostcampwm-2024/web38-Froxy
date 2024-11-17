@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { LotusCreateDto } from './dto/lotus.create.dto';
 import { LotusDto } from './dto/lotus.dto';
+import { LotusResponseDto } from './dto/lotus.response.dto';
 import { SimpleUserResponseDto } from './dto/simple.user.response.dto';
 import { Lotus } from './lotus.entity';
 import { LotusRepository } from './lotus.repository';
@@ -20,7 +20,7 @@ export class LotusService {
     isPublic: boolean,
     tag: string[],
     gistUuid: string
-  ): Promise<LotusCreateDto> {
+  ): Promise<LotusResponseDto> {
     const commits = await this.gistService.getCommitsForAGist(gistUuid, 1, gitToken);
     if (commits.length < 1) {
       throw new HttpException('this gist repository has no commit.', HttpStatus.NOT_FOUND);
@@ -35,7 +35,18 @@ export class LotusService {
     await this.saveLotus(new LotusDto(title, isPublic, gistUuid, currentCommitId, userData));
     const lotusData = await this.lotusRepository.findOneBy({ gistRepositoryId: gistUuid, commitId: currentCommitId });
 
-    return LotusCreateDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(userData), lotusData);
+    return LotusResponseDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(userData), lotusData);
+  }
+
+  async updateLotus(lotusId: string, title: string, tag: string[], isPublic: boolean): Promise<LotusResponseDto> {
+    const result = await this.lotusRepository.update({ lotusId }, { title, isPublic });
+    if (!result.affected) throw new HttpException('update fail', HttpStatus.BAD_REQUEST);
+    const updateLotus = await this.lotusRepository.findOne({
+      where: { lotusId },
+      relations: ['user']
+    });
+    if (!updateLotus) throw new HttpException('invalid lotusId', HttpStatus.BAD_REQUEST);
+    return LotusResponseDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(updateLotus.user), updateLotus);
   }
 
   async checkAlreadyExist(gistUuid: string, commitId: string) {
