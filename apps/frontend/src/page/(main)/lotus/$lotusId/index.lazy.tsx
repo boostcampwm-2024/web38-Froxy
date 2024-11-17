@@ -2,7 +2,7 @@ import { Button, Heading, Text } from '@froxy/design/components';
 import { createLazyFileRoute } from '@tanstack/react-router';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { CodeView, CodeViewValue } from '@/feature/CodeView';
-import { CommentCard, CommentForm, CommentValue } from '@/feature/Comment';
+import { CommentCard, CommentForm } from '@/feature/Comment';
 import { HISTORY_STATUS, HistoryType } from '@/feature/History';
 import { Lotus } from '@/feature/Lotus';
 import { LotusType } from '@/feature/Lotus/type';
@@ -13,6 +13,7 @@ export const Route = createLazyFileRoute('/(main)/lotus/$lotusId/')({
 });
 
 const LotusDummyData: LotusType = {
+  id: '1',
   link: 'https://example.com',
   title: 'Understanding TypeScript',
   logo: '/image/exampleImage.jpeg',
@@ -76,7 +77,7 @@ export const HistoryData: HistoryType[] = [
   }
 ];
 
-export const CommentData: CommentValue[] = [
+export const CommentData = [
   {
     id: 'c1',
     comment: 'Great job on the project!',

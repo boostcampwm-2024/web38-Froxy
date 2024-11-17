@@ -3,6 +3,7 @@ import { LotusType } from '@/feature/Lotus/type';
 import { Pagination } from '@/widget/Pagination';
 
 const LotusDummyData: LotusType = {
+  id: '1',
   link: 'https://example.com',
   title: 'Understanding TypeScript',
   logo: '/image/exampleImage.jpeg',

@@ -5,6 +5,7 @@ interface AuthorType {
 }
 
 export interface LotusType {
+  id: string;
   link: string;
   title: string;
   logo: string;
