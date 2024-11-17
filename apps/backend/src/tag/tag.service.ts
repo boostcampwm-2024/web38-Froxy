@@ -4,7 +4,10 @@ import { TagRepository } from './tag.repository';
 @Injectable()
 export class TagService {
   constructor(private readonly tagRepository: TagRepository) {}
-  getHello(): string {
-    return 'Hello World!';
+  createTag(tagName: string): any {
+    this.tagRepository.save({
+      tagName: tagName
+    });
+    return { message: `${tagName} 생성` };
   }
 }

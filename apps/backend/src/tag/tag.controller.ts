@@ -1,12 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { TagCreateRequestDto } from './dto/tag.createRequest.dto copy';
 import { TagService } from './tag.service';
 
-@Controller()
+@Controller('tag')
 export class TagController {
   constructor(private readonly tagService: TagService) {}
 
-  @Get()
-  getHello(): string {
-    return this.tagService.getHello();
+  @Post()
+  getHello(@Body() tagCreateRequestDto: TagCreateRequestDto): any {
+    return this.tagService.createTag(tagCreateRequestDto.tag);
   }
 }
