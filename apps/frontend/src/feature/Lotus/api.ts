@@ -24,3 +24,4 @@ export const getLotusDetail = async ({
 
   return { ...data, date: new Date(data.date) };
 };
+

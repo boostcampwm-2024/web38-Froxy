@@ -9,6 +9,7 @@ import { SuspenseLotusFiles } from '@/widget/SuspenseLotusFiles';
 
 import '@/app/style/github.css';
 
+
 export const Route = createLazyFileRoute('/(main)/lotus/$lotusId/')({
   component: RouteComponent
 });

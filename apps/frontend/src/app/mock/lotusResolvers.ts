@@ -116,7 +116,7 @@ export const patchLotus = async ({
   const lotus = await lotusList.findOne({ id });
 
   const updatedLotus = await lotusList.update(lotus, body);
-
+  
   return HttpResponse.json(updatedLotus);
 };
 

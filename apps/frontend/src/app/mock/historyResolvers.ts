@@ -174,6 +174,7 @@ export const mockGetHistoryList = ({
   const page = Number(url.searchParams.get('page')) || 1;
 
   if (!lotusId) {
+
     return new HttpResponse('Bad Request', {
       status: 400,
       headers: {
@@ -192,6 +193,7 @@ export const mockGetHistoryList = ({
       },
       {
         historyId: '2',
+
         status: 'SUCCESS',
         date: '2024-11-16T12:00:00Z',
         title: 'Deployment Completed'
