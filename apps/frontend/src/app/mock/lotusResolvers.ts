@@ -29,7 +29,51 @@ export const getLotusDetail = async ({ params }: { params: Record<string, string
 
   const lotus = await lotusList.findOne({ id: lotusId });
 
-  return HttpResponse.json(lotus);
+  return HttpResponse.json({
+    ...lotus,
+    language: 'javascript',
+    files: [
+      {
+        filename: 'index.js',
+        language: 'javascript',
+        content: "console.log('Hello, World!');"
+      },
+      {
+        filename: 'run.js',
+        language: 'javascript',
+        content: `function run() {\n  console.log('Running...');\n}`
+      },
+      {
+        filename: 'README.md',
+        language: 'markdown',
+        content:
+          '## #️⃣연관된 이슈\n' +
+          '\n' +
+          '#71\n' +
+          '\n' +
+          '## 📝작업 내용\n' +
+          '\n' +
+          '- MockRepository를 사용해 동적인 Mocking 구현\n' +
+          '- lotusList api 계층\n' +
+          '- lotusList query 계층\n' +
+          '- SuspenseLotusCardList 구현\n' +
+          '\n' +
+          '### 스크린샷 (선택)\n' +
+          '\n' +
+          '![lotusListPage](https://github.com/user-attachments/assets/01fa0ad7-f556-485f-b442-2b9a51161f0d)\n' +
+          '\n' +
+          '## 💬리뷰 요구사항(선택)\n' +
+          '\n' +
+          '> 모킹파일을 건드리고, 구조화 했더니 변경사항이 너무 많네요.. 죄송합니다.\n' +
+          '\n' +
+          '네이밍이 이상하거나 이해가 가지 않는 부분 모두 코멘트 남겨주세요!\n' +
+          '\n' +
+          '모킹은 순차적으로 동적으로 변경해볼 예정입니다.\n' +
+          '\n' +
+          '파일 경로나 query-key 구조화 같은 경우에는 추후에 정리가 필요해보입니다.\n'
+      }
+    ]
+  });
 };
 
 type CreateLotusDto = {
