@@ -1,36 +1,37 @@
 import { http } from 'msw';
 import { mockGetGistDetail, mockGetUserGistList } from './gistResolvers';
 import {
-  mockDeleteLotus,
   mockGetHistory,
   mockGetHistoryList,
-  mockGetLotusDetail,
-  mockGetPublicLotusList,
   mockGetTagList,
   mockGetUserLotusList,
-  mockPatchLotus,
   mockPostCodeRun,
-  mockPostCreateLotus,
   mockPostTag
-} from './lotusResolvers';
+} from './historyResolvers';
+import { deleteLotus, getLotusDetail, getPublicLotusList, patchLotus, postCreateLotus } from './lotusResolvers';
 import { mockGetUserInfo, mockLogin, mockLogout, mockPatchUserInfo } from './userResolvers';
 
 export const handlers = [
-  http.get(`${import.meta.env.VITE_API_BASE_URL}/user`, mockGetUserInfo),
-  http.patch(`${import.meta.env.VITE_API_BASE_URL}/user`, mockPatchUserInfo),
-  http.post(`${import.meta.env.VITE_API_BASE_URL}/user/login`, mockLogin),
-  http.post(`${import.meta.env.VITE_API_BASE_URL}/user/logout`, mockLogout),
-  http.get(`${import.meta.env.VITE_API_BASE_URL}/user/:id/lotus`, mockGetUserLotusList),
-  http.get(`${import.meta.env.VITE_API_BASE_URL}/user/gist`, mockGetUserGistList),
-  http.get(`${import.meta.env.VITE_API_BASE_URL}/user/gist/:gistId`, mockGetGistDetail),
-  http.get(`${import.meta.env.VITE_API_BASE_URL}/lotus`, mockGetPublicLotusList),
-  http.get(`${import.meta.env.VITE_API_BASE_URL}/lotus/:lotusId`, mockGetLotusDetail),
-  http.get(`${import.meta.env.VITE_API_BASE_URL}/lotus/:lotusId/history`, mockGetHistoryList),
-  http.post(`${import.meta.env.VITE_API_BASE_URL}/lotus/:lotusId/history`, mockPostCodeRun),
-  http.get(`${import.meta.env.VITE_API_BASE_URL}/lotus/:lotusId/history/:historyId`, mockGetHistory),
-  http.post(`${import.meta.env.VITE_API_BASE_URL}/lotus`, mockPostCreateLotus),
-  http.patch(`${import.meta.env.VITE_API_BASE_URL}/lotus/:id`, mockPatchLotus),
-  http.delete(`${import.meta.env.VITE_API_BASE_URL}/lotus/:id`, mockDeleteLotus),
-  http.get(`${import.meta.env.VITE_API_BASE_URL}/tag`, mockGetTagList),
-  http.post(`${import.meta.env.VITE_API_BASE_URL}/tag`, mockPostTag)
+  // user
+  http.get(`/api/user`, mockGetUserInfo),
+  http.patch(`/api/user`, mockPatchUserInfo),
+  http.post(`/api/user/login`, mockLogin),
+  http.post(`/api/user/logout`, mockLogout),
+  http.get(`/api/user/:id/lotus`, mockGetUserLotusList),
+  http.get(`/api/user/gist`, mockGetUserGistList),
+  http.get(`/api/user/gist/:gistId`, mockGetGistDetail),
+  // lotus
+  http.get(`/api/lotus`, getPublicLotusList),
+  http.get(`/api/lotus/:lotusId`, getLotusDetail),
+  http.post(`/api/lotus`, postCreateLotus),
+  http.patch(`/api/lotus/:id`, patchLotus),
+  http.delete(`/api/lotus/:id`, deleteLotus),
+  // history
+  http.get(`/api/lotus/:lotusId/history`, mockGetHistoryList),
+  http.post(`/api/lotus/:lotusId/history`, mockPostCodeRun),
+  http.get(`/api/lotus/:lotusId/history/:historyId`, mockGetHistory),
+
+  // tag
+  http.get(`/api/tag`, mockGetTagList),
+  http.post(`/api/tag`, mockPostTag)
 ];
