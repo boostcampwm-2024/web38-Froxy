@@ -2,7 +2,7 @@ import { SimpleTagResponseDto } from './simple.tag.response.dto';
 import { SimpleUserResponseDto } from './simple.user.response.dto';
 import { Lotus } from '@/lotus/lotus.entity';
 
-export class CreateLotusDto {
+export class LotusCreateDto {
   id: string;
   user: SimpleUserResponseDto;
   title: string;
@@ -10,7 +10,7 @@ export class CreateLotusDto {
   createAt: Date;
   tag: SimpleTagResponseDto[];
 
-  static ofSpreadData(user: SimpleUserResponseDto, lotus: Lotus): CreateLotusDto {
+  static ofSpreadData(user: SimpleUserResponseDto, lotus: Lotus): LotusCreateDto {
     return {
       id: lotus.lotusId,
       user,

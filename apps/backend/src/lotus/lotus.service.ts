@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { CreateLotusDto } from './dto/create.lotus.dto';
+import { LotusCreateDto } from './dto/lotus.create.dto';
 import { LotusDto } from './dto/lotus.dto';
 import { SimpleUserResponseDto } from './dto/simple.user.response.dto';
 import { Lotus } from './lotus.entity';
@@ -20,7 +20,7 @@ export class LotusService {
     isPublic: boolean,
     tag: string[],
     gistUuid: string
-  ): Promise<CreateLotusDto> {
+  ): Promise<LotusCreateDto> {
     const commits = await this.gistService.getCommitsForAGist(gistUuid, 1, gitToken);
     if (commits.length < 1) {
       throw new HttpException('this gist repository has no commit.', HttpStatus.NOT_FOUND);
@@ -35,7 +35,7 @@ export class LotusService {
     await this.saveLotus(new LotusDto(title, isPublic, gistUuid, currentCommitId, userData));
     const lotusData = await this.lotusRepository.findOneBy({ gistRepositoryId: gistUuid, commitId: currentCommitId });
 
-    return CreateLotusDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(userData), lotusData);
+    return LotusCreateDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(userData), lotusData);
   }
 
   async checkAlreadyExist(gistUuid: string, commitId: string) {
