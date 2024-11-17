@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { LotusDetailDto } from './dto/lotus.detail.dto';
 import { LotusDto } from './dto/lotus.dto';
 import { LotusResponseDto } from './dto/lotus.response.dto';
 import { MessageDto } from './dto/message.dto';
@@ -55,6 +56,16 @@ export class LotusService {
     if (!result.affected) throw new HttpException('no match data', HttpStatus.NOT_FOUND);
 
     return new MessageDto('ok');
+  }
+
+  async getLotusFile(gitToken: string, lotusId: string): Promise<LotusDetailDto> {
+    const lotusData = await this.lotusRepository.findOne({
+      where: { lotusId },
+      relations: ['category', 'user']
+    });
+    const commitFiles = await this.gistService.getCommit(lotusData.gistRepositoryId, lotusData.commitId, gitToken);
+
+    return LotusDetailDto.ofGistFileListDto(commitFiles, lotusData);
   }
 
   async checkAlreadyExist(gistUuid: string, commitId: string) {

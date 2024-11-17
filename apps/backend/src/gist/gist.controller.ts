@@ -42,7 +42,8 @@ export class GistController {
 
   @Get(['/:id'])
   findOne(@Param('id') id: string) {
-    return this.gistService.getGistById(id);
+    const gitToken = this.configService.get<string>('GIT_TOKEN');
+    return this.gistService.getGistById(id, gitToken);
   }
 
   @Patch('/:gist_id/comment/:comment_id')
@@ -66,6 +67,7 @@ export class GistController {
 
   @Get(':gist_id/commit/:id')
   getCommitFile(@Param('gist_id') gist_id: string, @Param('id') commit_id: string) {
-    return this.gistService.getCommit(gist_id, commit_id);
+    const gitToken = this.configService.get<string>('GIT_TOKEN');
+    return this.gistService.getCommit(gist_id, commit_id, gitToken);
   }
 }

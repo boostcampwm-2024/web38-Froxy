@@ -1,3 +1,4 @@
+import { GistApiFileListDto } from '@/gist/dto/gistApiFileList.dto';
 import { User } from '@/user/user.entity';
 
 export class SimpleUserResponseDto {

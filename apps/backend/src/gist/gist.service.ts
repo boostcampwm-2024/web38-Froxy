@@ -41,12 +41,12 @@ export class GistService {
     return gistsData;
   }
 
-  async getGistById(id: string): Promise<GistApiFileListDto> {
+  async getGistById(id: string, gittoken: string): Promise<GistApiFileListDto> {
     const data = await this.gistGetReq(`https://api.github.com/gists/${id}`);
 
     const fileArr: GistApiFileDto[] = await Promise.all(
       Object.keys(data.files).map(async (key) => {
-        const content = await this.getFileContent(data.files[key].raw_url);
+        const content = await this.getFileContent(data.files[key].raw_url, gittoken);
         return new GistApiFileDto(
           key,
           data.files[key].raw_url,
@@ -83,7 +83,7 @@ export class GistService {
 
     const fileArr: GistApiFileDto[] = await Promise.all(
       Object.keys(mostRecentData.files).map(async (key) => {
-        const content = await this.getFileContent(mostRecentData.files[key].raw_url);
+        const content = await this.getFileContent(mostRecentData.files[key].raw_url, this.gittoken);
 
         return new GistApiFileDto(
           key,
@@ -121,8 +121,8 @@ export class GistService {
     return commits;
   }
 
-  async getCommit(gist_id: string, commit_id: string) {
-    const response = await this.getFilesFromCommit(this.getCommitUrl(gist_id, commit_id));
+  async getCommit(gist_id: string, commit_id: string, gitToken: string) {
+    const response = await this.getFilesFromCommit(this.getCommitUrl(gist_id, commit_id), gitToken);
     return response;
   }
 
@@ -136,12 +136,12 @@ export class GistService {
     return `https://api.github.com/gists/${gist_id}/${commit_id}`;
   }
 
-  async getFilesFromCommit(commit_url: string) {
-    const data = await this.getFileContent(commit_url);
+  async getFilesFromCommit(commit_url: string, gittoken: string) {
+    const data = await this.getFileContent(commit_url, gittoken);
     const dataJson = JSON.parse(data);
     const fileArr: GistApiFileDto[] = await Promise.all(
       Object.keys(dataJson.files).map(async (key) => {
-        const content = await this.getFileContent(dataJson.files[key].raw_url);
+        const content = await this.getFileContent(dataJson.files[key].raw_url, gittoken);
 
         return new GistApiFileDto(
           key,
@@ -173,10 +173,10 @@ export class GistService {
     return result;
   }
 
-  async getFileContent(raw_url: string) {
+  async getFileContent(raw_url: string, gittoken: string) {
     const response = await fetch(raw_url, {
       headers: {
-        Authorization: `Bearer ${this.gittoken}`
+        Authorization: `Bearer ${gittoken}`
       }
     });
     if (!response.ok) {
