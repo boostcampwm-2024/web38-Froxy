@@ -1,7 +1,7 @@
-import { Lotus, useLotusSuspenseQuery } from '@/feature/Lotus';
+import { Lotus, useLotusListSuspenseQuery } from '@/feature/Lotus';
 
 export function SuspenseLotusList({ page = 1 }: { page?: number }) {
-  const { data: lotusList } = useLotusSuspenseQuery({ page });
+  const { data: lotusList } = useLotusListSuspenseQuery({ page });
 
   return (
     <div className="w-full grid grid-cols-3 gap-[2rem]">
