@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { typeORMConfig } from './config/typeorm.config';
 import { DockerModule } from './docker/docker.module';
 import { GistModule } from './gist/gist.module';
+import { LotusModule } from './lotus/lotus.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -22,7 +23,8 @@ import { UserModule } from './user/user.module';
     DockerModule,
     GistModule,
     UserModule,
-    AuthModule
+    AuthModule,
+    LotusModule
   ],
   controllers: [AppController],
   providers: [AppService]

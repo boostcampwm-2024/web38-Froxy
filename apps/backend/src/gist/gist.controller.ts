@@ -25,7 +25,8 @@ export class GistController {
 
   @Get('/user')
   findUser() {
-    return this.gistService.getUserData();
+    const gitToken = this.configService.get<string>('GIT_TOKEN');
+    return this.gistService.getUserData(gitToken);
   }
 
   @Get('/:gist_id/comments')
@@ -35,7 +36,8 @@ export class GistController {
 
   @Get(['/:id/commits', '/:id/commits/:pageIdx'])
   findCommits(@Param('id') id: string, @Param('pageIdx') pageIdx: number) {
-    return this.gistService.getCommitsForAGist(id, pageIdx ? pageIdx : 1);
+    const gitToken = this.configService.get<string>('GIT_TOKEN');
+    return this.gistService.getCommitsForAGist(id, pageIdx ? pageIdx : 1, gitToken);
   }
 
   @Get(['/:id'])
@@ -63,7 +65,7 @@ export class GistController {
   }
 
   @Get(':gist_id/commit/:id')
-  getCommitFile(@Param('gist_id') gist_id: string, @Param('id') commit_id: number) {
+  getCommitFile(@Param('gist_id') gist_id: string, @Param('id') commit_id: string) {
     return this.gistService.getCommit(gist_id, commit_id);
   }
 }

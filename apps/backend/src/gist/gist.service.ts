@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CommentDto } from './dto/comment.dto';
 import { CommitDto } from './dto/commit.dto';
 import { GistApiFileDto } from './dto/gistApiFile.dto';
@@ -38,7 +38,6 @@ export class GistService {
     };
     const queryParam = new URLSearchParams(params).toString();
     const gistsData = await this.gistGetReq(`https://api.github.com/gists`, queryParam, gitToken);
-    // console.log(gistsData);
     return gistsData;
   }
 
@@ -107,7 +106,7 @@ export class GistService {
     return gist;
   }
 
-  async getCommitsForAGist(gist_id: string, pageIdx = 1): Promise<CommitDto[]> {
+  async getCommitsForAGist(gist_id: string, pageIdx = 1, gitToken: string): Promise<CommitDto[]> {
     const page = pageIdx;
     const perPage = 5;
     const params = {
@@ -115,15 +114,26 @@ export class GistService {
       per_page: perPage.toString()
     };
     const queryParam = new URLSearchParams(params).toString();
-    const data = await this.gistGetReq(`https://api.github.com/gists/${gist_id}/commits`, queryParam);
-    const commits: CommitDto[] = data.map((commit) => new CommitDto(commit.committed_at, commit.url));
+    const data = await this.gistGetReq(`https://api.github.com/gists/${gist_id}/commits`, queryParam, gitToken);
+    const commits: CommitDto[] = data.map((commit) =>
+      CommitDto.of(commit.committed_at, commit.url, this.parsingCommitId(commit.url))
+    );
     return commits;
   }
 
-  async getCommit(gist_id: string, commit_id: number) {
-    const commits = await this.getCommitsForAGist(gist_id);
-    const response = await this.getFilesFromCommit(commits[commit_id].url);
+  async getCommit(gist_id: string, commit_id: string) {
+    const response = await this.getFilesFromCommit(this.getCommitUrl(gist_id, commit_id));
     return response;
+  }
+
+  parsingCommitId(url: string) {
+    const nodes = url.trim().split('/');
+    if (nodes.length === 0) throw new HttpException('wrong url', HttpStatus.BAD_REQUEST);
+    return nodes.pop();
+  }
+
+  getCommitUrl(gist_id: string, commit_id: string) {
+    return `https://api.github.com/gists/${gist_id}/${commit_id}`;
   }
 
   async getFilesFromCommit(commit_url: string) {
@@ -154,8 +164,8 @@ export class GistService {
     return gist;
   }
 
-  async getUserData(): Promise<UserDto> {
-    const userData = await this.gistGetReq('https://api.github.com/user');
+  async getUserData(gitToken: string): Promise<UserDto> {
+    const userData = await this.gistGetReq('https://api.github.com/user', null, gitToken);
     if (!userData.id || !userData.avatar_url || !userData.login) {
       throw new Error('404');
     }
@@ -242,7 +252,6 @@ export class GistService {
       },
       body: JSON.stringify({ body: body })
     });
-    console.log(response);
     return await response.json();
   }
 

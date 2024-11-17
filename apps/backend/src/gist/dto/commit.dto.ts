@@ -1,9 +1,13 @@
 export class CommitDto {
   committed_at: string;
   url: string;
+  commit_id: string;
 
-  constructor(committed_at: string, url: string) {
-    this.committed_at = committed_at;
-    this.url = url;
+  static of(committed_at: string, url: string, commit_id: string): CommitDto {
+    return {
+      committed_at,
+      url,
+      commit_id
+    };
   }
 }

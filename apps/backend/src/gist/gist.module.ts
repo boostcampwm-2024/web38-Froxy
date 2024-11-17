@@ -4,6 +4,7 @@ import { GistService } from './gist.service';
 
 @Module({
   controllers: [GistController],
-  providers: [GistService]
+  providers: [GistService],
+  exports: [GistService]
 })
 export class GistModule {}
