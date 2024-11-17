@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { LotusDetailDto } from './dto/lotus.detail.dto';
 import { LotusDto } from './dto/lotus.dto';
+import { LotusPublicDto } from './dto/lotus.public.dto';
 import { LotusResponseDto } from './dto/lotus.response.dto';
 import { MessageDto } from './dto/message.dto';
 import { SimpleUserResponseDto } from './dto/simple.user.response.dto';
@@ -35,7 +36,10 @@ export class LotusService {
     const gitUser = await this.gistService.getUserData(gitToken);
     const userData = await this.userService.findOne(gitUser.id);
     await this.saveLotus(new LotusDto(title, isPublic, gistUuid, currentCommitId, userData));
-    const lotusData = await this.lotusRepository.findOneBy({ gistRepositoryId: gistUuid, commitId: currentCommitId });
+    const lotusData = await this.lotusRepository.findOne({
+      where: { gistRepositoryId: gistUuid, commitId: currentCommitId },
+      relations: ['category']
+    });
 
     return LotusResponseDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(userData), lotusData);
   }
@@ -66,6 +70,18 @@ export class LotusService {
     const commitFiles = await this.gistService.getCommit(lotusData.gistRepositoryId, lotusData.commitId, gitToken);
 
     return LotusDetailDto.ofGistFileListDto(commitFiles, lotusData);
+  }
+
+  async getPublicLotus(page: number, size: number, search: string): Promise<LotusPublicDto> {
+    const lotusData = await this.lotusRepository.find({
+      where: { isPublic: true },
+      relations: ['category', 'user']
+    });
+    const firstIdx = size * (page - 1);
+    const totalNum = lotusData.length;
+    const returnLotusData = lotusData.splice(firstIdx, size);
+
+    return LotusPublicDto.ofLotusList(returnLotusData, page, Math.ceil(totalNum / size));
   }
 
   async checkAlreadyExist(gistUuid: string, commitId: string) {

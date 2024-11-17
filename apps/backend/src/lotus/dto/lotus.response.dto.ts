@@ -17,7 +17,19 @@ export class LotusResponseDto {
       title: lotus.title,
       isPublic: lotus.isPublic,
       createAt: lotus.createdAt,
-      tag: []
+      tag: lotus.category
+    };
+  }
+
+  static ofLotus(lotus: Lotus): LotusResponseDto {
+    const simpleUser = SimpleUserResponseDto.ofUserDto(lotus.user);
+    return {
+      id: lotus.lotusId,
+      user: simpleUser,
+      title: lotus.title,
+      isPublic: lotus.isPublic,
+      createAt: lotus.createdAt,
+      tag: lotus.category
     };
   }
 }

@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LotusDetailDto } from './dto/lotus.detail.dto';
+import { LotusPublicDto } from './dto/lotus.public.dto';
 import { LotusResponseDto } from './dto/lotus.response.dto';
 import { MessageDto } from './dto/message.dto';
 import { LotusService } from './lotus.service';
@@ -20,9 +21,9 @@ export class LotusController {
     return this.lotusService.createLotus(gitToken, title, isPublic, tag, gistUuid);
   }
 
-  @Patch()
+  @Patch('/:lotusId')
   updateLotus(
-    @Query('lotusId') lotusId: string,
+    @Param('lotusId') lotusId: string,
     @Body('title') title: string,
     @Body('tag') tag: string[],
     @Body('isPublic') isPublic: boolean
@@ -30,14 +31,23 @@ export class LotusController {
     return this.lotusService.updateLotus(lotusId, title, tag, isPublic);
   }
 
-  @Delete()
-  deleteLotus(@Query('lotusId') lotusId: string): Promise<MessageDto> {
+  @Delete('/:lotusId')
+  deleteLotus(@Param('lotusId') lotusId: string): Promise<MessageDto> {
     return this.lotusService.deleteLotus(lotusId);
   }
 
-  @Get()
-  getLotusDetail(@Query('lotusId') lotusId: string): Promise<LotusDetailDto> {
+  @Get('/:lotusId')
+  getLotusDetail(@Param('lotusId') lotusId: string): Promise<LotusDetailDto> {
     const gitToken = this.configService.get<string>('GIT_TOKEN');
     return this.lotusService.getLotusFile(gitToken, lotusId);
+  }
+
+  @Get()
+  getPublicLotus(
+    @Query('page') page: number,
+    @Query('size') size: number,
+    @Query('search') search: string
+  ): Promise<LotusPublicDto> {
+    return this.lotusService.getPublicLotus(page, size, search);
   }
 }
