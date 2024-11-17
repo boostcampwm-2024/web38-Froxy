@@ -1,22 +1,11 @@
 import { DefaultBodyType, HttpResponse, StrictRequest } from 'msw';
 
 // github 사용자 기본 정보 조회 api
-export const mockGetUserInfo = ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
-  const authorization = request.headers.get('Authorization');
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return new HttpResponse('Unauthorized: Invalid or missing token', {
-      status: 401,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-  }
-
+export const mockGetUserInfo = () => {
   return HttpResponse.json({
-    id: '1234567890',
+    id: '1',
     nickname: 'mockUser',
-    profile: 'https://github.com/mockUser'
+    profile: '/image/exampleImage.jpeg'
   });
 };
 

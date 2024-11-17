@@ -8,17 +8,6 @@ export const mockGetUserLotusList = ({
   request: StrictRequest<DefaultBodyType>;
   params: PathParams;
 }) => {
-  const authorization = request.headers.get('Authorization');
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return new HttpResponse('Unauthorized: Invalid or missing token', {
-      status: 401,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-  }
-
   const { id } = params;
   const url = new URL(request.url);
   const page = url.searchParams.get('page');
@@ -44,7 +33,7 @@ export const mockGetUserLotusList = ({
         author: {
           id: '20000000001',
           nickname: 'dev_master',
-          profile: 'https://example.com/profiles/dev_master'
+          profile: '/image/exampleImage.jpeg'
         }
       },
       {
@@ -56,7 +45,7 @@ export const mockGetUserLotusList = ({
         author: {
           id: '20000000002',
           nickname: 'react_enthusiast',
-          profile: 'https://example.com/profiles/react_enthusiast'
+          profile: '/image/exampleImage.jpegt'
         }
       }
     ],
