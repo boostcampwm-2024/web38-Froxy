@@ -168,24 +168,12 @@ export const mockGetHistoryList = ({
   request: StrictRequest<DefaultBodyType>;
   params: PathParams;
 }) => {
-  const authorization = request.headers.get('Authorization');
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return new HttpResponse('Unauthorized: Invalid or missing token', {
-      status: 401,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-  }
-
   const { lotusId } = params;
 
   const url = new URL(request.url);
-  const page = url.searchParams.get('page');
-  const size = url.searchParams.get('size');
+  const page = Number(url.searchParams.get('page')) || 1;
 
-  if (!lotusId || !page || !size) {
+  if (!lotusId) {
     return new HttpResponse('Bad Request', {
       status: 400,
       headers: {
@@ -197,26 +185,26 @@ export const mockGetHistoryList = ({
   return HttpResponse.json({
     list: [
       {
-        historyId: '10000000001',
-        status: 'SUCCESS',
-        date: '2024-11-16T12:00:00Z',
-        title: 'Deployment Completed'
-      },
-      {
-        historyId: '10000000002',
+        historyId: '1',
         status: 'PENDING',
         date: '2024-11-15T14:30:00Z',
         title: 'Backup in Progress'
       },
       {
-        historyId: '10000000003',
+        historyId: '2',
+        status: 'SUCCESS',
+        date: '2024-11-16T12:00:00Z',
+        title: 'Deployment Completed'
+      },
+      {
+        historyId: '3',
         status: 'ERROR',
         date: '2024-11-14T16:45:00Z',
         title: 'Database Migration Failed'
       }
     ],
     page: {
-      current: 1,
+      current: page,
       max: 3
     }
   });
