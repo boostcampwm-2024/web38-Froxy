@@ -2,7 +2,7 @@ import { Lotus } from '@/feature/Lotus';
 import { useUserLotusListSuspenseQuery } from '@/feature/User/query';
 
 export function SuspenseUserLotusList({ page = 1 }: { page?: number }) {
-  const { data: lotusList } = useUserLotusListSuspenseQuery({ page, size: 10, userId: '1' });
+  const { data: lotusList } = useUserLotusListSuspenseQuery({ page, size: 10 });
 
   return (
     <div className="w-full grid grid-cols-3 gap-[2rem]">

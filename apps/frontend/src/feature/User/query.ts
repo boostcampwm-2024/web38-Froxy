@@ -10,18 +10,10 @@ export const useUserInfoSuspenseQuery = () => {
   return query;
 };
 
-export const useUserLotusListSuspenseQuery = ({
-  page = 1,
-  size,
-  userId
-}: {
-  page: number;
-  size: number;
-  userId: string;
-}) => {
+export const useUserLotusListSuspenseQuery = ({ page = 1, size }: { page: number; size: number }) => {
   const query = useSuspenseQuery({
-    queryKey: ['lotus', page, userId],
-    queryFn: async () => getUserLotusList({ page, size, userId })
+    queryKey: ['lotus', page],
+    queryFn: async () => getUserLotusList({ page, size })
   });
 
   return query;

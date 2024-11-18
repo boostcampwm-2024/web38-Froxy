@@ -17,7 +17,7 @@ export const handlers = [
   http.patch(`/api/user`, mockPatchUserInfo),
   http.post(`/api/user/login`, mockLogin),
   http.post(`/api/user/logout`, mockLogout),
-  http.get(`/api/user/:id/lotus`, mockGetUserLotusList),
+  http.get(`/api/user/lotus`, mockGetUserLotusList),
   http.get(`/api/user/gist`, mockGetUserGistList),
   http.get(`/api/user/gist/:gistId`, mockGetGistDetail),
   // lotus

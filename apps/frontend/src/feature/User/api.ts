@@ -11,16 +11,8 @@ export const getUserInfo = async () => {
 };
 
 // 사용자의 Lotus 목록 조회
-export const getUserLotusList = async ({
-  page,
-  size,
-  userId = '1'
-}: {
-  page: number;
-  size: number;
-  userId: string;
-}) => {
-  const res = await fetch(`/api/user/${userId}/lotus?page=${page}&size=${size}`);
+export const getUserLotusList = async ({ page, size }: { page: number; size: number }) => {
+  const res = await fetch(`/api/user/lotus?page=${page}&size=${size}`);
 
   const { lotuses } = await res.json();
 
