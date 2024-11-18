@@ -40,7 +40,7 @@ export class GistController {
     return this.gistService.getCommitsForAGist(id, pageIdx ? pageIdx : 1, gitToken);
   }
 
-  @Get(['/:id'])
+  //@Get(['/:id'])
   findOne(@Param('id') id: string) {
     const gitToken = this.configService.get<string>('GIT_TOKEN');
     return this.gistService.getGistById(id, gitToken);
