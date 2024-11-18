@@ -9,12 +9,15 @@ export function SuspenseLotusHistoryList({ id }: { id: string }) {
 
   return (
     <div className="flex flex-col gap-5">
-      {list.map((history) => (
-        <div key={history.id} className="flex items-center shadow-zinc-300 shadow-md rounded-md p-5 gap-10">
+      {list.map((history, i) => (
+        <div
+          key={history.date.toISOString() + i}
+          className="flex items-center shadow-zinc-300 shadow-md rounded-md p-5 px-7 gap-7"
+        >
           <History value={history}>
-            <History.StatusIcon className="w-10 h-10" current={history.status === 'PENDING'} />
+            <History.StatusIcon className="w-7 h-7" current={history.status === 'PENDING'} />
             <div className="flex flex-col gap-2">
-              <History.Title />
+              <History.Filename />
 
               <div className="flex gap-2">
                 <History.StatusLabel />

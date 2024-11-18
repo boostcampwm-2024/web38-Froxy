@@ -24,7 +24,7 @@ export function HistoryList({ historyList, className }: HistoryListProps) {
             <div className="flex items-center gap-5 p-3 hover:bg-gray-200 rounded-lg hover:bg-opacity-30 hover:cursor-pointer">
               <History.StatusIcon current={index === 0} />
               <div>
-                <History.Title />
+                <History.Filename />
                 <div className="flex items-center gap-2">
                   <History.StatusLabel />
                   <span className="text-gray-400"> • </span>
