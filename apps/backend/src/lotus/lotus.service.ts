@@ -76,27 +76,25 @@ export class LotusService {
     return LotusDetailDto.ofGistFileListDto(commitFiles, lotusData);
   }
 
-  async getPublicLotus(page = 1, inpsize = -1, search: string): Promise<LotusPublicDto> {
+  async getPublicLotus(page = 1, size = 10, search: string): Promise<LotusPublicDto> {
     const lotusData = await this.lotusRepository.find({
       where: { isPublic: true },
       relations: ['category', 'user']
     });
 
     const totalNum = lotusData.length;
-    const size = inpsize < 0 ? totalNum : inpsize;
     const firstIdx = size * (page - 1);
     const returnLotusData = lotusData.splice(firstIdx, size);
 
     return LotusPublicDto.ofLotusList(returnLotusData, page, Math.ceil(totalNum / size));
   }
 
-  async getUserLotus(userId: string, page = 1, inpsize = -1) {
+  async getUserLotus(userId: string, page = 1, size = 10) {
     const lotusData = await this.lotusRepository.find({
       where: { user: { userId } },
       relations: ['category', 'user']
     });
     const totalNum = lotusData.length;
-    const size = inpsize < 0 ? totalNum : inpsize;
     const firstIdx = size * (page - 1);
     const returnLotusData = lotusData.splice(firstIdx, size);
 
