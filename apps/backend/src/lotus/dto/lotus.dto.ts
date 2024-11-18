@@ -9,20 +9,29 @@ export class LotusDto {
   isPublic: boolean;
   gistRepositoryId: string;
   commitId: string;
+  language: string;
+  version: string;
   createdAt: Date;
   user: User;
   comments: Comment[];
   historys: History[];
   category: Tag[];
 
-  constructor(title: string, isPublic: boolean, gistRepositoryId: string, commitId: string, user: User) {
-    const createdAt = new Date();
-
+  constructor(
+    title: string,
+    isPublic: boolean,
+    gistRepositoryId: string,
+    commitId: string,
+    user: User,
+    language: string,
+    version: string
+  ) {
     this.title = title;
     this.isPublic = isPublic;
     this.gistRepositoryId = gistRepositoryId;
     this.commitId = commitId;
-    this.createdAt = createdAt;
+    this.language = language;
+    this.version = version;
     this.comments = [];
     this.historys = [];
     this.category = [];

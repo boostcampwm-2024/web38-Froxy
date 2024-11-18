@@ -15,10 +15,12 @@ export class LotusController {
     @Body('title') title: string,
     @Body('isPublic') isPublic: boolean,
     @Body('tag') tag: string[],
-    @Body('gistUuid') gistUuid: string
+    @Body('gistUuid') gistUuid: string,
+    @Body('language') language: string,
+    @Body('version') version: string
   ): Promise<LotusResponseDto> {
     const gitToken = this.configService.get<string>('GIT_TOKEN');
-    return this.lotusService.createLotus(gitToken, title, isPublic, tag, gistUuid);
+    return this.lotusService.createLotus(gitToken, title, isPublic, tag, gistUuid, language, version);
   }
 
   @Patch('/:lotusId')

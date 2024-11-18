@@ -32,6 +32,12 @@ export class Lotus {
   @Column({ name: 'commit_id' })
   commitId: string;
 
+  @Column()
+  language: string;
+
+  @Column({ name: 'version' })
+  version: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

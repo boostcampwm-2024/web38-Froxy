@@ -7,6 +7,7 @@ export class LotusResponseDto {
   author: SimpleUserResponseDto;
   title: string;
   isPublic: boolean;
+  language: string;
   createAt: Date;
   tag: SimpleTagResponseDto[];
 
@@ -15,6 +16,7 @@ export class LotusResponseDto {
       id: lotus.lotusId,
       author: user,
       title: lotus.title,
+      language: lotus.language,
       isPublic: lotus.isPublic,
       createAt: lotus.createdAt,
       tag: lotus.category
@@ -27,6 +29,7 @@ export class LotusResponseDto {
       id: lotus.lotusId,
       author: simpleUser,
       title: lotus.title,
+      language: lotus.language,
       isPublic: lotus.isPublic,
       createAt: lotus.createdAt,
       tag: lotus.category

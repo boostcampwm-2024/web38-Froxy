@@ -8,6 +8,8 @@ export class LotusDetailDto {
   title: string;
   tags: string[];
   date: Date;
+  language: string;
+  version: string;
   isPublic: boolean;
   author: SimpleUserResponseDto;
   files: SimpleFileResponseDto[];
@@ -21,6 +23,8 @@ export class LotusDetailDto {
     return {
       id: lotus.lotusId,
       title: lotus.title,
+      language: lotus.language,
+      version: lotus.version,
       date: lotus.createdAt,
       isPublic: lotus.isPublic,
       tags: simpleTags,

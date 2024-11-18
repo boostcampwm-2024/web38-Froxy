@@ -22,8 +22,12 @@ export class LotusService {
     title: string,
     isPublic: boolean,
     tag: string[],
-    gistUuid: string
+    gistUuid: string,
+    inpLanguage: string,
+    inpVersion: string
   ): Promise<LotusResponseDto> {
+    const language = !inpLanguage ? 'NodeJs' : inpLanguage;
+    const version: string = !inpVersion ? 'v22.11.0' : inpVersion;
     const commits = await this.gistService.getCommitsForAGist(gistUuid, 1, gitToken);
     if (commits.length < 1) {
       throw new HttpException('this gist repository has no commit.', HttpStatus.NOT_FOUND);
@@ -35,7 +39,7 @@ export class LotusService {
     }
     const gitUser = await this.gistService.getUserData(gitToken);
     const userData = await this.userService.findOne(gitUser.id);
-    await this.saveLotus(new LotusDto(title, isPublic, gistUuid, currentCommitId, userData));
+    await this.saveLotus(new LotusDto(title, isPublic, gistUuid, currentCommitId, userData, language, version));
     const lotusData = await this.lotusRepository.findOne({
       where: { gistRepositoryId: gistUuid, commitId: currentCommitId },
       relations: ['category']
