@@ -1,12 +1,13 @@
 import { LotusDeleteButton } from './LotusDeleteButton';
 import { LotusUpdateButton } from './LotusUpdateButton';
+import { SuspenseLotusPublicToggle } from './SuspenseLotusPublicToggle';
 import { Lotus, useLotusSuspenseQuery } from '@/feature/Lotus';
 
 export function SuspenseLotusDetail({ id }: { id: string }) {
   const { data: lotus } = useLotusSuspenseQuery({ id });
 
   return (
-    <div className="flex justify-between pb-4 border-b-2 border-slate-200">
+    <div className="flex justify-between items-start pb-4 border-b-2 border-slate-200">
       <div>
         <Lotus lotus={lotus}>
           <div className=" mb-4">
@@ -17,7 +18,8 @@ export function SuspenseLotusDetail({ id }: { id: string }) {
           <Lotus.CreateDate className="text-xs text-[rgba(28,29,34,0.5)]" />
         </Lotus>
       </div>
-      <div className="flex items-start gap-2">
+      <div className="flex items-center gap-2 pt-2">
+        <SuspenseLotusPublicToggle lotus={lotus} className="mr-5" />
         <LotusUpdateButton lotusId={id} />
         <LotusDeleteButton lotusId={id} />
       </div>
