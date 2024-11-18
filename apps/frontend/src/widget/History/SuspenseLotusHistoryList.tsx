@@ -1,6 +1,8 @@
-import { Text } from '@froxy/design/components';
-import { History } from '@/feature/History';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@froxy/design/components';
+import { HistoryTrigger } from './HistoryTrigger';
+import { SuspenseLotusHistoryDetail } from './SuspenseLotusHistoryDetail';
 import { useLotusHistoryListSuspenseQuery } from '@/feature/History/query';
+import { AsyncBoundary } from '@/shared/components/AsyncBoundary';
 
 export function SuspenseLotusHistoryList({ id }: { id: string }) {
   const {
@@ -9,27 +11,24 @@ export function SuspenseLotusHistoryList({ id }: { id: string }) {
 
   return (
     <div className="flex flex-col gap-5">
-      {list.map((history, i) => (
-        <div
-          key={history.date.toISOString() + i}
-          className="flex items-center shadow-zinc-300 shadow-md rounded-md p-5 px-7 gap-7"
-        >
-          <History value={history}>
-            <History.StatusIcon className="w-7 h-7" current={history.status === 'PENDING'} />
-            <div className="flex flex-col gap-2">
-              <History.Filename />
-
-              <div className="flex gap-2">
-                <History.StatusLabel />
-                <Text size="sm" variant="muted">
-                  {'•'}
-                </Text>
-                <History.Date />
-              </div>
-            </div>
-          </History>
-        </div>
-      ))}
+      <Accordion type="single">
+        {list.map((history) => (
+          <AccordionItem
+            key={history.id}
+            className="shadow-zinc-300 shadow-md rounded-md p-5 px-7 gap-7"
+            value={history.id}
+          >
+            <AccordionTrigger className="">
+              <HistoryTrigger history={history} />
+            </AccordionTrigger>
+            <AccordionContent>
+              <AsyncBoundary pending={<div>Loading...</div>} rejected={() => <div>Error!!</div>}>
+                <SuspenseLotusHistoryDetail lotusId={id} historyId={history.id} />
+              </AsyncBoundary>
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
     </div>
   );
 }
