@@ -1,20 +1,7 @@
 import { DefaultBodyType, HttpResponse, PathParams, StrictRequest } from 'msw';
 
 // 사용자의 Lotus 목록 조회
-export const mockGetUserLotusList = ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
-  const url = new URL(request.url);
-  const page = url.searchParams.get('page');
-  const size = url.searchParams.get('size');
-
-  if (!page || !size) {
-    return new HttpResponse('Bad Request', {
-      status: 400,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-  }
-
+export const mockGetUserLotusList = () => {
   return HttpResponse.json({
     lotuses: [
       {
