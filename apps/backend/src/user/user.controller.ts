@@ -2,7 +2,7 @@ import { Controller, Get, Query, Redirect, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from './user.service';
 
-@Controller('/user')
+@Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService, private configService: ConfigService) {}
   private OAUTH_CLIENT_ID = this.configService.get<string>('OAUTH_CLIENT_ID');

@@ -4,11 +4,12 @@ on:
   push:
     branches:
       - release  # release 브랜치에 푸시될 때 실행
+  
 
 jobs:
   build_and_deploy:
     runs-on: ubuntu-20.04  # 빌드가 진행될 환경 설정
-
+          
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -21,21 +22,18 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}  # DockerHub 사용자 이름
           password: ${{ secrets.DOCKER_PASSWORD }}  # DockerHub 비밀번호
-
-      #이미지 이름 저장
-      - name: Set Docker image tag as a variable
-        run: echo "DOCKER_TAG=${{ secrets.DOCKER_USERNAME }}/froxy-server:latest" >> $GITHUB_ENV
       
       - name: Create .env file
         run: |
-          echo "${{ secrets.BE_ENV }}" > .env
+          echo "${{ secrets.BE_ENV }}" > ./apps/backend/.env
+          
       - name: Build Docker image
         run: |
-          docker build -t $DOCKER_TAG .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest .
           
       - name: Push Docker image to Docker Hub
         run: |
-          docker push $DOCKER_TAG
+          docker push ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest
 
       - name: Setup SSH
         uses: webfactory/ssh-agent@v0.5.3
@@ -49,6 +47,6 @@ jobs:
               docker stop froxy-container
               docker rm froxy-container
             fi
-            docker pull $DOCKER_TAG && \
-            docker run -d --name froxy-container -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest"
+            docker pull ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest && \
+            docker run --network froxy-network -d --name froxy-container -p 3000:3000 -v /var/run/docker.sock:/var/run/docker.sock ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest"
             docker image prune -f
