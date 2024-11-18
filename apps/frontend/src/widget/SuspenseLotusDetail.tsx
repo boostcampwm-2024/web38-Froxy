@@ -1,6 +1,5 @@
-import { Button, Text } from '@froxy/design/components';
-import { IoSettingsSharp } from 'react-icons/io5';
 import { LotusDeleteButton } from './LotusDeleteButton';
+import { LotusUpdateButton } from './LotusUpdateButton';
 import { Lotus, useLotusSuspenseQuery } from '@/feature/Lotus';
 
 export function SuspenseLotusDetail({ id }: { id: string }) {
@@ -19,10 +18,7 @@ export function SuspenseLotusDetail({ id }: { id: string }) {
         </Lotus>
       </div>
       <div className="flex items-start gap-2">
-        <Button variant={'default'}>
-          <IoSettingsSharp />
-          <Text size="sm">수정하기</Text>
-        </Button>
+        <LotusUpdateButton lotusId={id} />
         <LotusDeleteButton lotusId={id} />
       </div>
     </div>
