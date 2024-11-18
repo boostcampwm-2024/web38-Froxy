@@ -7,4 +7,5 @@ export * from './ui/select';
 export * from './ui/typography';
 export * from './ui/tabs';
 export * from './ui/switch';
+export * from './ui/accordion';
 export * from './Slot';
