@@ -38,11 +38,6 @@ export class LotusController {
     return this.lotusService.deleteLotus(lotusId);
   }
 
-  @Get('/user')
-  getUserLotus(@Query('page') page: number, @Query('size') size: number): Promise<LotusPublicDto> {
-    const userId = '1';
-    return this.lotusService.getUserLotus(userId, page, size);
-  }
   @Get()
   getPublicLotus(
     @Query('page') page: number,
