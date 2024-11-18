@@ -1,15 +1,17 @@
 import { History } from '@/history/history.entity';
 
 export class HistoryPublicDto {
-  historyId: string;
+  id: string;
   status: string;
+  filename: string;
   date: Date;
 
   static of(history: History): HistoryPublicDto {
     console.log(history);
     return {
-      historyId: history.historyId,
+      id: history.historyId,
       status: history.status,
+      filename: history.execFilename,
       date: history.createdAt
     };
   }
