@@ -130,30 +130,38 @@ export const mockGetLotusDetail = ({
   });
 };
 
-interface HistoryValue {
-  status: 'PENDING' | 'ERROR' | 'SUCCESS';
-  filename: string;
+interface HistoryType {
+  status: 'SUCCESS' | 'ERROR' | 'PENDING';
   date: string;
+  filename: string;
+  input?: string[];
+  output?: string;
 }
 
-const historyList = new MockRepository<HistoryValue>();
+const historyList = new MockRepository<HistoryType>();
 
 const insertHistory = () => {
-  const historyMock: HistoryValue[] = [
+  const historyMock: HistoryType[] = [
     {
       status: 'SUCCESS',
       date: '2024-11-15T14:30:00Z',
-      filename: 'main.js'
+      filename: 'main.js',
+      input: ['1', '2'],
+      output: '3'
     },
     {
       status: 'SUCCESS',
       date: '2024-11-16T12:00:00Z',
-      filename: 'index.js'
+      filename: 'index.js',
+      input: ['3', '4'],
+      output: 'console.log(7)'
     },
     {
       status: 'ERROR',
       date: '2024-11-14T16:45:00Z',
-      filename: 'main.js'
+      filename: 'main.js',
+      input: ['5', '6'],
+      output: 'Error: Cannot find module'
     }
   ];
 
@@ -217,8 +225,19 @@ export const mockPostCodeRun = async ({ request }: { request: StrictRequest<Defa
   const newHistory = await historyList.create({
     filename: body.execFileName,
     date: new Date().toISOString(),
-    status: 'PENDING'
+    status: 'PENDING',
+    input: body.input
   });
+
+  setTimeout(() => {
+    historyList.update(
+      { id: newHistory.id },
+      {
+        status: 'SUCCESS',
+        output: `입력한 값: ${newHistory.input} `
+      }
+    );
+  }, 2000);
 
   return HttpResponse.json({
     status: newHistory.status
@@ -226,7 +245,7 @@ export const mockPostCodeRun = async ({ request }: { request: StrictRequest<Defa
 };
 
 // 해당 히스토리 정보
-export const mockGetHistory = ({ params }: { params: PathParams }) => {
+export const mockGetHistory = async ({ params }: { params: PathParams }) => {
   const { lotusId, historyId } = params;
 
   if (!lotusId || !historyId) {
@@ -238,11 +257,9 @@ export const mockGetHistory = ({ params }: { params: PathParams }) => {
     });
   }
 
-  return HttpResponse.json({
-    status: 'PENDING',
-    input: '입력',
-    output: '결과'
-  });
+  const history = await historyList.findOne({ id: historyId as string });
+
+  return HttpResponse.json(history);
 };
 
 // Lotus 생성
