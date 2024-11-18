@@ -14,7 +14,7 @@ export class AuthService {
     });
   }
 
-  async verifyJwt(token: string) {
+  verifyJwt(token: string) {
     try {
       const decoded = this.jwtService.verify(token, {
         secret: this.JWT_SECRET_KEY
