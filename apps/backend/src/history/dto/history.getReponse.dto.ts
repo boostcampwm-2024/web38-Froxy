@@ -32,7 +32,7 @@ export class HistoryGetResponseDto {
   @ApiProperty({
     example: '실행일시'
   })
-  data: Date;
+  date: Date;
 
   static of(history: History): HistoryGetResponseDto {
     return {
@@ -40,7 +40,7 @@ export class HistoryGetResponseDto {
       filename: history.execFilename,
       input: JSON.parse(history.input),
       output: history.result,
-      data: history.createdAt
+      date: history.createdAt
     };
   }
 }
