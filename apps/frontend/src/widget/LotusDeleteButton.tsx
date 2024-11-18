@@ -1,6 +1,6 @@
 import { Button, Heading, Text } from '@froxy/design/components';
 import { useNavigate } from '@tanstack/react-router';
-import { IoSettingsSharp } from 'react-icons/io5';
+import { RiDeleteBin5Fill } from 'react-icons/ri';
 import { useLotusDeleteMutation } from '@/feature/Lotus';
 import { ModalBox } from '@/shared/components/Overlay';
 import { useOverlay } from '@/shared/hooks/useOverlay';
@@ -46,7 +46,7 @@ export function LotusDeleteButton({ lotusId }: { lotusId: string }) {
 
   return (
     <Button variant={'destructive'} onClick={handleOpenDeleteModal}>
-      <IoSettingsSharp />
+      <RiDeleteBin5Fill />
       <Text size="sm">삭제하기</Text>
     </Button>
   );
