@@ -32,7 +32,7 @@ export class LotusService {
     if (commits.length < 1) {
       throw new HttpException('this gist repository has no commit.', HttpStatus.NOT_FOUND);
     }
-    const currentCommitId = commits[0].commit_id;
+    const currentCommitId = commits[0].commitId;
 
     if (await this.checkAlreadyExist(gistUuid, currentCommitId)) {
       throw new HttpException('same commit Lotus already exist.', HttpStatus.CONFLICT);

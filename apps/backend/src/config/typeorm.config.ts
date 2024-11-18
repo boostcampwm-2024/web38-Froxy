@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { History } from '@/ history/history.entity';
 import { Comment } from '@/comment/comment.entity';
+import { History } from '@/history/history.entity';
 import { Lotus } from '@/lotus/lotus.entity';
 import { Tag } from '@/tag/tag.entity';
 import { User } from '@/user/user.entity';

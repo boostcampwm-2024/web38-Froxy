@@ -8,3 +8,5 @@ export const Lotus = Object.assign(LotusProvider, {
   TagList: LotusTagList,
   Link: LotusLink
 });
+
+export * from './query';

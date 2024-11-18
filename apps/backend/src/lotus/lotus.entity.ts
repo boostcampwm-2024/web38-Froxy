@@ -9,8 +9,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn
 } from 'typeorm';
-import { History } from '@/ history/history.entity';
 import { Comment } from '@/comment/comment.entity';
+import { History } from '@/history/history.entity';
 import { Tag } from '@/tag/tag.entity';
 import { User } from '@/user/user.entity';
 
@@ -23,13 +23,13 @@ export class Lotus {
   @Column()
   title: string;
 
-  @Column({ name: 'is_public' })
+  @Column({ name: 'is_public', default: false })
   isPublic: boolean;
 
   @Column({ name: 'gist_repository_id' })
   gistRepositoryId: string;
 
-  @Column({ name: 'commit_id' })
+  @Column({ name: 'commit_id', nullable: true })
   commitId: string;
 
   @Column()

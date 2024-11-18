@@ -6,7 +6,7 @@ import { User } from '@/user/user.entity';
 export class Tag {
   //@PrimaryGeneratedColumn('uuid', { type: 'bigint' })
   @PrimaryGeneratedColumn('increment', { type: 'bigint', name: 'tag_id' })
-  tagId: number;
+  tagId: string;
 
   @Column({ name: 'tag_name' })
   tagName: string;

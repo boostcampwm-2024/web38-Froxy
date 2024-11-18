@@ -4,6 +4,9 @@ import { Container } from 'dockerode';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import * as tar from 'tar-stream';
+import { GistApiFileDto } from '@/gist/dto/gistApiFile.dto';
+import { GistApiFileListDto } from '@/gist/dto/gistApiFileList.dto';
+import { GistService } from '@/gist/gist.service';
 
 interface GistFileAttributes {
   filename: string;
@@ -23,23 +26,35 @@ interface GistFile {
 @Injectable()
 export class DockerService {
   docker = new Docker();
+  constructor(private gistService: GistService) {}
 
-  async getDocker(gitToken: string, gistId: string, mainFileName: string, inputs: any[]): Promise<string> {
-    const gistUrl = 'https://gist.github.com/username/gistid';
-
-    return this.runGistFiles(gitToken, gistId, mainFileName, inputs)
+  async getDocker(
+    gitToken: string,
+    gistId: string,
+    commit_id: string,
+    mainFileName: string,
+    inputs: any[]
+  ): Promise<string> {
+    return this.runGistFiles(gitToken, gistId, commit_id, mainFileName, inputs)
       .then((result) => {
-        console.log('Execution Result:', result);
+        // console.log('Execution Result:', result);
         return result;
       })
       .catch((error) => {
-        console.error('Execution Error:', error);
+        // console.error('Execution Error:', error);
         throw new Error('Execution Error');
       });
   }
 
-  async runGistFiles(gitToken: string, gistId: string, mainFileName: string, inputs: any[]): Promise<string> {
-    const files = await this.fetchGistFiles(gitToken, gistId);
+  async runGistFiles(
+    gitToken: string,
+    gistId: string,
+    commitId: string,
+    mainFileName: string,
+    inputs: any[]
+  ): Promise<string> {
+    const gistData: GistApiFileListDto = await this.gistService.getCommit(gistId, commitId);
+    const files: GistApiFileDto[] = gistData.files;
 
     // 컨테이너 생성
     const container = await this.docker.createContainer({
@@ -105,14 +120,14 @@ export class DockerService {
     }
   }
 
-  async parseTarBuffer(files: { name: string; content: string }[]): Promise<Buffer> {
+  async parseTarBuffer(files: GistApiFileDto[]): Promise<Buffer> {
     //desciption: tar 아카이브를 생성
     return new Promise<Buffer>((resolve, reject) => {
       const pack = tar.pack();
 
       for (const file of files) {
         //desciption: 파일 이름과 내용을 tar 아카이브에 추가
-        pack.entry({ name: file.name }, file.content, (err) => {
+        pack.entry({ name: file.fileName }, file.content, (err) => {
           if (err) reject(err);
         });
       }

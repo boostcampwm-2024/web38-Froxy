@@ -7,7 +7,7 @@ export class SimpleFileResponseDto {
 
   static ofFileApiDto(fileApiDto: GistApiFileDto) {
     return {
-      filename: fileApiDto.file_name,
+      filename: fileApiDto.fileName,
       language: fileApiDto.language,
       content: fileApiDto.content
     };

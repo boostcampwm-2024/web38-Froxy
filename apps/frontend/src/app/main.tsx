@@ -5,12 +5,30 @@ import { RouteProvider } from './router';
 
 import './style/index.css';
 
-const root = ReactDOM.createRoot(document.getElementById('root')!);
+async function enableMocking() {
+  if (process.env.NODE_ENV !== 'development') {
+    return;
+  }
 
-root.render(
-  <StrictMode>
-    <QueryProvider>
-      <RouteProvider />
-    </QueryProvider>
-  </StrictMode>
-);
+  const { worker } = await import('./mock/browser');
+
+  return worker.start({
+    onUnhandledRequest: (request, print) => {
+      if (!request.url.includes('/api/')) return;
+
+      print.warning();
+    }
+  });
+}
+
+enableMocking().then(() => {
+  const root = ReactDOM.createRoot(document.getElementById('root')!);
+
+  root.render(
+    <StrictMode>
+      <QueryProvider>
+        <RouteProvider />
+      </QueryProvider>
+    </StrictMode>
+  );
+});

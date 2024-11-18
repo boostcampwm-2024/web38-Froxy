@@ -17,7 +17,7 @@ export class User {
   @Column({ name: 'git_token' })
   gitToken: string;
 
-  @Column({ name: 'git_id' })
+  @Column({ name: 'git_id', unique: true })
   gitId: number;
 
   @OneToMany(() => Lotus, (lotus) => lotus.user)

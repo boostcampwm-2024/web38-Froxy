@@ -13,13 +13,13 @@ import { createFileRoute } from '@tanstack/react-router';
 // Import Routes
 
 import { Route as rootRoute } from './../../page/__root';
+import { Route as mainUserIndexImport } from './../../page/(main)/user/index';
+import { Route as mainLotusIndexImport } from './../../page/(main)/lotus/index';
 
 // Create Virtual Routes
 
 const mainRouteLazyImport = createFileRoute('/(main)')();
 const IndexLazyImport = createFileRoute('/')();
-const mainUserIndexLazyImport = createFileRoute('/(main)/user/')();
-const mainLotusIndexLazyImport = createFileRoute('/(main)/lotus/')();
 const mainLotusCreateIndexLazyImport = createFileRoute('/(main)/lotus/create/')();
 const mainLotusLotusIdIndexLazyImport = createFileRoute('/(main)/lotus/$lotusId/')();
 
@@ -39,7 +39,7 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute
 } as any).lazy(() => import('./../../page/index.lazy').then((d) => d.Route));
 
-const mainUserIndexLazyRoute = mainUserIndexLazyImport
+const mainUserIndexRoute = mainUserIndexImport
   .update({
     id: '/user/',
     path: '/user/',
@@ -47,7 +47,7 @@ const mainUserIndexLazyRoute = mainUserIndexLazyImport
   } as any)
   .lazy(() => import('./../../page/(main)/user/index.lazy').then((d) => d.Route));
 
-const mainLotusIndexLazyRoute = mainLotusIndexLazyImport
+const mainLotusIndexRoute = mainLotusIndexImport
   .update({
     id: '/lotus/',
     path: '/lotus/',
@@ -93,14 +93,14 @@ declare module '@tanstack/react-router' {
       id: '/(main)/lotus/';
       path: '/lotus';
       fullPath: '/lotus';
-      preLoaderRoute: typeof mainLotusIndexLazyImport;
+      preLoaderRoute: typeof mainLotusIndexImport;
       parentRoute: typeof mainRouteLazyImport;
     };
     '/(main)/user/': {
       id: '/(main)/user/';
       path: '/user';
       fullPath: '/user';
-      preLoaderRoute: typeof mainUserIndexLazyImport;
+      preLoaderRoute: typeof mainUserIndexImport;
       parentRoute: typeof mainRouteLazyImport;
     };
     '/(main)/lotus/$lotusId/': {
@@ -123,15 +123,15 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface mainRouteLazyRouteChildren {
-  mainLotusIndexLazyRoute: typeof mainLotusIndexLazyRoute;
-  mainUserIndexLazyRoute: typeof mainUserIndexLazyRoute;
+  mainLotusIndexRoute: typeof mainLotusIndexRoute;
+  mainUserIndexRoute: typeof mainUserIndexRoute;
   mainLotusLotusIdIndexLazyRoute: typeof mainLotusLotusIdIndexLazyRoute;
   mainLotusCreateIndexLazyRoute: typeof mainLotusCreateIndexLazyRoute;
 }
 
 const mainRouteLazyRouteChildren: mainRouteLazyRouteChildren = {
-  mainLotusIndexLazyRoute: mainLotusIndexLazyRoute,
-  mainUserIndexLazyRoute: mainUserIndexLazyRoute,
+  mainLotusIndexRoute: mainLotusIndexRoute,
+  mainUserIndexRoute: mainUserIndexRoute,
   mainLotusLotusIdIndexLazyRoute: mainLotusLotusIdIndexLazyRoute,
   mainLotusCreateIndexLazyRoute: mainLotusCreateIndexLazyRoute
 };
@@ -140,16 +140,16 @@ const mainRouteLazyRouteWithChildren = mainRouteLazyRoute._addFileChildren(mainR
 
 export interface FileRoutesByFullPath {
   '/': typeof mainRouteLazyRouteWithChildren;
-  '/lotus': typeof mainLotusIndexLazyRoute;
-  '/user': typeof mainUserIndexLazyRoute;
+  '/lotus': typeof mainLotusIndexRoute;
+  '/user': typeof mainUserIndexRoute;
   '/lotus/$lotusId': typeof mainLotusLotusIdIndexLazyRoute;
   '/lotus/create': typeof mainLotusCreateIndexLazyRoute;
 }
 
 export interface FileRoutesByTo {
   '/': typeof mainRouteLazyRouteWithChildren;
-  '/lotus': typeof mainLotusIndexLazyRoute;
-  '/user': typeof mainUserIndexLazyRoute;
+  '/lotus': typeof mainLotusIndexRoute;
+  '/user': typeof mainUserIndexRoute;
   '/lotus/$lotusId': typeof mainLotusLotusIdIndexLazyRoute;
   '/lotus/create': typeof mainLotusCreateIndexLazyRoute;
 }
@@ -158,8 +158,8 @@ export interface FileRoutesById {
   __root__: typeof rootRoute;
   '/': typeof IndexLazyRoute;
   '/(main)': typeof mainRouteLazyRouteWithChildren;
-  '/(main)/lotus/': typeof mainLotusIndexLazyRoute;
-  '/(main)/user/': typeof mainUserIndexLazyRoute;
+  '/(main)/lotus/': typeof mainLotusIndexRoute;
+  '/(main)/user/': typeof mainUserIndexRoute;
   '/(main)/lotus/$lotusId/': typeof mainLotusLotusIdIndexLazyRoute;
   '/(main)/lotus/create/': typeof mainLotusCreateIndexLazyRoute;
 }
@@ -215,11 +215,11 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
       ]
     },
     "/(main)/lotus/": {
-      "filePath": "(main)/lotus/index.lazy.tsx",
+      "filePath": "(main)/lotus/index.tsx",
       "parent": "/(main)"
     },
     "/(main)/user/": {
-      "filePath": "(main)/user/index.lazy.tsx",
+      "filePath": "(main)/user/index.tsx",
       "parent": "/(main)"
     },
     "/(main)/lotus/$lotusId/": {

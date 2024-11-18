@@ -1,16 +1,13 @@
-interface AuthorType {
-  id: number;
-  nickname: string;
-  profile: string;
-}
+import { UserType } from '@/feature/User/type';
 
 export interface LotusType {
+  id: string;
   link: string;
   title: string;
   logo: string;
   date: Date;
   tags: string[];
-  author: AuthorType;
+  author: UserType;
   isPublic?: boolean;
 }
 

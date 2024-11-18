@@ -1,6 +1,7 @@
 import { ComponentProps, HTMLProps, createContext, useContext } from 'react';
 import { Badge, Text } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
+import { Link } from '@tanstack/react-router';
 import { BadgeVariantType, LotusType } from '@/feature/Lotus/type';
 import { Time } from '@/shared/components/Time';
 
@@ -65,15 +66,18 @@ export function LotusCreateDate(props: LotusCreateDateProps) {
   return <Time date={date} format="YYYY-MM-DD" {...props} />;
 }
 
-type LotusLinkProps = HTMLProps<HTMLAnchorElement>;
+type LotusLinkProps = {
+  children: React.ReactNode;
+  className?: string;
+};
 
-export function LotusLink({ children, ...props }: LotusLinkProps) {
-  const { link } = useLotusContext();
+export function LotusLink({ children, className }: LotusLinkProps) {
+  const { id: lotusId } = useLotusContext();
 
   return (
-    <a {...props} href={`/publicLotus/${link}`}>
+    <Link to={'/lotus/$lotusId'} params={{ lotusId }} className={className}>
       {children}
-    </a>
+    </Link>
   );
 }
 
