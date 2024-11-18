@@ -165,7 +165,7 @@ const insertHistory = () => {
 insertHistory();
 
 // Lotus History 목록 조회
-export const mockGetHistoryList = ({
+export const mockGetHistoryList = async ({
   request,
   params
 }: {
@@ -186,7 +186,7 @@ export const mockGetHistoryList = ({
     });
   }
 
-  const list = historyList.findMany({ page });
+  const list = await historyList.findMany({ page });
 
   return HttpResponse.json({
     list,
