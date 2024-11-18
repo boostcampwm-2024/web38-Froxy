@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HistoryExecResponseDto } from './dto/history.execResponse.dto';
 import { HistoryGetResponseDto } from './dto/history.getReponse.dto';
 import { HistoryResponseListDto } from './dto/history.responseList.dto';
 import { HistoryRepository } from './history.repository';
@@ -20,8 +21,6 @@ export class HistoryService {
   async saveHistory(gitToken: string, lotusId: string, execFilename: string, inputs: string[]): Promise<any> {
     const [lotus]: Lotus[] = await this.lotusRepository.findBy({ lotusId: lotusId });
     const file: GistApiFileListDto = await this.gistService.getCommit(lotus.gistRepositoryId, lotus.commitId);
-    // const file: GistApiFileListDto = await this.gistService.getCommit('0fd9d1999eae1c272bd071dc95f96f99','654dd3f1d7f17d172132aebae283e73356197d18');
-    console.log(execFilename);
     const history = await this.historyRepository.save({
       input: JSON.stringify(inputs),
       execFilename: execFilename,
@@ -30,7 +29,7 @@ export class HistoryService {
       lotus: lotus
     });
     this.execContainer(gitToken, lotus.gistRepositoryId, lotus.commitId, execFilename, inputs, history.historyId);
-    return { status: HISTORY_STATUS.PENDING };
+    return HistoryExecResponseDto.of(HISTORY_STATUS.PENDING);
   }
 
   async execContainer(
