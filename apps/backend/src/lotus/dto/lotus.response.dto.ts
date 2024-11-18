@@ -8,7 +8,7 @@ export class LotusResponseDto {
   title: string;
   isPublic: boolean;
   language: string;
-  createAt: Date;
+  date: Date;
   tag: SimpleTagResponseDto[];
 
   static ofSpreadData(user: SimpleUserResponseDto, lotus: Lotus): LotusResponseDto {
@@ -18,7 +18,7 @@ export class LotusResponseDto {
       title: lotus.title,
       language: lotus.language,
       isPublic: lotus.isPublic,
-      createAt: lotus.createdAt,
+      date: lotus.createdAt,
       tag: lotus.category
     };
   }
@@ -31,7 +31,7 @@ export class LotusResponseDto {
       title: lotus.title,
       language: lotus.language,
       isPublic: lotus.isPublic,
-      createAt: lotus.createdAt,
+      date: lotus.createdAt,
       tag: lotus.category
     };
   }
