@@ -53,7 +53,7 @@ export class DockerService {
     mainFileName: string,
     inputs: any[]
   ): Promise<string> {
-    const gistData: GistApiFileListDto = await this.gistService.getCommit(gistId, commitId);
+    const gistData: GistApiFileListDto = await this.gistService.getCommit(gistId, commitId, gitToken);
     const files: GistApiFileDto[] = gistData.files;
 
     // 컨테이너 생성
