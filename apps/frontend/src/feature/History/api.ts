@@ -19,6 +19,14 @@ export const getLotusHistoryList = async ({
   return body;
 };
 
+export const getLotusHistory = async ({ id, historyId }: { id: string; historyId: string }): Promise<HistoryType> => {
+  const response = await fetch(`/api/lotus/${id}/history/${historyId}`);
+
+  const data = (await response.json()) as HistoryType;
+
+  return data;
+};
+
 export interface PostCodeRunProps {
   lotusId: string;
   input: string[];
