@@ -4,6 +4,7 @@ import { QueryProvider } from './query';
 import { RouteProvider } from './router';
 
 import './style/index.css';
+import { OverlayProvider } from '@/shared/hooks/useOverlay';
 
 async function enableMocking() {
   if (process.env.NODE_ENV !== 'development') {
@@ -27,7 +28,9 @@ enableMocking().then(() => {
   root.render(
     <StrictMode>
       <QueryProvider>
-        <RouteProvider />
+        <OverlayProvider>
+          <RouteProvider />
+        </OverlayProvider>
       </QueryProvider>
     </StrictMode>
   );

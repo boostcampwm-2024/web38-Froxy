@@ -1,4 +1,5 @@
 import { DefaultBodyType, HttpResponse, PathParams, StrictRequest } from 'msw';
+import { MockRepository } from './MockRepository';
 
 // 사용자의 Lotus 목록 조회
 export const mockGetUserLotusList = () => {
@@ -129,6 +130,40 @@ export const mockGetLotusDetail = ({
   });
 };
 
+interface HistoryValue {
+  status: 'PENDING' | 'ERROR' | 'SUCCESS';
+  filename: string;
+  date: string;
+}
+
+const historyList = new MockRepository<HistoryValue>();
+
+const insertHistory = () => {
+  const historyMock: HistoryValue[] = [
+    {
+      status: 'SUCCESS',
+      date: '2024-11-15T14:30:00Z',
+      filename: 'main.js'
+    },
+    {
+      status: 'SUCCESS',
+      date: '2024-11-16T12:00:00Z',
+      filename: 'index.js'
+    },
+    {
+      status: 'ERROR',
+      date: '2024-11-14T16:45:00Z',
+      filename: 'main.js'
+    }
+  ];
+
+  for (const item of historyMock) {
+    historyList.create(item);
+  }
+};
+
+insertHistory();
+
 // Lotus History 목록 조회
 export const mockGetHistoryList = ({
   request,
@@ -151,28 +186,10 @@ export const mockGetHistoryList = ({
     });
   }
 
-  return HttpResponse.json({
-    list: [
-      {
-        historyId: '1',
-        status: 'PENDING',
-        date: '2024-11-15T14:30:00Z',
-        title: 'Backup in Progress'
-      },
-      {
-        historyId: '2',
+  const list = historyList.findMany({ page });
 
-        status: 'SUCCESS',
-        date: '2024-11-16T12:00:00Z',
-        title: 'Deployment Completed'
-      },
-      {
-        historyId: '3',
-        status: 'ERROR',
-        date: '2024-11-14T16:45:00Z',
-        title: 'Database Migration Failed'
-      }
-    ],
+  return HttpResponse.json({
+    list,
     page: {
       current: page,
       max: 3
@@ -182,60 +199,34 @@ export const mockGetHistoryList = ({
 
 // 코드 실행
 interface PostCodeRunBody {
-  input: string[];
+  input?: string[];
   execFileName: string;
 }
 
 export const mockPostCodeRun = async ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
-  const authorization = request.headers.get('Authorization');
+  const body = (await request.json()) as PostCodeRunBody;
 
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return new HttpResponse('Unauthorized: Invalid or missing token', {
-      status: 401,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-  }
-
-  try {
-    const body = (await request.json()) as PostCodeRunBody;
-
-    if (!body?.input?.length || !body?.execFileName) throw new Error('body 형식이 올바르지 않음');
-
-    return HttpResponse.json({
-      status: 'PENDING'
-    });
-  } catch (error) {
-    console.error(error);
+  if (!body?.execFileName)
     return new HttpResponse('Bad Request', {
       status: 400,
       headers: {
         'Content-Type': 'text/plain'
       }
     });
-  }
+
+  const newHistory = await historyList.create({
+    filename: body.execFileName,
+    date: new Date().toISOString(),
+    status: 'PENDING'
+  });
+
+  return HttpResponse.json({
+    status: newHistory.status
+  });
 };
 
 // 해당 히스토리 정보
-export const mockGetHistory = ({
-  request,
-  params
-}: {
-  request: StrictRequest<DefaultBodyType>;
-  params: PathParams;
-}) => {
-  const authorization = request.headers.get('Authorization');
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return new HttpResponse('Unauthorized: Invalid or missing token', {
-      status: 401,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-  }
-
+export const mockGetHistory = ({ params }: { params: PathParams }) => {
   const { lotusId, historyId } = params;
 
   if (!lotusId || !historyId) {
