@@ -15,6 +15,9 @@ export class UserService {
   findOne(gitId: number): Promise<User | null> {
     return this.userRepository.findOneBy({ gitId });
   }
+  findOneByUserId(userId: string): Promise<User | null> {
+    return this.userRepository.findOneBy({ userId });
+  }
 
   async loginUser(tokenData) {
     const accessToken = tokenData.access_token;
@@ -29,6 +32,8 @@ export class UserService {
     if (!user) {
       await this.saveUser(new UserCreateDto(inputUser, accessToken));
       user = await this.findOne(inputUser.id);
+    } else {
+      await this.userRepository.update({ gitId: inputUser.id }, { gitToken: accessToken });
     }
     return this.authService.createJwt(user.userId);
   }

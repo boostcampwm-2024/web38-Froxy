@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { isString } from 'class-validator';
-import { Response } from 'express';
+import { Request } from 'express';
 import { UserService } from '@/user/user.service';
 
 @Injectable()
@@ -36,9 +36,15 @@ export class AuthService {
     }
   }
 
-  getTokenFromResponse(res: Response): string {
-    const token = res.getHeader('Authorization');
-    if (!isString(token)) throw new HttpException('Invalid Authorization', HttpStatus.UNAUTHORIZED);
+  getIdFromRequest(req: Request): string {
+    const auth = req.header('Authorization');
+    if (!auth) {
+      throw new HttpException('Invalid Authorization', HttpStatus.UNAUTHORIZED);
+    }
+    const token = req.header('Authorization').split(' ')[1].trim();
+    if (!isString(token)) {
+      throw new HttpException('Invalid Authorization', HttpStatus.UNAUTHORIZED);
+    }
     return this.verifyJwt(token);
   }
 

@@ -18,6 +18,7 @@ export class LotusService {
     private readonly userService: UserService
   ) {}
   async createLotus(
+    userId: string,
     gitToken: string,
     title: string,
     isPublic: boolean,
@@ -37,8 +38,7 @@ export class LotusService {
     if (await this.checkAlreadyExist(gistUuid, currentCommitId)) {
       throw new HttpException('same commit Lotus already exist.', HttpStatus.CONFLICT);
     }
-    const gitUser = await this.gistService.getUserData(gitToken);
-    const userData = await this.userService.findOne(gitUser.id);
+    const userData = await this.userService.findOneByUserId(userId);
     await this.saveLotus(new LotusDto(title, isPublic, gistUuid, currentCommitId, userData, language, version));
     const lotusData = await this.lotusRepository.findOne({
       where: { gistRepositoryId: gistUuid, commitId: currentCommitId },
@@ -48,18 +48,35 @@ export class LotusService {
     return LotusResponseDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(userData), lotusData);
   }
 
-  async updateLotus(lotusId: string, title: string, tag: string[], isPublic: boolean): Promise<LotusResponseDto> {
-    const result = await this.lotusRepository.update({ lotusId }, { title, isPublic });
-    if (!result.affected) throw new HttpException('update fail', HttpStatus.BAD_REQUEST);
+  async updateLotus(
+    lotusId: string,
+    title: string,
+    tag: string[],
+    isPublic: boolean,
+    userIdWhoWantToUpdate: string
+  ): Promise<LotusResponseDto> {
     const updateLotus = await this.lotusRepository.findOne({
       where: { lotusId },
       relations: ['user']
     });
+    if (updateLotus.user.userId !== userIdWhoWantToUpdate) {
+      throw new HttpException('this is not allowed req', HttpStatus.FORBIDDEN);
+    }
     if (!updateLotus) throw new HttpException('invalid lotusId', HttpStatus.NOT_FOUND);
+    const result = await this.lotusRepository.update({ lotusId }, { title, isPublic });
+    if (!result.affected) throw new HttpException('update fail', HttpStatus.BAD_REQUEST);
     return LotusResponseDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(updateLotus.user), updateLotus);
   }
 
-  async deleteLotus(lotusId: string): Promise<MessageDto> {
+  async deleteLotus(lotusId: string, userIdWhoWantToDelete: string): Promise<MessageDto> {
+    const deleteLotus = await this.lotusRepository.findOne({
+      where: { lotusId },
+      relations: ['user']
+    });
+    if (deleteLotus.user.userId !== userIdWhoWantToDelete) {
+      throw new HttpException('this is not allowed req', HttpStatus.FORBIDDEN);
+    }
+
     const result = await this.lotusRepository.delete({ lotusId });
     if (!result.affected) throw new HttpException('no match data', HttpStatus.NOT_FOUND);
 
@@ -71,6 +88,11 @@ export class LotusService {
       where: { lotusId },
       relations: ['category', 'user']
     });
+    // todo : 이거 gist 정책 따라서 private 이어도 내부 볼 수 있게 해야 하나? 혹은 private이면 남들도 절대 못 보게?
+    // if (!lotusData.isPublic && lotusData.user.gitToken !== gitToken) {
+    //   throw new HttpException("this user can't access that lotus", HttpStatus.NOT_ACCEPTABLE);
+    // }
+
     const commitFiles = await this.gistService.getCommit(lotusData.gistRepositoryId, lotusData.commitId, gitToken);
 
     return LotusDetailDto.ofGistFileListDto(commitFiles, lotusData);
