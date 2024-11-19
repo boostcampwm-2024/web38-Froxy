@@ -18,9 +18,11 @@ export const HISTORY_STATUS_COLOR = {
 type HistoryStatus = (typeof HISTORY_STATUS)[keyof typeof HISTORY_STATUS];
 export interface HistoryType {
   id: string;
-  title: string;
-  date: Date;
   status: HistoryStatus;
+  filename: string;
+  input: string;
+  output: string;
+  date: Date;
 }
 
 const HistoryContext = createContext<HistoryType | null>(null);
@@ -44,14 +46,14 @@ export function HistoryProvider({ children, value }: HistoryProviderProps) {
   return <HistoryContext.Provider value={value}>{children}</HistoryContext.Provider>;
 }
 
-type HistoryTitleProps = ComponentProps<typeof Heading>;
+type HistoryFilenameProps = ComponentProps<typeof Heading>;
 
-export function HistoryTitle({ className, ...props }: HistoryTitleProps) {
-  const { title } = useHistoryContext();
+export function HistoryFilename({ className, ...props }: HistoryFilenameProps) {
+  const { filename } = useHistoryContext();
 
   return (
-    <Text size="md" className={cn('', className)} {...props}>
-      {title}
+    <Text className={cn('font-semibold', className)} {...props}>
+      {filename}
     </Text>
   );
 }
@@ -100,7 +102,7 @@ export function HistoryDate({ className, ...props }: HistoryDateProps) {
 }
 
 export const History = Object.assign(HistoryProvider, {
-  Title: HistoryTitle,
+  Filename: HistoryFilename,
   StatusIcon: HistoryStatusIcon,
   StatusLabel: HistoryStatusLabel,
   Date: HistoryDate

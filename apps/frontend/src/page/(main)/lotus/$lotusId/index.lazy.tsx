@@ -1,9 +1,7 @@
-import { Button } from '@froxy/design/components';
-
 import { createLazyFileRoute } from '@tanstack/react-router';
-
 import { AsyncBoundary } from '@/shared/components/AsyncBoundary';
 import { SuspenseLotusHistoryList } from '@/widget/History';
+import { CodeRunButton } from '@/widget/LotusCodeInput';
 import { SuspenseLotusDetail } from '@/widget/SuspenseLotusDetail';
 import { SuspenseLotusFiles } from '@/widget/SuspenseLotusFiles';
 
@@ -26,15 +24,11 @@ function RouteComponent() {
         <SuspenseLotusFiles id={id} />
       </AsyncBoundary>
 
-      <CreateHistoryButton />
+      <CodeRunButton lotusId={id} />
 
       <AsyncBoundary pending={<div>Loading...</div>} rejected={() => <div>Error!</div>}>
         <SuspenseLotusHistoryList id={id} />
       </AsyncBoundary>
     </div>
   );
-}
-
-function CreateHistoryButton() {
-  return <Button>실행하기</Button>;
 }
