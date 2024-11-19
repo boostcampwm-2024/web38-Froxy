@@ -1,5 +1,5 @@
-import { useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { getUserGistFile, getUserGistList, getUserInfo, getUserLotusList } from './api';
+import { useMutation, useQuery, useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { getUserGistFile, getUserGistList, getUserInfo, getUserLotusList, postLogin } from './api';
 
 export const useUserInfoSuspenseQuery = () => {
   const query = useSuspenseQuery({
@@ -39,4 +39,21 @@ export const useUserGistFileSuspenseQuery = ({ gistId }: { gistId: string }) => 
   });
 
   return query;
+};
+
+export const useUserQuery = () => {
+  const query = useQuery({
+    queryKey: ['user'],
+    queryFn: getUserInfo
+  });
+
+  return query;
+};
+
+export const useLoginMutation = () => {
+  const mutation = useMutation({
+    mutationFn: postLogin
+  });
+
+  return mutation;
 };

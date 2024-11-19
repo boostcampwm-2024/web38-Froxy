@@ -1,14 +1,6 @@
 import { UserType } from './type';
 import { LotusType } from '@/feature/Lotus/type';
-
-// github 사용자 기본 정보 조회
-export const getUserInfo = async () => {
-  const res = await fetch('/api/user');
-
-  const user = await res.json();
-
-  return user as UserType;
-};
+import { api } from '@/shared/utils/api';
 
 // 사용자의 Lotus 목록 조회
 export const getUserLotusList = async ({ page = 1, size = 10 }: { page?: number; size?: number }) => {
@@ -58,4 +50,19 @@ export const getUserGistFile = async ({ gistId }: { gistId: string }) => {
   const { files } = await res.json();
 
   return files as GistFileType[];
+};
+
+export const postLogin = async () => {
+  const res = await api.post<{ token: string }>('/api/user/login');
+
+  const data = res.data;
+
+  return data;
+};
+
+//사용자 기본 정보 조회
+export const getUserInfo = async () => {
+  const res = await api.get<UserType>('/api/user');
+
+  return res.data;
 };
