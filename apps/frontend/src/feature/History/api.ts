@@ -1,13 +1,14 @@
 import { HistoryType } from '.';
+import { api } from '@/shared/utils/api';
 
 export const getLotusHistoryList = async ({
   id
 }: {
   id: string;
 }): Promise<{ list: HistoryType[]; page: { current: number; max: number } }> => {
-  const response = await fetch(`/api/lotus/${id}/history`);
+  const response = await api.get(`/api/lotus/${id}/history`);
 
-  const data = (await response.json()) as { list: HistoryType[]; page: { current: number; max: number } };
+  const data = response.data as { list: HistoryType[]; page: { current: number; max: number } };
 
   console.log(data);
 
@@ -20,9 +21,9 @@ export const getLotusHistoryList = async ({
 };
 
 export const getLotusHistory = async ({ id, historyId }: { id: string; historyId: string }): Promise<HistoryType> => {
-  const response = await fetch(`/api/lotus/${id}/history/${historyId}`);
+  const response = await api.get(`/api/lotus/${id}/history/${historyId}`);
 
-  const data = (await response.json()) as HistoryType;
+  const data = response.data as HistoryType;
 
   return data;
 };
@@ -38,12 +39,9 @@ export const postCodeRun = async ({ lotusId, input, execFileName }: PostCodeRunP
     input,
     execFileName
   };
-  const res = await fetch(`/api/lotus/${lotusId}/history`, {
-    method: 'POST',
-    body: JSON.stringify(body)
-  });
+  const response = await api.post(`/api/lotus/${lotusId}/history`, body);
 
-  const data = await res.json();
+  const data = response.data;
 
   return data;
 };

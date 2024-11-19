@@ -4,9 +4,9 @@ import { api } from '@/shared/utils/api';
 
 // 사용자의 Lotus 목록 조회
 export const getUserLotusList = async ({ page = 1, size = 10 }: { page?: number; size?: number }) => {
-  const res = await fetch(`/api/user/lotus?page=${page}&size=${size}`);
+  const response = await api.get(`/api/user/lotus?page=${page}&size=${size}`);
 
-  const { lotuses } = await res.json();
+  const { lotuses } = response.data;
 
   return lotuses.map((lotus: LotusType) => ({
     ...lotus,
@@ -29,9 +29,9 @@ interface UserGistListResponse {
 
 // 사용자의 Gist 목록 조회
 export const getUserGistList = async ({ page = 1, size = 10 }: { page?: number; size?: number }) => {
-  const res = await fetch(`/api/user/gist?page=${page}&size=${size}`);
+  const response = await api.get(`/api/user/gist?page=${page}&size=${size}`);
 
-  const data = await res.json();
+  const data = response.data;
 
   return data as UserGistListResponse;
 };
@@ -45,9 +45,9 @@ interface GistFileType {
 }
 
 export const getUserGistFile = async ({ gistId }: { gistId: string }) => {
-  const res = await fetch(`/api/user/gist/${gistId}`);
+  const response = await api.get(`/api/user/gist/${gistId}`);
 
-  const { files } = await res.json();
+  const { files } = await response.data;
 
   return files as GistFileType[];
 };

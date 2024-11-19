@@ -1,11 +1,12 @@
 import { LotusType } from './type';
 
 import { CodeViewValue } from '@/feature/CodeView';
+import { api } from '@/shared/utils/api';
 
 export const getLotusList = async ({ page = 1 }: { page: number }) => {
-  const res = await fetch(`/api/lotus?page=${page}`);
+  const response = await api.get(`/api/lotus?page=${page}`);
 
-  const { lotuses } = await res.json();
+  const { lotuses } = response.data;
 
   return lotuses.map((lotus: LotusType) => ({
     ...lotus,
@@ -18,9 +19,9 @@ export const getLotusDetail = async ({
 }: {
   id: string;
 }): Promise<LotusType & { language: string; files: CodeViewValue[] }> => {
-  const response = await fetch(`/api/lotus/${id}`);
+  const response = await api.get(`/api/lotus/${id}`);
 
-  const data = await response.json();
+  const data = await response.data;
 
   return { ...data, date: new Date(data.date) };
 };
@@ -30,11 +31,9 @@ export const deleteLotus = async ({
 }: {
   id: string;
 }): Promise<LotusType & { language: string; files: CodeViewValue[] }> => {
-  const response = await fetch(`/api/lotus/${id}`, {
-    method: 'DELETE'
-  });
+  const response = await api.delete(`/api/lotus/${id}`);
 
-  const data = await response.json();
+  const data = response.data;
 
   return data;
 };
@@ -52,12 +51,9 @@ export const updateLotus = async ({
   id: string;
   body: UpdateLotusDto;
 }): Promise<LotusType & { language: string; files: CodeViewValue[] }> => {
-  const response = await fetch(`/api/lotus/${id}`, {
-    method: 'PATCH',
-    body: JSON.stringify(body)
-  });
+  const response = await api.patch(`/api/lotus/${id}`, body);
 
-  const data = await response.json();
+  const data = await response.data;
 
   return data;
 };
@@ -74,12 +70,9 @@ export const createLotus = async ({
 }: {
   body: CreateLotusDto;
 }): Promise<LotusType & { language: string; files: CodeViewValue[] }> => {
-  const response = await fetch(`/api/lotus`, {
-    method: 'POST',
-    body: JSON.stringify(body)
-  });
+  const response = await api.post(`/api/lotus`, body);
 
-  const data = await response.json();
+  const data = await response.data;
 
   return data;
 };
