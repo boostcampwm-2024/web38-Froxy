@@ -1,6 +1,7 @@
 import { Button, Heading } from '@froxy/design/components';
 import { useNavigate } from '@tanstack/react-router';
-import { CreateLotusButton, LoginButton, LogoutButton } from './Navigation';
+import { LoginButton } from './LoginButton';
+import { CreateLotusButton, LogoutButton } from './Navigation';
 import { useUserQuery } from '@/feature/User/query';
 
 export function Header() {
@@ -30,7 +31,7 @@ export function Header() {
               <img className="w-10 h-10 rounded-full" src="/image/exampleImage.jpeg" alt="프로필 사진" />
             </>
           ) : (
-            <LoginButton />
+            <LoginButton variant={'default'}>Login</LoginButton>
           )}
         </div>
       </div>
