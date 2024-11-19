@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Headers, HttpCode, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Headers, HttpCode, Param, Post, Query, Req } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiHeader, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { Request } from 'express';
 import { HistoryExecRequestDto } from './dto/history.execRequest.dto';
 import { HistoryExecResponseDto } from './dto/history.execResponse.dto';
 import { HistoryGetResponseDto } from './dto/history.getReponse.dto';
@@ -12,11 +13,7 @@ import { UserService } from '@/user/user.service';
 
 @Controller('lotus/:lotusId/history')
 export class HistoryController {
-  constructor(
-    private historyService: HistoryService,
-    private configService: ConfigService,
-    private authServer: AuthService
-  ) {}
+  constructor(private historyService: HistoryService, private authServer: AuthService) {}
 
   @Post()
   @HttpCode(200)
@@ -24,11 +21,11 @@ export class HistoryController {
   @ApiBody({ type: HistoryExecRequestDto })
   @ApiResponse({ status: 200, description: '실행 성공', type: HistoryExecResponseDto })
   async execCode(
-    @Headers('Authorization') token: string,
+    @Req() request: Request,
     @Param('lotusId') lotusId: string,
     @Body() historyExecRequestDto: HistoryExecRequestDto
   ): Promise<any> {
-    const gitToken = await this.authServer.getUserGitToken(this.authServer.verifyJwt(token));
+    const gitToken = await this.authServer.getUserGitToken(this.authServer.getIdFromRequest(request));
     // const execFileName = 'FunctionDivide.js';
     // const input = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
     const { input, execFileName } = historyExecRequestDto;
