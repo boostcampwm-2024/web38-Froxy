@@ -1,5 +1,6 @@
 import { Controller, Get, Query, Redirect, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { UserCreateDto } from './dto/user.create.dto';
 import { UserService } from './user.service';
 import { LotusPublicDto } from '@/lotus/dto/lotus.public.dto';
 import { LotusService } from '@/lotus/lotus.service';
@@ -14,6 +15,30 @@ export class UserController {
   private OAUTH_CLIENT_ID = this.configService.get<string>('OAUTH_CLIENT_ID');
   private OAUTH_CLIENT_SECRETS = this.configService.get<string>('OAUTH_CLIENT_SECRETS');
   private OAUTH_LOGIN_CALLBACK_URL = this.configService.get<string>('OAUTH_LOGIN_CALLBACK_URL');
+
+  private TEST_GIT_TOKEN = this.configService.get<string>('TEST_GIT_TOKEN');
+  private TEST_GIT_LOGIN = this.configService.get<string>('TEST_GIT_LOGIN');
+  private TEST_GIT_PROFILE = this.configService.get<string>('TEST_GIT_PROFILE');
+  private TEST_GIT_ID = this.configService.get<number>('TEST_GIT_ID');
+
+  @Get('test')
+  async testLogin() {
+    let testUser = await this.userService.findOne(this.TEST_GIT_ID);
+    if (!testUser) {
+      await this.userService.saveUser(
+        new UserCreateDto(
+          {
+            login: this.TEST_GIT_LOGIN,
+            avatar_url: this.TEST_GIT_PROFILE,
+            id: this.TEST_GIT_ID
+          },
+          this.TEST_GIT_TOKEN
+        )
+      );
+      testUser = await this.userService.findOne(this.TEST_GIT_ID);
+    }
+    return this.userService.makeTestUser(testUser);
+  }
 
   @Get('login')
   @Redirect()

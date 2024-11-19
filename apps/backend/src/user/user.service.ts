@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable, forwardRef } from '@nestjs/common';
 import { UserCreateDto } from './dto/user.create.dto';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
@@ -6,7 +6,12 @@ import { AuthService } from '@/auth/auth.service';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository, private authService: AuthService) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    @Inject(forwardRef(() => AuthService))
+    private authService: AuthService
+  ) {}
+
   findOne(gitId: number): Promise<User | null> {
     return this.userRepository.findOneBy({ gitId });
   }
@@ -28,7 +33,17 @@ export class UserService {
     return this.authService.createJwt(user.userId);
   }
 
+  async makeTestUser(user: User) {
+    return this.authService.createJwt(user.userId);
+  }
+
   async saveUser(user: User): Promise<void> {
     await this.userRepository.save(user);
+  }
+
+  async findUserGistToken(userId: string): Promise<string> {
+    const foundUser = await this.userRepository.findOneBy({ userId });
+    if (!foundUser) throw new HttpException('user data not found', HttpStatus.NOT_FOUND);
+    return foundUser.gitToken;
   }
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LotusController } from './lotus.controller';
 import { Lotus } from './lotus.entity';
@@ -8,7 +8,7 @@ import { GistModule } from '@/gist/gist.module';
 import { UserModule } from '@/user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Lotus]), GistModule, UserModule],
+  imports: [TypeOrmModule.forFeature([Lotus]), GistModule, forwardRef(() => UserModule)],
   controllers: [LotusController],
   providers: [LotusService, LotusRepository],
   exports: [LotusService, LotusRepository]
