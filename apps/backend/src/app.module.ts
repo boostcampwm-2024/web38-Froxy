@@ -8,6 +8,7 @@ import { typeORMConfig } from './config/typeorm.config';
 import { DockerModule } from './docker/docker.module';
 import { GistModule } from './gist/gist.module';
 import { HistoryModule } from './history/history.module';
+import { TagModule } from './tag/tag.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -24,7 +25,8 @@ import { UserModule } from './user/user.module';
     GistModule,
     HistoryModule,
     UserModule,
-    AuthModule
+    AuthModule,
+    TagModule
   ],
   controllers: [AppController],
   providers: [AppService]

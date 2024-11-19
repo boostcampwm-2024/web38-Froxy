@@ -150,3 +150,7 @@ code span[data-highlighted-line-id='rm'] {
 [data-theme='github-dark'] [data-highlighted-chars] {
   background-color: var(--highlight-char-bg);
 }
+
+.terminal code > [data-line]::before {
+  content: '>';
+}

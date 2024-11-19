@@ -1,12 +1,18 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { TagCreateRequestDto } from './dto/tag.createRequest.dto';
 import { TagService } from './tag.service';
 
-@Controller()
+@Controller('tag')
 export class TagController {
   constructor(private readonly tagService: TagService) {}
 
+  @Post()
+  createtag(@Body() tagCreateRequestDto: TagCreateRequestDto): any {
+    return this.tagService.createTag(tagCreateRequestDto.tag);
+  }
+
   @Get()
-  getHello(): string {
-    return this.tagService.getHello();
+  searchTag(@Query('keyword') keyword: string) {
+    return this.tagService.serachTag(keyword);
   }
 }

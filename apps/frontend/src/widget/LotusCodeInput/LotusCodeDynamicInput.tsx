@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Button, Input, Text } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,21 +14,21 @@ export const lotusCodeInputValue = z.object({
   )
 });
 
-export type LotusCodeFormValues = z.infer<typeof lotusCodeInputValue>;
+export type LotusCodeDynamicInputValue = z.infer<typeof lotusCodeInputValue>;
 
-interface LotusCodeInputFormProps {
+interface LotusCodeDynamicInputProps {
   className?: string;
-  onSubmit?: (args: { data: LotusCodeFormValues; reset: () => void }) => void;
+  onChangeValue?: (data: LotusCodeDynamicInputValue) => void;
+  isDisabled?: boolean;
 }
 
-export function LotusCodeInputForm(props: LotusCodeInputFormProps) {
+export function LotusCodeDynamicInput(props: LotusCodeDynamicInputProps) {
   const {
     register,
-    reset,
     control,
-    handleSubmit,
+    watch,
     formState: { errors }
-  } = useForm<LotusCodeFormValues>({
+  } = useForm<LotusCodeDynamicInputValue>({
     defaultValues: lotusCodeInputValue.parse({ items: [] }),
     resolver: zodResolver(lotusCodeInputValue)
   });
@@ -37,7 +38,7 @@ export function LotusCodeInputForm(props: LotusCodeInputFormProps) {
     name: 'items'
   });
 
-  const onSubmit = (data: LotusCodeFormValues) => props.onSubmit?.({ data, reset });
+  const values = watch();
 
   const handleReorder = (newFields: typeof fields) => {
     const firstDiffIndex = fields.findIndex((field, index) => field.id !== newFields[index].id);
@@ -49,8 +50,12 @@ export function LotusCodeInputForm(props: LotusCodeInputFormProps) {
     swap(firstDiffIndex, newIndex);
   };
 
+  useEffect(() => {
+    props.onChangeValue?.(values);
+  }, [values, props]);
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className={cn(props.className)}>
+    <form className={cn(props.className)}>
       <Reorder.Group drag="y" values={fields} onReorder={handleReorder}>
         {fields.map((field, index) => (
           <Reorder.Item key={field.id} value={field} className="hover:cursor-move">
@@ -59,7 +64,9 @@ export function LotusCodeInputForm(props: LotusCodeInputFormProps) {
                 {index + 1}번
               </Text>
               <Input {...register(`items.${index}.input`)} placeholder={`Input ${index + 1}`} />
-              <Button onClick={() => remove(index)}>삭제</Button>
+              <Button type="button" onClick={() => remove(index)}>
+                삭제
+              </Button>
             </div>
 
             <Text variant="destructive" className="min-h-5 my-2 pl-12">
@@ -68,17 +75,9 @@ export function LotusCodeInputForm(props: LotusCodeInputFormProps) {
           </Reorder.Item>
         ))}
       </Reorder.Group>
-      <Button variant={'outline'} className="block w-full my-5" onClick={() => append({ input: '' })}>
+      <Button type="button" variant={'outline'} className="block w-full my-5" onClick={() => append({ input: '' })}>
         새로운 항목 추가
       </Button>
-      <div className="flex gap-2">
-        <Button className="w-full" variant={'secondary'} onClick={() => reset()}>
-          취소하기
-        </Button>
-        <Button className="w-full" type="submit">
-          완료하기
-        </Button>
-      </div>
     </form>
   );
 }
