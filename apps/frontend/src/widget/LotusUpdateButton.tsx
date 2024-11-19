@@ -9,7 +9,7 @@ import { useOverlay } from '@/shared/hooks/useOverlay';
 export function LotusUpdateButton({ lotusId }: { lotusId: string }) {
   const { mutate } = useLotusUpdateMutation();
 
-  const { open, close } = useOverlay();
+  const { open, exit } = useOverlay();
 
   const queryClient = useQueryClient();
 
@@ -22,17 +22,17 @@ export function LotusUpdateButton({ lotusId }: { lotusId: string }) {
         }
       }
     );
-    close();
+    exit();
   };
 
   const handleOpenUpdateModal = () => {
-    open(
-      <ModalBox onClose={close}>
+    open(() => (
+      <ModalBox onClose={exit}>
         <div className="p-6 w-1/2 bg-white rounded-lg">
-          <LotusUpdateForm lotusId={lotusId} onSubmit={onSubmit} onCancel={close} />
+          <LotusUpdateForm lotusId={lotusId} onSubmit={onSubmit} onCancel={exit} />
         </div>
       </ModalBox>
-    );
+    ));
   };
 
   return (

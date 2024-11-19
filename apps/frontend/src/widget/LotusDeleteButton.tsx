@@ -7,7 +7,7 @@ import { useOverlay } from '@/shared/hooks/useOverlay';
 
 export function LotusDeleteButton({ lotusId }: { lotusId: string }) {
   const { mutate } = useLotusDeleteMutation();
-  const { open, close } = useOverlay();
+  const { open, exit } = useOverlay();
 
   const navigate = useNavigate();
 
@@ -21,18 +21,18 @@ export function LotusDeleteButton({ lotusId }: { lotusId: string }) {
         }
       }
     );
-    close();
+    exit();
   };
 
   const handleOpenDeleteModal = () => {
-    open(
-      <ModalBox onClose={close}>
+    open(() => (
+      <ModalBox onClose={exit}>
         <div className="p-6 w-80 bg-white rounded-lg">
           <Heading size="sm" className="p-2 pb-8 text-center">
             정말로 삭제하시겠습니까?
           </Heading>
           <div className="flex gap-2">
-            <Button type="button" className="w-full" variant={'secondary'} onClick={close}>
+            <Button type="button" className="w-full" variant={'secondary'} onClick={exit}>
               취소하기
             </Button>
             <Button className="w-full" variant={'destructive'} onClick={handleDeleteLotus}>
@@ -41,7 +41,7 @@ export function LotusDeleteButton({ lotusId }: { lotusId: string }) {
           </div>
         </div>
       </ModalBox>
-    );
+    ));
   };
 
   return (
