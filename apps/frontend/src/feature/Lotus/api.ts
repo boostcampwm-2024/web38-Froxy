@@ -41,7 +41,7 @@ export const deleteLotus = async ({
 
 interface UpdateLotusDto {
   title?: string;
-  tag?: string[];
+  tags?: string[];
   isPublic?: boolean;
 }
 
@@ -54,6 +54,28 @@ export const updateLotus = async ({
 }): Promise<LotusType & { language: string; files: CodeViewValue[] }> => {
   const response = await fetch(`/api/lotus/${id}`, {
     method: 'PATCH',
+    body: JSON.stringify(body)
+  });
+
+  const data = await response.json();
+
+  return data;
+};
+
+interface CreateLotusDto {
+  title: string;
+  isPublic: boolean;
+  tags: string[];
+  gistUuid: string;
+}
+
+export const createLotus = async ({
+  body
+}: {
+  body: CreateLotusDto;
+}): Promise<LotusType & { language: string; files: CodeViewValue[] }> => {
+  const response = await fetch(`/api/lotus`, {
+    method: 'POST',
     body: JSON.stringify(body)
   });
 
