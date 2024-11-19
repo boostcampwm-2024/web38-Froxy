@@ -44,7 +44,8 @@ export const useUserGistFileSuspenseQuery = ({ gistId }: { gistId: string }) => 
 export const useUserQuery = () => {
   const query = useQuery({
     queryKey: ['user'],
-    queryFn: getUserInfo
+    queryFn: getUserInfo,
+    retry: 1
   });
 
   return query;
