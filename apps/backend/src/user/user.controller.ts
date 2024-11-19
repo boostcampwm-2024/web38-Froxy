@@ -1,5 +1,7 @@
-import { Controller, Get, Query, Redirect, Res } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpException, HttpStatus, Query, Redirect, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { TokenDTO } from './dto/token.dto';
 import { UserCreateDto } from './dto/user.create.dto';
 import { UserService } from './user.service';
 import { LotusPublicDto } from '@/lotus/dto/lotus.public.dto';
@@ -22,7 +24,10 @@ export class UserController {
   private TEST_GIT_ID = this.configService.get<number>('TEST_GIT_ID');
 
   @Get('test')
-  async testLogin() {
+  @HttpCode(200)
+  @ApiOperation({ summary: 'test용 access token 발급' })
+  @ApiResponse({ status: 200, description: '실행 성공', type: TokenDTO })
+  async testLogin(): Promise<TokenDTO> {
     let testUser = await this.userService.findOne(this.TEST_GIT_ID);
     if (!testUser) {
       await this.userService.saveUser(
@@ -37,7 +42,7 @@ export class UserController {
       );
       testUser = await this.userService.findOne(this.TEST_GIT_ID);
     }
-    return { token: await this.userService.makeTestUser(testUser) };
+    return TokenDTO.of(await this.userService.makeTestUser(testUser));
   }
 
   @Get('login')
@@ -48,7 +53,7 @@ export class UserController {
   }
 
   @Get('login/callback')
-  async githubCallback(@Query('code') code: string, @Res() res) {
+  async githubCallback(@Query('code') code: string): Promise<TokenDTO> {
     try {
       const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
         method: 'POST',
@@ -64,14 +69,19 @@ export class UserController {
       });
       const tokenData = await tokenResponse.json();
       const token = await this.userService.loginUser(tokenData);
-      res.json({ token });
+      return TokenDTO.of(token);
     } catch (error) {
       console.error('GitHub OAuth 오류:', error);
-      res.status(500).send('GitHub 인증에 실패했습니다.');
+      throw new HttpException('GitHub 인증에 실패했습니다.', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @Get('/lotus')
+  @HttpCode(200)
+  @ApiOperation({ summary: '사용자 lotus 목록 가져오기' })
+  @ApiResponse({ status: 200, description: '실행 성공', type: LotusPublicDto })
+  @ApiQuery({ name: 'page', type: String, example: '1', required: false })
+  @ApiQuery({ name: 'size', type: String, example: '10', required: false })
   getUserLotus(@Query('page') page: number, @Query('size') size: number): Promise<LotusPublicDto> {
     const userId = '1';
     return this.lotusService.getUserLotus(userId, page, size);
