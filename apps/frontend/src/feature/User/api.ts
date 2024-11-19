@@ -11,7 +11,7 @@ export const getUserInfo = async () => {
 };
 
 // 사용자의 Lotus 목록 조회
-export const getUserLotusList = async ({ page, size }: { page: number; size: number }) => {
+export const getUserLotusList = async ({ page = 1, size = 10 }: { page?: number; size?: number }) => {
   const res = await fetch(`/api/user/lotus?page=${page}&size=${size}`);
 
   const { lotuses } = await res.json();
@@ -20,4 +20,42 @@ export const getUserLotusList = async ({ page, size }: { page: number; size: num
     ...lotus,
     date: new Date(lotus.date)
   })) as LotusType[];
+};
+
+interface GistType {
+  gistId: string;
+  title: string;
+  nickname: string;
+}
+
+interface UserGistListResponse {
+  gists: GistType[];
+  page: number;
+  size: number;
+  hasNextPage: boolean;
+}
+
+// 사용자의 Gist 목록 조회
+export const getUserGistList = async ({ page = 1, size = 10 }: { page?: number; size?: number }) => {
+  const res = await fetch(`/api/user/gist?page=${page}&size=${size}`);
+
+  const data = await res.json();
+
+  return data as UserGistListResponse;
+};
+
+// TODO : Gist Feature 분리 고려
+// 특정 gist의 파일 조회
+interface GistFileType {
+  filename: string;
+  language: string;
+  content: string;
+}
+
+export const getUserGistFile = async ({ gistId }: { gistId: string }) => {
+  const res = await fetch(`/api/user/gist/${gistId}`);
+
+  const { files } = await res.json();
+
+  return files as GistFileType[];
 };
