@@ -1,7 +1,24 @@
 import { DefaultBodyType, HttpResponse, StrictRequest } from 'msw';
 
+const MOCK_UUID = 'mock-uuid';
+
 // github 사용자 기본 정보 조회 api
-export const mockGetUserInfo = () => {
+export const mockGetUserInfo = ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
+  const authorization = request.headers.get('Authorization');
+
+  const [type, token] = authorization?.split(' ') || [];
+
+  console.log('type', type, 'token', token, 'MOCK_UUID', MOCK_UUID, token === MOCK_UUID);
+
+  if (token !== MOCK_UUID || type !== 'Bearer') {
+    return new HttpResponse('Unauthorized: Invalid or missing token', {
+      status: 401,
+      headers: {
+        'Content-Type': 'text/plain'
+      }
+    });
+  }
+
   return HttpResponse.json({
     id: '1',
     nickname: 'mockUser',
@@ -48,20 +65,9 @@ export const mockPatchUserInfo = async ({ request }: { request: StrictRequest<De
 };
 
 // 로그인 api
-export const mockLogin = ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
-  const authorization = request.headers.get('Authorization');
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return new HttpResponse('Unauthorized: Invalid or missing token', {
-      status: 401,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-  }
-
+export const mockLogin = () => {
   return HttpResponse.json({
-    token: '가짜 토큰'
+    token: MOCK_UUID
   });
 };
 
