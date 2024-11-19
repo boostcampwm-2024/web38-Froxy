@@ -1,8 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { LotusCreateRequestDto } from './dto/lotus.createRequest.dto';
 import { LotusDetailDto } from './dto/lotus.detail.dto';
 import { LotusDto } from './dto/lotus.dto';
 import { LotusPublicDto } from './dto/lotus.public.dto';
 import { LotusResponseDto } from './dto/lotus.response.dto';
+import { LotusUpdateRequestDto } from './dto/lotus.updateRequest.dto';
 import { MessageDto } from './dto/message.dto';
 import { SimpleUserResponseDto } from './dto/simple.user.response.dto';
 import { Lotus } from './lotus.entity';
@@ -20,28 +22,27 @@ export class LotusService {
   async createLotus(
     userId: string,
     gitToken: string,
-    title: string,
-    isPublic: boolean,
-    tag: string[],
-    gistUuid: string,
-    inpLanguage: string,
-    inpVersion: string
+    lotusInputData: LotusCreateRequestDto
   ): Promise<LotusResponseDto> {
-    const language = !inpLanguage ? 'NodeJs' : inpLanguage;
-    const version: string = !inpVersion ? 'v22.11.0' : inpVersion;
-    const commits = await this.gistService.getCommitsForAGist(gistUuid, 1, gitToken);
+    if (!lotusInputData.language) {
+      lotusInputData.language = 'JavaScript';
+    }
+    if (!lotusInputData.version) {
+      lotusInputData.version = 'NodeJs:v22.11.0';
+    }
+    const commits = await this.gistService.getCommitsForAGist(lotusInputData.gistUuid, 1, gitToken);
     if (commits.length < 1) {
       throw new HttpException('this gist repository has no commit.', HttpStatus.NOT_FOUND);
     }
     const currentCommitId = commits[0].commitId;
 
-    if (await this.checkAlreadyExist(gistUuid, currentCommitId)) {
+    if (await this.checkAlreadyExist(lotusInputData.gistUuid, currentCommitId)) {
       throw new HttpException('same commit Lotus already exist.', HttpStatus.CONFLICT);
     }
     const userData = await this.userService.findOneByUserId(userId);
-    await this.saveLotus(new LotusDto(title, isPublic, gistUuid, currentCommitId, userData, language, version));
+    await this.saveLotus(new LotusDto(currentCommitId, userData, lotusInputData));
     const lotusData = await this.lotusRepository.findOne({
-      where: { gistRepositoryId: gistUuid, commitId: currentCommitId },
+      where: { gistRepositoryId: lotusInputData.gistUuid, commitId: currentCommitId },
       relations: ['category']
     });
 
@@ -50,9 +51,7 @@ export class LotusService {
 
   async updateLotus(
     lotusId: string,
-    title: string,
-    tag: string[],
-    isPublic: boolean,
+    lotusUpdateRequestDto: LotusUpdateRequestDto,
     userIdWhoWantToUpdate: string
   ): Promise<LotusResponseDto> {
     const updateLotus = await this.lotusRepository.findOne({
@@ -63,7 +62,10 @@ export class LotusService {
       throw new HttpException('this is not allowed req', HttpStatus.FORBIDDEN);
     }
     if (!updateLotus) throw new HttpException('invalid lotusId', HttpStatus.NOT_FOUND);
-    const result = await this.lotusRepository.update({ lotusId }, { title, isPublic });
+    const result = await this.lotusRepository.update(
+      { lotusId },
+      { title: lotusUpdateRequestDto.title, isPublic: lotusUpdateRequestDto.isPublic }
+    );
     if (!result.affected) throw new HttpException('update fail', HttpStatus.BAD_REQUEST);
     return LotusResponseDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(updateLotus.user), updateLotus);
   }

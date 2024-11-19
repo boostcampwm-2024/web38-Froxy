@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsString, ValidateNested } from 'class-validator';
+import { LotusCreateRequestDto } from './lotus.createRequest.dto';
 import { Comment } from '@/comment/comment.entity';
 import { History } from '@/history/history.entity';
 import { Tag } from '@/tag/tag.entity';
@@ -46,21 +47,13 @@ export class LotusDto {
   @Type(() => Tag)
   category: Tag[];
 
-  constructor(
-    title: string,
-    isPublic: boolean,
-    gistRepositoryId: string,
-    commitId: string,
-    user: User,
-    language: string,
-    version: string
-  ) {
-    this.title = title;
-    this.isPublic = isPublic;
-    this.gistRepositoryId = gistRepositoryId;
+  constructor(commitId: string, user: User, lotusInputData: LotusCreateRequestDto) {
+    this.title = lotusInputData.title;
+    this.isPublic = lotusInputData.isPublic;
+    this.gistRepositoryId = lotusInputData.gistUuid;
     this.commitId = commitId;
-    this.language = language;
-    this.version = version;
+    this.language = lotusInputData.language;
+    this.version = lotusInputData.version;
     this.comments = [];
     this.historys = [];
     this.category = [];
