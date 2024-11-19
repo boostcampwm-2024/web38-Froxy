@@ -1,29 +1,39 @@
-import { Button, Heading, Text } from '@froxy/design/components';
+import { Button, Heading } from '@froxy/design/components';
+import { useNavigate } from '@tanstack/react-router';
+import { CreateLotusButton, LoginButton, LogoutButton } from './Navigation';
+import { useUserQuery } from '@/feature/User/query';
 
 export function Header() {
-  // TODO: 로그인 여부 확인하는 로직 추가 필요
-  const isLogin = false;
+  const { data } = useUserQuery();
+
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate({ to: '/lotus' });
+  };
 
   return (
-    <div className="flex justify-center mb-7 w-full shadow-md">
+    <header className="flex justify-center mb-7 w-full shadow-md">
       <div className="w-full max-w-screen-xl py-5 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-        <div className="flex items-center gap-4">
+        <Button className="flex items-center gap-4" variant={null} onClick={() => handleClick()}>
           <img className="w-14 h-14" src="/image/logoIcon.svg" alt="로고" />
           <Heading size="lg">Froxy</Heading>
-        </div>
-        <div className="flex items-center gap-4">
-          {isLogin ? (
+        </Button>
+        <div className="flex items-center gap-8">
+          {data ? (
             <>
-              <Button variant={'ghost'}>
-                <Text variant="muted">create Lotus</Text>
-              </Button>
+              <div className="flex items-center">
+                <CreateLotusButton />
+                <LogoutButton />
+              </div>
+
               <img className="w-10 h-10 rounded-full" src="/image/exampleImage.jpeg" alt="프로필 사진" />
             </>
           ) : (
-            <Button variant={'default'}>Login</Button>
+            <LoginButton />
           )}
         </div>
       </div>
-    </div>
+    </header>
   );
 }
