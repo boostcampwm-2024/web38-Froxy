@@ -1,17 +1,22 @@
-import { Body, Controller, Delete, Get, Headers, HttpCode, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Headers, HttpCode, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Request } from 'express';
 import { GistService } from './gist.service';
+import { AuthService } from '@/auth/auth.service';
 
 @Controller('user')
 export class GistController {
-  constructor(private readonly gistService: GistService, private readonly configService: ConfigService) {}
+  constructor(
+    private readonly gistService: GistService,
+    private readonly configService: ConfigService,
+    private readonly authService: AuthService
+  ) {}
 
   @Get('gists')
   @HttpCode(200)
-  getGistPage(@Headers('Authorization') token: string, @Query('page') page: number, @Query('perPage') perPage: number) {
-    //todo: token extract
-    const gitToken = this.configService.get<string>('GIT_TOKEN');
-    return this.gistService.getGistList(gitToken, Number(page), Number(perPage));
+  async getGistPage(@Req() request: Request, @Query('page') page: number, @Query('perPage') perPage: number) {
+    const gitToken = await this.authService.getUserGitToken(this.authService.getIdFromRequest(request));
+    return await this.gistService.getGistList(gitToken, Number(page), Number(perPage));
   }
 
   @Get('')

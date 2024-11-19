@@ -1,9 +1,11 @@
-import { Controller, Get, HttpCode, HttpException, HttpStatus, Query, Redirect, Res } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpException, HttpStatus, Query, Redirect, Req, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { Request } from 'express';
 import { TokenDTO } from './dto/token.dto';
 import { UserCreateDto } from './dto/user.create.dto';
 import { UserService } from './user.service';
+import { AuthService } from '@/auth/auth.service';
 import { LotusPublicDto } from '@/lotus/dto/lotus.public.dto';
 import { LotusService } from '@/lotus/lotus.service';
 
@@ -12,6 +14,7 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
     private readonly lotusService: LotusService,
+    private readonly authService: AuthService,
     private configService: ConfigService
   ) {}
   private OAUTH_CLIENT_ID = this.configService.get<string>('OAUTH_CLIENT_ID');
@@ -82,8 +85,12 @@ export class UserController {
   @ApiResponse({ status: 200, description: '실행 성공', type: LotusPublicDto })
   @ApiQuery({ name: 'page', type: String, example: '1', required: false })
   @ApiQuery({ name: 'size', type: String, example: '10', required: false })
-  getUserLotus(@Query('page') page: number, @Query('size') size: number): Promise<LotusPublicDto> {
-    const userId = '1';
+  getUserLotus(
+    @Req() request: Request,
+    @Query('page') page: number,
+    @Query('size') size: number
+  ): Promise<LotusPublicDto> {
+    const userId = this.authService.getIdFromRequest(request);
     return this.lotusService.getUserLotus(userId, page, size);
   }
 }
