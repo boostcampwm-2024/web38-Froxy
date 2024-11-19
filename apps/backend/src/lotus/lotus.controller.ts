@@ -69,9 +69,11 @@ export class LotusController {
   @ApiResponse({ status: 200, description: '실행 성공', type: LotusDetailDto })
   async getLotusDetail(@Req() request: Request, @Param('lotusId') lotusId: string): Promise<LotusDetailDto> {
     let gitToken = '';
+    let userId = '-1';
     try {
-      gitToken = await this.authService.getUserGitToken(this.authService.getIdFromRequest(request));
+      userId = this.authService.getIdFromRequest(request);
+      gitToken = await this.authService.getUserGitToken(userId);
     } catch (e) {}
-    return this.lotusService.getLotusFile(gitToken, lotusId);
+    return this.lotusService.getLotusFile(userId, gitToken, lotusId);
   }
 }

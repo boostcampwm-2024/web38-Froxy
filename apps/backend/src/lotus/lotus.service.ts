@@ -85,15 +85,14 @@ export class LotusService {
     return new MessageDto('ok');
   }
 
-  async getLotusFile(gitToken: string, lotusId: string): Promise<LotusDetailDto> {
+  async getLotusFile(userId: string, gitToken: string, lotusId: string): Promise<LotusDetailDto> {
     const lotusData = await this.lotusRepository.findOne({
       where: { lotusId },
       relations: ['category', 'user']
     });
-    // todo : 이거 gist 정책 따라서 private 이어도 내부 볼 수 있게 해야 하나? 혹은 private이면 남들도 절대 못 보게?
-    // if (!lotusData.isPublic && lotusData.user.gitToken !== gitToken) {
-    //   throw new HttpException("this user can't access that lotus", HttpStatus.NOT_ACCEPTABLE);
-    // }
+    if (!lotusData.isPublic && lotusData.user.userId !== userId) {
+      throw new HttpException("this user can't access that lotus", HttpStatus.NOT_ACCEPTABLE);
+    }
 
     const commitFiles = await this.gistService.getCommit(lotusData.gistRepositoryId, lotusData.commitId, gitToken);
 

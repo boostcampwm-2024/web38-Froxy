@@ -37,7 +37,7 @@ export class UserController {
       );
       testUser = await this.userService.findOne(this.TEST_GIT_ID);
     }
-    return this.userService.makeTestUser(testUser);
+    return { token: await this.userService.makeTestUser(testUser) };
   }
 
   @Get('login')
