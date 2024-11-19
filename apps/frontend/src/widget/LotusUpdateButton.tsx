@@ -13,9 +13,9 @@ export function LotusUpdateButton({ lotusId }: { lotusId: string }) {
 
   const queryClient = useQueryClient();
 
-  const onSubmit = (args: { title: string; tags: string[] }) => {
+  const onSubmit = (body: { title: string; tags: string[] }) => {
     mutate(
-      { body: { ...args, tag: args.tags }, id: lotusId },
+      { body, id: lotusId },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['lotus', 'detail', lotusId] });
