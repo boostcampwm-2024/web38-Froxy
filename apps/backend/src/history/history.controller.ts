@@ -1,18 +1,33 @@
-import { Body, Controller, Get, HttpCode, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Headers, HttpCode, Param, Post, Query } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ApiBody, ApiHeader, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { HistoryExecRequestDto } from './dto/history.execRequest.dto';
+import { HistoryExecResponseDto } from './dto/history.execResponse.dto';
 import { HistoryGetResponseDto } from './dto/history.getReponse.dto';
 import { HistoryResponseListDto } from './dto/history.responseList.dto';
 import { HistoryService } from './history.service';
+import { AuthService } from '@/auth/auth.service';
+import { HISTORY_STATUS } from '@/constants/constants';
 
 @Controller('lotus/:lotusId/history')
 export class HistoryController {
-  constructor(private historyService: HistoryService, private configService: ConfigService) {}
+  constructor(
+    private historyService: HistoryService,
+    private configService: ConfigService,
+    private authServer: AuthService
+  ) {}
 
   @Post()
   @HttpCode(200)
-  execCode(@Param('lotusId') lotusId: string, @Body() historyExecRequestDto: HistoryExecRequestDto): Promise<any> {
-    const gitToken = this.configService.get<string>('GIT_TOKEN');
+  @ApiOperation({ summary: '코드 실행 & history 추가' })
+  @ApiBody({ type: HistoryExecRequestDto })
+  @ApiResponse({ status: 200, description: '실행 성공', type: HistoryExecResponseDto })
+  execCode(
+    @Headers('Authorization') token: string,
+    @Param('lotusId') lotusId: string,
+    @Body() historyExecRequestDto: HistoryExecRequestDto
+  ): Promise<any> {
+    const gitToken = this.authServer.verifyJwt(token).user_id;
     // const execFileName = 'FunctionDivide.js';
     // const input = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
     const { input, execFileName } = historyExecRequestDto;
@@ -21,6 +36,10 @@ export class HistoryController {
 
   @Get()
   @HttpCode(200)
+  @ApiOperation({ summary: '해당 lotus의 history 목록 조회' })
+  @ApiResponse({ status: 200, description: '실행 성공', type: HistoryResponseListDto })
+  @ApiQuery({ name: 'page', type: Number, example: 1 })
+  @ApiQuery({ name: 'size', type: Number, example: 5 })
   getHistoryList(
     @Param('lotusId') lotusId: string,
     @Query('page') page: number,
@@ -31,6 +50,8 @@ export class HistoryController {
 
   @Get(':historyId')
   @HttpCode(200)
+  @ApiOperation({ summary: '해당 historyId의 상세 정보 조회' })
+  @ApiResponse({ status: 200, description: '실행 성공', type: HistoryGetResponseDto })
   getHistory(@Param('historyId') historyId: string): Promise<HistoryGetResponseDto> {
     return this.historyService.getHistoryFromId(historyId);
   }
