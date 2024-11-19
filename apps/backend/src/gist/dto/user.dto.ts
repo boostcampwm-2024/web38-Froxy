@@ -1,6 +1,13 @@
+import { IsNumber, IsString } from 'class-validator';
+
 export class UserDto {
+  @IsString()
   login: string;
+
+  @IsNumber()
   id: number;
+
+  @IsString()
   avatarUrl: string;
 
   static of(gistOwner: any): UserDto {

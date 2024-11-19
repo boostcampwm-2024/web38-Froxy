@@ -1,6 +1,13 @@
+import { IsDate, IsString, IsUrl } from 'class-validator';
+
 export class CommitDto {
-  committedAt: string;
+  @IsDate()
+  committedAt: Date;
+
+  @IsString()
   commitId: string;
+
+  @IsUrl()
   url: string;
 
   static of(history: any): CommitDto {

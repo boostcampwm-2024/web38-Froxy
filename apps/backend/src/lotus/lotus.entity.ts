@@ -26,10 +26,10 @@ export class Lotus {
   @Column({ name: 'is_public', default: false })
   isPublic: boolean;
 
-  @Column({ name: 'gist_repository_id' })
+  @Column({ name: 'gist_repository_id', nullable: false })
   gistRepositoryId: string;
 
-  @Column({ name: 'commit_id', nullable: true })
+  @Column({ name: 'commit_id', nullable: false })
   commitId: string;
 
   @Column()

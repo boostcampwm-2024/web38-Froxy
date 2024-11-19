@@ -1,17 +1,38 @@
+import { Type } from 'class-transformer';
+import { IsArray, IsBoolean, IsDate, IsString, ValidateNested } from 'class-validator';
 import { SimpleFileResponseDto } from './simple.file.response.dto';
 import { SimpleUserResponseDto } from './simple.user.response.dto';
 import { GistApiFileListDto } from '@/gist/dto/gistApiFileList.dto';
 import { Lotus } from '@/lotus/lotus.entity';
 
 export class LotusDetailDto {
+  @IsString()
   id: string;
+
+  @IsString()
   title: string;
+
+  @IsArray()
   tags: string[];
+
+  @IsDate()
   date: Date;
+
+  @IsString()
   language: string;
+
+  @IsString()
   version: string;
+
+  @IsBoolean()
   isPublic: boolean;
+
+  @ValidateNested()
+  @Type(() => SimpleUserResponseDto)
   author: SimpleUserResponseDto;
+
+  @ValidateNested({ each: true })
+  @Type(() => SimpleFileResponseDto)
   files: SimpleFileResponseDto[];
 
   static ofGistFileListDto(gistFileList: GistApiFileListDto, lotus: Lotus): LotusDetailDto {

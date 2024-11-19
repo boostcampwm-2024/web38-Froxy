@@ -1,9 +1,16 @@
+import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
 import { LotusResponseDto } from './lotus.response.dto';
 import { PageDto } from './page.dto';
 import { Lotus } from '@/lotus/lotus.entity';
 
 export class LotusPublicDto {
+  @ValidateNested({ each: true })
+  @Type(() => LotusResponseDto)
   lotuses: LotusResponseDto[];
+
+  @ValidateNested()
+  @Type(() => PageDto)
   page: PageDto;
 
   static ofLotusList(lotusList: Lotus[], idx: number, maxV: number): LotusPublicDto {

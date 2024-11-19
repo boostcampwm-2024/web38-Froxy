@@ -1,9 +1,22 @@
+import { IsNumber, IsString } from 'class-validator';
+
 export class GistApiFileDto {
+  @IsString()
   fileName?: string;
+
+  @IsString()
   rawUrl?: string;
+
+  @IsString()
   type?: string;
+
+  @IsString()
   language?: string;
+
+  @IsNumber()
   size?: number;
+
+  @IsString()
   content?: string;
 
   static of(fileName: string, data: any, content: string): GistApiFileDto {
