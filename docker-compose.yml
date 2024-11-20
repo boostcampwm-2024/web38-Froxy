@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  froxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: froxy-api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql
+    container_name: froxy-mysql
+    env_file:
+      - ./apps/backend/.env
+    ports:
+      - "3306:3307"
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:

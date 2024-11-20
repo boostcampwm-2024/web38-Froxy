@@ -1,5 +1,7 @@
-import { Controller, Get, Query, Redirect, Res } from '@nestjs/common';
+import { Controller, Get, Param, Query, Redirect, Req, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtSecretRequestType } from '@nestjs/jwt';
+import { UserRepository } from './user.repository';
 import { UserService } from './user.service';
 import { LotusPublicDto } from '@/lotus/dto/lotus.public.dto';
 import { LotusService } from '@/lotus/lotus.service';
@@ -50,5 +52,16 @@ export class UserController {
   getUserLotus(@Query('page') page: number, @Query('size') size: number): Promise<LotusPublicDto> {
     const userId = '1';
     return this.lotusService.getUserLotus(userId, page, size);
+  }
+  @Get('test')
+  test() {
+    return this.userService.test();
+  }
+
+  @Get('veri')
+  veri(@Req() req: Request) {
+    const token = req.headers['authorization'].split(' ')[1];
+    console.log(token);
+    return this.userService.veri(token);
   }
 }

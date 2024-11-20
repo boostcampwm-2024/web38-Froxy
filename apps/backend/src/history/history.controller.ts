@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Headers, HttpCode, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Headers, HttpCode, Param, Post, Query, Req } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiHeader, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { Request } from 'express';
 import { HistoryExecRequestDto } from './dto/history.execRequest.dto';
 import { HistoryExecResponseDto } from './dto/history.execResponse.dto';
 import { HistoryGetResponseDto } from './dto/history.getReponse.dto';
@@ -14,7 +15,7 @@ export class HistoryController {
   constructor(
     private historyService: HistoryService,
     private configService: ConfigService,
-    private authServer: AuthService
+    private authService: AuthService
   ) {}
 
   @Post()
@@ -23,11 +24,12 @@ export class HistoryController {
   @ApiBody({ type: HistoryExecRequestDto })
   @ApiResponse({ status: 200, description: '실행 성공', type: HistoryExecResponseDto })
   execCode(
-    @Headers('Authorization') token: string,
+    @Req() req: Request,
     @Param('lotusId') lotusId: string,
     @Body() historyExecRequestDto: HistoryExecRequestDto
   ): Promise<any> {
-    const gitToken = this.authServer.verifyJwt(token).user_id;
+    const gitToken = req.headers['Authorization'] as string;
+
     // const execFileName = 'FunctionDivide.js';
     // const input = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
     const { input, execFileName } = historyExecRequestDto;

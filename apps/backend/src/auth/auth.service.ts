@@ -23,6 +23,7 @@ export class AuthService {
     } catch (e) {
       if (e.name === 'TokenExpiredError') throw new Error('401');
       else {
+        console.error(e);
         throw new Error('401');
       }
     }
