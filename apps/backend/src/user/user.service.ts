@@ -1,8 +1,10 @@
 import { HttpException, HttpStatus, Inject, Injectable, forwardRef } from '@nestjs/common';
 import { UserCreateDto } from './dto/user.create.dto';
+import { UserPatchDTO } from './dto/user.patch.dto';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
 import { AuthService } from '@/auth/auth.service';
+import { SimpleUserResponseDto } from '@/lotus/dto/simple.user.response.dto';
 
 @Injectable()
 export class UserService {
@@ -17,6 +19,23 @@ export class UserService {
   }
   findOneByUserId(userId: string): Promise<User | null> {
     return this.userRepository.findOneBy({ userId });
+  }
+
+  async getSimpleUserInfoByUserId(userId: string): Promise<SimpleUserResponseDto> {
+    const user = await this.userRepository.findOneBy({ userId });
+    return SimpleUserResponseDto.ofUserDto(user);
+  }
+
+  async patchUserDataByUserId(userId: string, updateData: UserPatchDTO): Promise<UserPatchDTO> {
+    const result = await this.userRepository.update(
+      { userId },
+      { nickname: updateData.nickname, profilePath: updateData.profile }
+    );
+    if (!result.affected) {
+      throw new HttpException('user info not found', HttpStatus.NOT_FOUND);
+    }
+    const user = await this.userRepository.findOneBy({ userId });
+    return UserPatchDTO.ofUser(user);
   }
 
   async loginUser(tokenData) {
