@@ -68,7 +68,7 @@ export class LotusDetailDto {
       SimpleFileResponseDto.ofFileApiDto(file)
     );
     const simpleUser: SimpleUserResponseDto = SimpleUserResponseDto.ofUserDto(lotus.user);
-    const simpleTags: string[] = lotus.category.map((tag) => tag.tagName);
+    const simpleTags: string[] = lotus.tags.map((tag) => tag.tagName);
     return {
       id: lotus.lotusId,
       title: lotus.title,

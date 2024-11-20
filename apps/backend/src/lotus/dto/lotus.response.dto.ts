@@ -48,7 +48,7 @@ export class LotusResponseDto {
   tags: string[];
 
   static ofSpreadData(user: SimpleUserResponseDto, lotus: Lotus): LotusResponseDto {
-    const tags = lotus.category.map((tag) => tag.tagName);
+    const tags = lotus.tags.map((tag) => tag.tagName);
     return {
       id: lotus.lotusId,
       author: user,
@@ -62,7 +62,7 @@ export class LotusResponseDto {
 
   static ofLotus(lotus: Lotus): LotusResponseDto {
     const simpleUser = SimpleUserResponseDto.ofUserDto(lotus.user);
-    const tags = lotus.category.map((tag) => tag.tagName);
+    const tags = lotus.tags.map((tag) => tag.tagName);
     return {
       id: lotus.lotusId,
       author: simpleUser,

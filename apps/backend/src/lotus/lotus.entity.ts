@@ -63,5 +63,5 @@ export class Lotus {
       referencedColumnName: 'tagId'
     }
   })
-  category: Tag[];
+  tags: Tag[];
 }

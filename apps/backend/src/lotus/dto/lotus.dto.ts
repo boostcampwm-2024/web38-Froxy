@@ -45,7 +45,7 @@ export class LotusDto {
 
   @ValidateNested({ each: true })
   @Type(() => Tag)
-  category: Tag[];
+  tags: Tag[];
 
   constructor(commitId: string, user: User, lotusInputData: LotusCreateRequestDto, tags: Tag[]) {
     this.title = lotusInputData.title;
@@ -56,7 +56,7 @@ export class LotusDto {
     this.version = lotusInputData.version;
     this.comments = [];
     this.historys = [];
-    this.category = tags;
+    this.tags = tags;
     this.user = user;
   }
 }

@@ -52,7 +52,7 @@ export class LotusService {
     await this.saveLotus(new LotusDto(currentCommitId, userData, lotusInputData, tags));
     const lotusData = await this.lotusRepository.findOne({
       where: { gistRepositoryId: lotusInputData.gistUuid, commitId: currentCommitId },
-      relations: ['category']
+      relations: ['tags']
     });
 
     return LotusResponseDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(userData), lotusData);
@@ -97,7 +97,7 @@ export class LotusService {
   async getLotusFile(userId: string, gitToken: string, lotusId: string): Promise<LotusDetailDto> {
     const lotusData = await this.lotusRepository.findOne({
       where: { lotusId },
-      relations: ['category', 'user']
+      relations: ['tags', 'user']
     });
     if (!lotusData.isPublic && lotusData.user.userId !== userId) {
       throw new HttpException("this user can't access that lotus", HttpStatus.NOT_ACCEPTABLE);
@@ -114,11 +114,11 @@ export class LotusService {
     const lotusData = await this.lotusRepository.find({
       where: {
         isPublic: true,
-        category: {
+        tags: {
           tagId: In(tags)
         }
       },
-      relations: ['category', 'user']
+      relations: ['tags', 'user']
     });
 
     const totalNum = lotusData.length;
@@ -131,7 +131,7 @@ export class LotusService {
   async getUserLotus(userId: string, page = 1, size = 10) {
     const lotusData = await this.lotusRepository.find({
       where: { user: { userId } },
-      relations: ['category', 'user']
+      relations: ['tags', 'user']
     });
     const totalNum = lotusData.length;
     const firstIdx = size * (page - 1);

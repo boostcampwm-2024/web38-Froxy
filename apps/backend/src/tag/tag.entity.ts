@@ -14,6 +14,6 @@ export class Tag {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @ManyToMany(() => Lotus, (lotus) => lotus.category)
+  @ManyToMany(() => Lotus, (lotus) => lotus.tags)
   lotuses: Lotus[];
 }
