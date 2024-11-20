@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  ci:
+  fe-cd:
     runs-on: ubuntu-20.04
     if: contains(github.event.pull_request.labels.*.name, '💻 Fe')
 
@@ -51,4 +51,4 @@ jobs:
           sudo apt-get update && sudo apt-get install -y awscli
 
           # 빌드된 정적 파일을 오브젝트 스토리지로 업로드
-          aws s3 sync ./apps/frontend/dist --acl public-read s3://froxy-fe --endpoint-url=https://kr.object.ncloudstorage.com
+          aws s3 sync ./apps/frontend/dist s3://froxy-fe --endpoint-url=https://kr.object.ncloudstorage.com --acl public-read
