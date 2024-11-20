@@ -112,7 +112,12 @@ export class LotusService {
     const tags = await this.tagService.serachTag(search);
 
     const lotusData = await this.lotusRepository.find({
-      where: { isPublic: true, category: In(tags) },
+      where: {
+        isPublic: true,
+        category: {
+          tagId: In(tags)
+        }
+      },
       relations: ['category', 'user']
     });
 

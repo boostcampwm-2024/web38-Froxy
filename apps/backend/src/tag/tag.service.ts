@@ -1,6 +1,4 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { Like } from 'typeorm';
-import { TagSearchResponseDTO } from './dto/tag.searchResponse.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Tag } from './tag.entity';
 import { TagRepository } from './tag.repository';
 
@@ -32,9 +30,9 @@ export class TagService {
     return tag;
   }
 
-  async serachTag(tagName: string): Promise<Tag[]> {
+  async serachTag(tagName: string): Promise<string[]> {
     const tags = await this.tagRepository.searchTagName(tagName);
-
-    return tags;
+    const tagIds = tags.map((tag) => tag.tagId);
+    return tagIds;
   }
 }
