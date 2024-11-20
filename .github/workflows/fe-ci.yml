@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  fe-cd:
+  fe-ci:
     runs-on: ubuntu-20.04
 
     steps:
