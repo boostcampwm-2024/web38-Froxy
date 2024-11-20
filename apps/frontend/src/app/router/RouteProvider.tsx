@@ -14,7 +14,7 @@ export function RouteProvider() {
   return (
     <>
       <Provider router={router} />
-      <TanStackRouterDevtools router={router} />
+      {import.meta.env.DEV && <TanStackRouterDevtools router={router} />}
     </>
   );
 }
