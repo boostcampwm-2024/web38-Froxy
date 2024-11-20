@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, HttpException, HttpStatus, Query, Redirect, Req, Res } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpException, HttpStatus, Post, Query, Redirect, Req, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -48,7 +48,7 @@ export class UserController {
     return TokenDTO.of(await this.userService.makeTestUser(testUser));
   }
 
-  @Get('login')
+  @Post('login')
   @Redirect()
   getGithubLoginPage() {
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${this.OAUTH_CLIENT_ID}&redirect_uri=${this.OAUTH_LOGIN_CALLBACK_URL}&scope=gist`;
