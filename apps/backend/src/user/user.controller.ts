@@ -17,6 +17,7 @@ import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Request } from 'express';
 import { FileDto } from './dto/file.dto';
+import { FileResponseDto } from './dto/file.response.dto';
 import { TokenDTO } from './dto/token.dto';
 import { UserCreateDto } from './dto/user.create.dto';
 import { UserPatchDTO } from './dto/user.patch.dto';
@@ -135,6 +136,8 @@ export class UserController {
 
   @Get('gist')
   @HttpCode(200)
+  @ApiOperation({ summary: '사용자의 gist 목록 가져오기' })
+  @ApiResponse({ status: 200, description: '실행 성공', type: ResponseAllGistsDto })
   async getGistPage(
     @Req() request: Request,
     @Query('page') page: number,
@@ -146,10 +149,12 @@ export class UserController {
 
   @Get('gist/:gistId')
   @HttpCode(200)
+  @ApiOperation({ summary: '사용자의 특정 gist의 내부 파일 데이터 가져오기' })
+  @ApiResponse({ status: 200, description: '실행 성공', type: FileResponseDto })
   async getCommitFile(@Req() request: Request, @Param('gistId') gistId: string) {
     const gitToken = await this.authService.getUserGitToken(this.authService.getIdFromRequest(request));
     const Files = await this.gistService.getGistById(gistId, gitToken);
     const result = Files.files.map((file) => FileDto.ofGistApiFile(file));
-    return { files: result };
+    return FileResponseDto.ofFiles(result);
   }
 }
