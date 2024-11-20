@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useRef } from 'react';
+import { CreateOverlayElement, OverlayControlRef, OverlayController } from './OverlayController';
 
 interface OverlayContextValue {
   id?: string;
@@ -37,10 +38,9 @@ const useUniqueIdRef = () => {
  * @returns {Function} return.close - 오버레이를 닫는 함수입니다.
  *
  * @example
- * const { open, close } = useOverlay();
+ * const { open } = useOverlay();
  *
- * open(
- *   <div>
+ * open(({isOpen, close})=><div>
  *     <h1>오버레이</h1>
  *     <button onClick={close}>닫기</button>
  *   </div>
@@ -50,6 +50,8 @@ export const useOverlay = ({ isCloseOnUnmount = true }: { isCloseOnUnmount?: boo
   const { mount, unmount } = useOverlayContext();
   const id = useUniqueIdRef();
 
+  const overlayRef = useRef<OverlayControlRef | null>(null);
+
   useEffect(() => {
     return () => {
       if (isCloseOnUnmount) unmount(id);
@@ -57,7 +59,28 @@ export const useOverlay = ({ isCloseOnUnmount = true }: { isCloseOnUnmount?: boo
   }, [id, unmount, isCloseOnUnmount]);
 
   return useMemo(
-    () => ({ open: (element: React.ReactNode) => mount(id, element), close: () => unmount(id) }),
+    () => ({
+      open: (overlayElement: CreateOverlayElement) => {
+        mount(
+          id,
+          <OverlayController
+            // NOTE: 상태가 변경되어도 새로운 컴포넌트를 렌더링하기 위해 key를 추가합니다.
+            key={Date.now()}
+            ref={overlayRef}
+            overlayElement={overlayElement}
+            onExit={() => {
+              unmount(id);
+            }}
+          />
+        );
+      },
+      close: () => {
+        overlayRef.current?.close();
+      },
+      exit: () => {
+        unmount(id);
+      }
+    }),
     [id, mount, unmount]
   );
 };

@@ -46,6 +46,7 @@ export function TagInput({ value, onChange }: TagInputProp) {
         onCompositionEnd={() => {
           setIsComposing(false);
         }}
+        placeholder="태그를 입력해주세요"
       />
       <div className="flex flex-wrap gap-2 my-2 p-0 px-1">
         {value.map((tag, i) => (

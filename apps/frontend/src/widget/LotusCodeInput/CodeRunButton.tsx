@@ -6,7 +6,7 @@ import { ModalBox } from '@/shared/components/Overlay';
 import { useOverlay } from '@/shared/hooks/useOverlay';
 
 export function CodeRunButton({ lotusId }: { lotusId: string }) {
-  const { open, close } = useOverlay();
+  const { open, exit } = useOverlay();
 
   const { mutate } = useCodeRunMutation();
 
@@ -17,7 +17,7 @@ export function CodeRunButton({ lotusId }: { lotusId: string }) {
       { lotusId, input: inputs, execFileName },
       {
         onSuccess: () => {
-          close();
+          exit();
           console.log('생성!');
           queryClient.invalidateQueries({ queryKey: ['lotus', 'detail', lotusId, 'history'] });
         }
@@ -26,11 +26,11 @@ export function CodeRunButton({ lotusId }: { lotusId: string }) {
   };
 
   const handleOpenModal = () =>
-    open(
-      <ModalBox onClose={close}>
+    open(() => (
+      <ModalBox onClose={exit}>
         <LotusRunCodeForm onCancel={() => close()} onSubmit={handleCodeRun} lotusId={lotusId} />
       </ModalBox>
-    );
+    ));
 
   return <Button onClick={handleOpenModal}>실행하기</Button>;
 }

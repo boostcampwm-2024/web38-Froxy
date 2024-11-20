@@ -38,7 +38,7 @@ export function LotusUpdateForm({ lotusId, onSubmit, onCancel }: LotusUpdateForm
         <Button type="button" className="w-full" variant={'secondary'} onClick={onCancel}>
           취소하기
         </Button>
-        <Button type="button" className="w-full" variant={'destructive'} onClick={handleSubmit}>
+        <Button type="button" className="w-full" variant={'default'} onClick={handleSubmit}>
           수정하기
         </Button>
       </div>

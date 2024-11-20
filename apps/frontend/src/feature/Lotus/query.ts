@@ -1,5 +1,5 @@
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { deleteLotus, getLotusDetail, getLotusList, updateLotus } from './api';
+import { createLotus, deleteLotus, getLotusDetail, getLotusList, updateLotus } from './api';
 
 export const useLotusListSuspenseQuery = ({ page = 1 }: { page?: number } = {}) => {
   const query = useSuspenseQuery({
@@ -30,6 +30,14 @@ export const useLotusDeleteMutation = () => {
 export const useLotusUpdateMutation = () => {
   const mutation = useMutation({
     mutationFn: updateLotus
+  });
+
+  return mutation;
+};
+
+export const useLotusCreateMutation = () => {
+  const mutation = useMutation({
+    mutationFn: createLotus
   });
 
   return mutation;

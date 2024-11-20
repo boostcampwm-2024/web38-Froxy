@@ -6,7 +6,7 @@ on:
       - release  # release 브랜치에 푸시될 때 실행
 
 jobs:
-  build_and_deploy:
+  be-cd:
     runs-on: ubuntu-20.04  # 빌드가 진행될 환경 설정
 
     steps:

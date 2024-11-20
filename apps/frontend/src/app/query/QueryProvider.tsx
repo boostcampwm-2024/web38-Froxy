@@ -5,7 +5,7 @@ type QueryProviderProps = {
   children: React.ReactNode;
 };
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 export function QueryProvider(props: QueryProviderProps) {
   return (

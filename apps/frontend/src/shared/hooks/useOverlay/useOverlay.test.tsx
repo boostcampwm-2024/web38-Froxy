@@ -29,7 +29,7 @@ describe('useOverlay', () => {
     const OverlayComponent = () => {
       const { open } = useOverlay();
 
-      open(<div role="overlay">test</div>);
+      open(() => <div role="overlay">test</div>);
 
       return <></>;
     };
@@ -50,7 +50,7 @@ describe('useOverlay', () => {
       const { open, close } = useOverlay();
 
       useEffect(() => {
-        open(<div role="overlay">test</div>);
+        open(() => <div role="overlay">test</div>);
 
         setTimeout(() => {
           close();

@@ -1,0 +1,50 @@
+name: Froxy Continuous Integration
+
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  fe-cd:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20' # 적절한 Node.js 버전으로 설정
+          cache: 'pnpm' # pnpm 캐싱 활성화
+
+      - name: Create .env file
+        run: |
+          echo "${{ secrets.FE_ENV }}" > apps/frontend/.env
+
+      - name: Install dependencies #라이브러리설치
+        run: |
+          pnpm install --no-frozen-lockfile
+
+      - name: Run lint & Turbo build
+        run: |
+          pnpm lint --filter=frontend
+          pnpm turbo run build --filter=frontend
+
+      - name: Upload to Object Storage
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.NCP_ACCESS_NAME }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.NCP_ACCESS_SECRET }}
+          AWS_DEFAULT_REGION: 'kr-standard' # 리전 설정
+        run: |
+          # AWS CLI 설치 확인 및 설정
+          sudo apt-get update && sudo apt-get install -y awscli
+
+          # 빌드된 정적 파일을 오브젝트 스토리지로 업로드
+          aws s3 sync ./apps/frontend/dist s3://froxy-fe --endpoint-url=https://kr.object.ncloudstorage.com --acl public-read

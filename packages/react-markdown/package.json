@@ -3,23 +3,15 @@
   "private": true,
   "version": "0.2.0",
   "type": "module",
-  "files": [
-    "dist"
-  ],
-  "types": "./src/index.d.ts",
-  "main": "./src/index.cjs.js",
-  "module": "./src/index.js",
+  "module": "./src/index.ts",
   "exports": {
     ".": {
-      "types": "./src/index.d.ts",
-      "import": "./src/index.js",
-      "require": "./src/index.cjs.js"
+      "import": "./src/index.ts"
     },
     "./github.css": "./src/github.css"
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest"
@@ -58,6 +50,7 @@
     "eslint-plugin-react-refresh": "^0.4.14",
     "globals": "^15.11.0",
     "jsdom": "^25.0.1",
+    "prettier": "2.x",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.11.0",
     "vite": "^5.4.10",
