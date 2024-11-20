@@ -53,15 +53,4 @@ export class UserController {
     const userId = '1';
     return this.lotusService.getUserLotus(userId, page, size);
   }
-  @Get('test')
-  test() {
-    return this.userService.test();
-  }
-
-  @Get('veri')
-  veri(@Req() req: Request) {
-    const token = req.headers['authorization'].split(' ')[1];
-    console.log(token);
-    return this.userService.veri(token);
-  }
 }

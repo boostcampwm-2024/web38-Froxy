@@ -31,16 +31,4 @@ export class UserService {
   async saveUser(user: User): Promise<void> {
     await this.userRepository.save(user);
   }
-
-  test() {
-    const token = this.authService.createJwt('1');
-    const decoded = this.authService.verifyJwt(token);
-    console.log(decoded);
-    return token;
-  }
-
-  veri(token: string) {
-    const decode = this.authService.verifyJwt(token);
-    return decode;
-  }
 }
