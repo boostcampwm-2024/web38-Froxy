@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { In } from 'typeorm';
 import { LotusCreateRequestDto } from './dto/lotus.createRequest.dto';
 import { LotusDetailDto } from './dto/lotus.detail.dto';
 import { LotusDto } from './dto/lotus.dto';
@@ -10,6 +11,8 @@ import { SimpleUserResponseDto } from './dto/simple.user.response.dto';
 import { Lotus } from './lotus.entity';
 import { LotusRepository } from './lotus.repository';
 import { GistService } from '@/gist/gist.service';
+import { Tag } from '@/tag/tag.entity';
+import { TagService } from '@/tag/tag.service';
 import { UserService } from '@/user/user.service';
 
 @Injectable()
@@ -17,7 +20,8 @@ export class LotusService {
   constructor(
     private readonly lotusRepository: LotusRepository,
     private readonly gistService: GistService,
-    private readonly userService: UserService
+    private readonly userService: UserService,
+    private readonly tagService: TagService
   ) {}
   async createLotus(
     userId: string,
@@ -40,7 +44,12 @@ export class LotusService {
       throw new HttpException('same commit Lotus already exist.', HttpStatus.CONFLICT);
     }
     const userData = await this.userService.findOneByUserId(userId);
-    await this.saveLotus(new LotusDto(currentCommitId, userData, lotusInputData));
+    const tags: Tag[] = await Promise.all(
+      lotusInputData.tags.map((tag) => {
+        return this.tagService.getTag(tag);
+      })
+    );
+    await this.saveLotus(new LotusDto(currentCommitId, userData, lotusInputData, tags));
     const lotusData = await this.lotusRepository.findOne({
       where: { gistRepositoryId: lotusInputData.gistUuid, commitId: currentCommitId },
       relations: ['category']
@@ -100,8 +109,10 @@ export class LotusService {
   }
 
   async getPublicLotus(page = 1, size = 10, search: string): Promise<LotusPublicDto> {
+    const tags = await this.tagService.serachTag(search);
+
     const lotusData = await this.lotusRepository.find({
-      where: { isPublic: true },
+      where: { isPublic: true, category: In(tags) },
       relations: ['category', 'user']
     });
 

@@ -10,10 +10,10 @@ export class TagService {
 
   async createTag(tagName: string): Promise<any> {
     try {
-      // const isExistTag = await this.tagRepository.findOne({where: {tagName}});
-      // if(isExistTag){
-      //   throw new HttpException('이미 존재하는 태그입니다.',HttpStatus.BAD_REQUEST);
-      // }
+      const isExistTag = await this.tagRepository.findOne({ where: { tagName } });
+      if (isExistTag) {
+        throw new HttpException('이미 존재하는 태그입니다.', HttpStatus.BAD_REQUEST);
+      }
       await this.tagRepository.save({
         tagName: tagName
       });
@@ -23,9 +23,18 @@ export class TagService {
     }
   }
 
-  async serachTag(tagName: string): Promise<any> {
+  async getTag(tagName: string): Promise<Tag> {
+    let tag = await this.tagRepository.findOne({ where: { tagName } });
+    if (!tag) {
+      await this.createTag(tagName);
+      tag = await this.tagRepository.findOne({ where: { tagName } });
+    }
+    return tag;
+  }
+
+  async serachTag(tagName: string): Promise<Tag[]> {
     const tags = await this.tagRepository.searchTagName(tagName);
 
-    return { tags: tags.map((tag) => TagSearchResponseDTO.of(tag)) };
+    return tags;
   }
 }

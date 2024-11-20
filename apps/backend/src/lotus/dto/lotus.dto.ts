@@ -47,7 +47,7 @@ export class LotusDto {
   @Type(() => Tag)
   category: Tag[];
 
-  constructor(commitId: string, user: User, lotusInputData: LotusCreateRequestDto) {
+  constructor(commitId: string, user: User, lotusInputData: LotusCreateRequestDto, tags: Tag[]) {
     this.title = lotusInputData.title;
     this.isPublic = lotusInputData.isPublic;
     this.gistRepositoryId = lotusInputData.gistUuid;
@@ -56,7 +56,7 @@ export class LotusDto {
     this.version = lotusInputData.version;
     this.comments = [];
     this.historys = [];
-    this.category = [];
+    this.category = tags;
     this.user = user;
   }
 }
