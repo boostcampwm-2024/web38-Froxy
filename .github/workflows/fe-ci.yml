@@ -3,7 +3,10 @@ name: Froxy Continuous Integration
 on:
   push:
     branches:
-      - release
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   fe-cd:
@@ -36,15 +39,3 @@ jobs:
         run: |
           pnpm lint --filter=frontend
           pnpm turbo run build --filter=frontend
-
-      - name: Upload to Object Storage
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.NCP_ACCESS_NAME }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.NCP_ACCESS_SECRET }}
-          AWS_DEFAULT_REGION: 'kr-standard' # 리전 설정
-        run: |
-          # AWS CLI 설치 확인 및 설정
-          sudo apt-get update && sudo apt-get install -y awscli
-
-          # 빌드된 정적 파일을 오브젝트 스토리지로 업로드
-          aws s3 sync ./apps/frontend/dist s3://froxy-fe --endpoint-url=https://kr.object.ncloudstorage.com --acl public-read
