@@ -30,7 +30,7 @@ export class TagService {
     return tag;
   }
 
-  async serachTag(tagName: string): Promise<string[]> {
+  async searchTag(tagName: string): Promise<string[]> {
     const tags = await this.tagRepository.searchTagName(tagName);
     const tagIds = tags.map((tag) => tag.tagId);
     return tagIds;

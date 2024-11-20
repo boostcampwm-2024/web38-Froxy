@@ -109,7 +109,7 @@ export class LotusService {
   }
 
   async getPublicLotus(page = 1, size = 10, search: string): Promise<LotusPublicDto> {
-    const tags = await this.tagService.serachTag(search);
+    const tags = await this.tagService.searchTag(search);
 
     const lotusData = await this.lotusRepository.find({
       where: {
