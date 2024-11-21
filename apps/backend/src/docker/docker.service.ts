@@ -37,11 +37,9 @@ export class DockerService {
   ): Promise<string> {
     return this.runGistFiles(gitToken, gistId, commit_id, mainFileName, inputs)
       .then((result) => {
-        // console.log('Execution Result:', result);
         return result;
       })
       .catch((error) => {
-        // console.error('Execution Error:', error);
         throw new Error('Execution Error');
       });
   }

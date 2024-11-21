@@ -40,8 +40,15 @@ export class HistoryService {
     inputs: string[],
     historyId: string
   ) {
-    const result = await this.dockerService.getDocker(gitToken, lotusId, commitId, execFilename, inputs);
-    const updatehistory = await this.historyRepository.update(historyId, { status: HISTORY_STATUS.SUCCESS, result });
+    try {
+      const result = await this.dockerService.getDocker(gitToken, lotusId, commitId, execFilename, inputs);
+      const updatehistory = await this.historyRepository.update(historyId, { status: HISTORY_STATUS.SUCCESS, result });
+    } catch (error) {
+      const updatehistory = await this.historyRepository.update(historyId, {
+        status: HISTORY_STATUS.ERROR,
+        result: error.message
+      });
+    }
   }
 
   async getHistoryList(lotusId: string, page: number, size: number): Promise<HistoryResponseListDto> {
