@@ -20,23 +20,23 @@ function RouteComponent() {
 
   const { token } = Route.useSearch();
 
-  const { data, error, isLoading } = useUserQuery();
+  const { data: user, error, isLoading } = useUserQuery();
 
   useEffect(() => {
     set(token);
-  }, [token, set, data]);
+  }, [token, set, user]);
 
-  if (error) throw new Error('??');
+  if (error) throw new Error('유저 정보 조회에 실패했습니다.');
 
   if (isLoading) return <div>...Loading</div>;
 
-  return <SuccessComponent />;
+  return <SuccessComponent nickname={user?.nickname ?? ''} />;
 }
 
-function SuccessComponent() {
+function SuccessComponent({ nickname }: { nickname: string }) {
   const { toast } = useToast();
 
-  toast({ description: `님 환영합니다!`, duration: 2000 });
+  toast({ description: `${nickname}님 환영합니다!`, duration: 2000 });
 
   return <Navigate to="/lotus" />;
 }

@@ -12,8 +12,7 @@ export function LogoutButton() {
 
   const handleClick = () => {
     set('');
-    queryClient.invalidateQueries({ queryKey: ['user'] });
-
+    queryClient.removeQueries({ queryKey: ['user'] });
     navigate({ to: '/' });
   };
 
