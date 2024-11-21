@@ -9,13 +9,14 @@ import {
   mockPostTag
 } from './historyResolvers';
 import { deleteLotus, getLotusDetail, getPublicLotusList, patchLotus, postCreateLotus } from './lotusResolvers';
-import { mockGetUserInfo, mockLogin, mockLogout, mockPatchUserInfo } from './userResolvers';
+import { mockGetLogin, mockGetUserInfo, mockLogin, mockLogout, mockPatchUserInfo } from './userResolvers';
 
 export const handlers = [
   // user
   http.get(`/api/user`, mockGetUserInfo),
   http.patch(`/api/user`, mockPatchUserInfo),
   http.post(`/api/user/login`, mockLogin),
+  http.get(`/api/user/login`, mockGetLogin),
   http.post(`/api/user/logout`, mockLogout),
   http.get(`/api/user/lotus`, mockGetUserLotusList),
   http.get(`/api/user/gist`, mockGetUserGistList),

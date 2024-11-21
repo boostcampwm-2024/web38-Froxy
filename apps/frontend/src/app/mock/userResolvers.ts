@@ -71,6 +71,16 @@ export const mockLogin = () => {
   });
 };
 
+// 로그인 api
+export const mockGetLogin = () => {
+  return new HttpResponse(null, {
+    status: 302,
+    headers: {
+      Location: `/login/success?token=${MOCK_UUID}`
+    }
+  });
+};
+
 // 로그아웃 api
 export const mockLogout = ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
   const authorization = request.headers.get('Authorization');

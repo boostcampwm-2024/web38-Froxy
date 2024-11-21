@@ -24,7 +24,7 @@ function RouteComponent() {
         <Button className="w-full max-w-lg" variant={'default'} onClick={() => navigate({ to: '/lotus' })}>
           공개 프로젝트 보러가기
         </Button>
-        <LoginButton className="w-full max-w-lg" variant={'outline'} onLoginSuccess={() => navigate({ to: '/lotus' })}>
+        <LoginButton className="w-full max-w-lg" variant={'outline'}>
           <FaGithub />
           GitHub로 로그인하기
         </LoginButton>
