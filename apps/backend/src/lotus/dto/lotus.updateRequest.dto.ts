@@ -1,5 +1,5 @@
 export class LotusUpdateRequestDto {
   title: string;
-  tag: string[];
+  tags: string[];
   isPublic: boolean;
 }

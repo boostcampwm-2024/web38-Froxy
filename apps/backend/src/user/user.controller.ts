@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   HttpCode,
   HttpException,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -15,7 +17,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { FileDto } from './dto/file.dto';
 import { FileResponseDto } from './dto/file.response.dto';
 import { TokenDTO } from './dto/token.dto';
@@ -69,7 +71,7 @@ export class UserController {
     return TokenDTO.of(await this.userService.makeTestUser(testUser));
   }
 
-  @Post('login')
+  @Get('login')
   @Redirect()
   getGithubLoginPage() {
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${this.OAUTH_CLIENT_ID}&redirect_uri=${this.OAUTH_LOGIN_CALLBACK_URL}&scope=gist`;
@@ -77,7 +79,8 @@ export class UserController {
   }
 
   @Get('login/callback')
-  async githubCallback(@Query('code') code: string): Promise<TokenDTO> {
+  async githubCallback(@Query('code') code: string, @Res() res: Response): Promise<void> {
+    const clientUrl = this.configService.get<string>('CLIENT_REDIRECT_URL');
     try {
       const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
         method: 'POST',
@@ -93,10 +96,9 @@ export class UserController {
       });
       const tokenData = await tokenResponse.json();
       const token = await this.userService.loginUser(tokenData);
-      return TokenDTO.of(token);
+      res.redirect(`${clientUrl}/login/success?token=${token}`);
     } catch (error) {
-      console.error('GitHub OAuth 오류:', error);
-      throw new HttpException('GitHub 인증에 실패했습니다.', HttpStatus.INTERNAL_SERVER_ERROR);
+      res.redirect(`${clientUrl}/login/error`);
     }
   }
 
@@ -108,8 +110,8 @@ export class UserController {
   @ApiQuery({ name: 'size', type: String, example: '10', required: false })
   getUserLotus(
     @Req() request: Request,
-    @Query('page') page: number,
-    @Query('size') size: number
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('size', new DefaultValuePipe(10), ParseIntPipe) size: number
   ): Promise<LotusPublicDto> {
     const userId = this.authService.getIdFromRequest(request);
     return this.lotusService.getUserLotus(userId, page, size);
@@ -140,11 +142,11 @@ export class UserController {
   @ApiResponse({ status: 200, description: '실행 성공', type: ResponseAllGistsDto })
   async getGistPage(
     @Req() request: Request,
-    @Query('page') page: number,
-    @Query('perPage') perPage: number
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('size', new DefaultValuePipe(10), ParseIntPipe) size: number
   ): Promise<ResponseAllGistsDto> {
     const gitToken = await this.authService.getUserGitToken(this.authService.getIdFromRequest(request));
-    return await this.gistService.getGistList(gitToken, Number(page), Number(perPage));
+    return await this.gistService.getGistList(gitToken, page, size);
   }
 
   @Get('gist/:gistId')

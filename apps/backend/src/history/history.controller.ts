@@ -1,4 +1,16 @@
-import { Body, Controller, Get, Headers, HttpCode, Param, Post, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  DefaultValuePipe,
+  Get,
+  Headers,
+  HttpCode,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+  Req
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiHeader, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Request } from 'express';
@@ -40,8 +52,8 @@ export class HistoryController {
   @ApiQuery({ name: 'size', type: Number, example: 5 })
   getHistoryList(
     @Param('lotusId') lotusId: string,
-    @Query('page') page: number,
-    @Query('size') size: number
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('size', new DefaultValuePipe(10), ParseIntPipe) size: number
   ): Promise<HistoryResponseListDto> {
     return this.historyService.getHistoryList(lotusId, page, size);
   }
