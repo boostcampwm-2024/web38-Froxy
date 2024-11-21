@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Inject, Injectable, forwardRef } from '@nestjs/common';
+import { isString } from 'class-validator';
 import { UserCreateDto } from './dto/user.create.dto';
 import { UserPatchDTO } from './dto/user.patch.dto';
 import { User } from './user.entity';
@@ -23,19 +24,32 @@ export class UserService {
 
   async getSimpleUserInfoByUserId(userId: string): Promise<SimpleUserResponseDto> {
     const user = await this.userRepository.findOneBy({ userId });
+    if (!user) {
+      throw new HttpException('user data is not found', HttpStatus.NOT_FOUND);
+    }
     return SimpleUserResponseDto.ofUserDto(user);
   }
 
   async patchUserDataByUserId(userId: string, updateData: UserPatchDTO): Promise<UserPatchDTO> {
-    const result = await this.userRepository.update(
-      { userId },
-      { nickname: updateData.nickname, profilePath: updateData.profile }
-    );
+    const modifyingData = this.getObjUser(updateData);
+
+    const result = await this.userRepository.update({ userId }, modifyingData);
     if (!result.affected) {
       throw new HttpException('user info not found', HttpStatus.NOT_FOUND);
     }
     const user = await this.userRepository.findOneBy({ userId });
     return UserPatchDTO.ofUser(user);
+  }
+
+  getObjUser(updateData: UserPatchDTO) {
+    let nickname = '';
+    let profilePath = '';
+    if (updateData.nickname && isString(updateData.nickname)) nickname = updateData.nickname;
+    if (updateData.profile) profilePath = updateData.profile;
+    if (!nickname && !profilePath) {
+      throw new HttpException('wrong user data', HttpStatus.BAD_REQUEST);
+    }
+    return { nickname, profilePath };
   }
 
   async loginUser(tokenData) {

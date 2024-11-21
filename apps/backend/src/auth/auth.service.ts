@@ -23,15 +23,19 @@ export class AuthService {
 
   verifyJwt(token: string): string {
     try {
+      if (!token) {
+        throw new Error('no token');
+      }
       const decoded = this.jwtService.verify(token, {
         secret: this.JWT_SECRET_KEY
       });
-      if (!decoded.userId) throw new Error();
+      if (!decoded.userId) throw new Error('invalid token');
       return decoded.userId;
     } catch (e) {
-      if (e.name === 'TokenExpiredError') throw new HttpException('Token expired.', HttpStatus.UNAUTHORIZED);
+      if (e.name === 'TokenExpiredError') throw new HttpException('token expired', HttpStatus.UNAUTHORIZED);
+      else if (e.message === 'no token') throw new HttpException('token is not found', HttpStatus.UNAUTHORIZED);
       else {
-        throw new HttpException('Invalid Authorization', HttpStatus.UNAUTHORIZED);
+        throw new HttpException('invalid token', HttpStatus.UNAUTHORIZED);
       }
     }
   }
@@ -39,11 +43,11 @@ export class AuthService {
   getIdFromRequest(req: Request): string {
     const auth = req.header('Authorization');
     if (!auth) {
-      throw new HttpException('Invalid Authorization', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('token is not found', HttpStatus.UNAUTHORIZED);
     }
     const token = req.header('Authorization').split(' ')[1].trim();
     if (!isString(token)) {
-      throw new HttpException('Invalid Authorization', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('invalid token', HttpStatus.UNAUTHORIZED);
     }
     return this.verifyJwt(token);
   }

@@ -23,9 +23,6 @@ export class GistService {
       hasNextPage = false;
     }
 
-    if (currentGistPage.length === 0) {
-      throw new Error('data없음');
-    }
     const gists = currentGistPage.map((gist) => {
       return ResponseGistDto.of(gist);
     });
@@ -43,11 +40,15 @@ export class GistService {
   }
 
   async getGistById(id: string, gitToken: string): Promise<GistApiFileListDto> {
-    const response = await this.gistReq('GET', `${this.gitBaseUrl}gists/${id}`, gitToken);
+    let response = null;
+    try {
+      response = await this.gistReq('GET', `${this.gitBaseUrl}gists/${id}`, gitToken);
+    } catch (e) {
+      throw new HttpException('gistId is not exist', HttpStatus.NOT_FOUND);
+    }
     const data = await response.json();
 
     const fileArr: GistApiFileDto[] = await this.parseGistApiFiles(data, gitToken);
-
     return GistApiFileListDto.of(data, fileArr);
   }
 
@@ -108,10 +109,12 @@ export class GistService {
     return result;
   }
   async getFileContent(raw_url: string, gittoken: string) {
+    const header = {};
+    if (gittoken) {
+      header['Authorization'] = `Bearer ${gittoken}`;
+    }
     const response = await fetch(raw_url, {
-      headers: {
-        Authorization: `Bearer ${gittoken}`
-      }
+      headers: header
     });
     if (!response.ok) {
       throw new Error('404');
@@ -169,7 +172,7 @@ export class GistService {
     }
     const response = await fetch(commendURL, requestInit);
     if (!response.ok) {
-      throw new Error('404');
+      throw new HttpException('gist api throw error', HttpStatus.NOT_FOUND);
     }
     return response;
   }

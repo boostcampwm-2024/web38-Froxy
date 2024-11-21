@@ -24,9 +24,9 @@ export class GistApiFileDto {
       fileName: fileName,
       rawUrl: data.files[fileName].raw_url,
       type: data.files[fileName].type,
-      language: data.files[fileName].language,
+      language: data.files[fileName].language ? data.files[fileName].language : '',
       size: data.files[fileName].size,
-      content: content
+      content: content ? content : ''
     };
   }
 }
