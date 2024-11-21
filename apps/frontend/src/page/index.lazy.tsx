@@ -1,7 +1,7 @@
 import { Button, Heading } from '@froxy/design/components';
 import { createLazyFileRoute, getRouteApi } from '@tanstack/react-router';
 import { FaGithub } from 'react-icons/fa';
-import { LoginButton } from '@/widget/LoginButton';
+import { LoginButton } from '@/widget/navigation/LoginButton';
 
 const { useNavigate } = getRouteApi('/');
 

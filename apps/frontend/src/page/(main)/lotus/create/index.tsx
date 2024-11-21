@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { isAuthUser } from '@/feature/User/utils/isAuthUser';
+import { isAuthUser } from '@/feature/user/util';
 
 export const Route = createFileRoute('/(main)/lotus/create/')({
   beforeLoad: () => {

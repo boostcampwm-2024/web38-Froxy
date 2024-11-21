@@ -1,6 +1,6 @@
 import { DefaultBodyType, HttpResponse, PathParams, StrictRequest } from 'msw';
 import { MockRepository } from './MockRepository';
-import { LotusType } from '@/feature/Lotus/type';
+import { LotusType } from '@/feature/lotus/type';
 
 const lotusList = new MockRepository<Omit<LotusType, 'id'>>();
 

@@ -1,9 +1,9 @@
 import { createLazyFileRoute } from '@tanstack/react-router';
-import { AsyncBoundary } from '@/shared/components/AsyncBoundary';
-import { SuspenseLotusHistoryList } from '@/widget/History';
-import { CodeRunButton } from '@/widget/LotusCodeInput';
-import { SuspenseLotusDetail } from '@/widget/SuspenseLotusDetail';
-import { SuspenseLotusFiles } from '@/widget/SuspenseLotusFiles';
+import { AsyncBoundary } from '@/shared/boundary';
+import { SuspenseLotusHistoryList } from '@/widget/history';
+import { CodeRunButton } from '@/widget/lotusCodeRun';
+import { SuspenseLotusDetail } from '@/widget/lotusDetail';
+import { SuspenseLotusFiles } from '@/widget/lotusDetail/SuspenseLotusFiles';
 
 import '@/app/style/github.css';
 

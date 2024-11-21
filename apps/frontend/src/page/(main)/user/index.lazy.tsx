@@ -1,9 +1,9 @@
 import { Button, Heading, Text } from '@froxy/design/components';
 import { createLazyFileRoute, getRouteApi } from '@tanstack/react-router';
-import { AsyncBoundary } from '@/shared/components/AsyncBoundary';
-import { Pagination } from '@/widget/Pagination';
-import { SuspenseUserInfoBox } from '@/widget/User/SuspenseUserInfoBox';
-import { SuspenseUserLotusList } from '@/widget/User/SuspenseUserLotusList';
+import { AsyncBoundary } from '@/shared/boundary';
+import { Pagination } from '@/shared/pagination/Pagination';
+import { SuspenseUserInfoBox } from '@/widget/user/SuspenseUserInfoBox';
+import { SuspenseUserLotusList } from '@/widget/user/SuspenseUserLotusList';
 
 const { useSearch, useNavigate } = getRouteApi('/(main)/user/');
 

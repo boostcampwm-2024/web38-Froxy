@@ -1,5 +1,5 @@
 import { createLazyFileRoute } from '@tanstack/react-router';
-import { LotusCreateForm } from '@/widget/LotusCreate/LotusCreateForm';
+import { LotusCreateForm } from '@/widget/lotusCreate/LotusCreateForm';
 
 export const Route = createLazyFileRoute('/(main)/lotus/create/')({
   component: RouteComponent

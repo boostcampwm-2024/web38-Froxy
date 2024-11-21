@@ -2,7 +2,7 @@ import { HTMLProps } from 'react';
 import { Text } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
 import { CommentViewer } from './Comment';
-import { Time } from '@/shared/components/Time';
+import { Time } from '@/shared';
 
 // Todo : UserFeature 추가 이후 author를 User로 타입 변경
 export interface CommentValue {

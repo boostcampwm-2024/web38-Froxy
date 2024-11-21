@@ -1,8 +1,8 @@
 import { Button, Heading } from '@froxy/design/components';
 import { useNavigate } from '@tanstack/react-router';
-import { LoginButton } from './LoginButton';
-import { CreateLotusButton, LogoutButton } from './Navigation';
-import { useUserQuery } from '@/feature/User/query';
+import { CreateLotusButton, LogoutButton } from './navigation';
+import { LoginButton } from './navigation/LoginButton';
+import { useUserQuery } from '@/feature/user/query';
 
 export function Header() {
   const { data } = useUserQuery();

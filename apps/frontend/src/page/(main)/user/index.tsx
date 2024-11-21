@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { z } from 'zod';
-import { isAuthUser } from '@/feature/User/utils/isAuthUser';
+import { isAuthUser } from '@/feature/user/util';
 
 const userLotusSearchValidation = z.object({
   page: z.number().default(1)

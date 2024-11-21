@@ -1,7 +1,7 @@
 import { createLazyFileRoute, getRouteApi } from '@tanstack/react-router';
-import { AsyncBoundary } from '@/shared/components/AsyncBoundary';
-import { LotusSearchBar, SuspenseLotusList } from '@/widget/LotusList';
-import { Pagination } from '@/widget/Pagination';
+import { AsyncBoundary } from '@/shared/boundary';
+import { Pagination } from '@/shared/pagination/Pagination';
+import { LotusSearchBar, SuspenseLotusList } from '@/widget/lotusList';
 
 const { useSearch, useNavigate } = getRouteApi('/(main)/lotus/');
 
