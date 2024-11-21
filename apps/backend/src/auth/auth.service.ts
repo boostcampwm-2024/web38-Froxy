@@ -38,7 +38,6 @@ export class AuthService {
 
   getIdFromRequest(req: Request): string {
     const auth = req.header('Authorization');
-    console.dir(req.get('Authorization'));
     if (!auth) {
       throw new HttpException('Invalid Authorization', HttpStatus.UNAUTHORIZED);
     }
