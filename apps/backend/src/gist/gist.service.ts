@@ -14,7 +14,13 @@ export class GistService {
   constructor() {
     this.gitBaseUrl = 'https://api.github.com/';
   }
-  async getGistList(gitToken: string, page: number, perPage: number): Promise<ResponseAllGistsDto> {
+  async getGistList(gitToken: string, page = 1, perPage = 10): Promise<ResponseAllGistsDto> {
+    if (!page) {
+      page = 1;
+    }
+    if (!perPage) {
+      perPage = 10;
+    }
     let hasNextPage = true;
     const currentGistPage = await this.gistPageData(gitToken, page, perPage);
     const nextGistPage = await this.gistPageData(gitToken, page + 1, perPage);
