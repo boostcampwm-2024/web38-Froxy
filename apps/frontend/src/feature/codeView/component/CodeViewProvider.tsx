@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { CodeViewValue } from '.';
-import { CodeViewActionContext, CodeViewContext } from './useCodeViewContext';
+import { CodeViewActionContext, CodeViewContext } from '@/feature/codeView/hook';
+import { CodeViewValue } from '@/feature/codeView/type';
 
 type CodeViewProviderProps = {
   value: CodeViewValue[];

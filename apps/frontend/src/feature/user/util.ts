@@ -1,5 +1,5 @@
 import { queryClient } from '@/app/query';
-import { UserType } from '@/feature/User/type';
+import { UserType } from '@/feature/user/type';
 
 export const isAuthUser = () => {
   const user = queryClient.getQueryData<UserType>(['user']);

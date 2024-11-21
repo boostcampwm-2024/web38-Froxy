@@ -1,7 +1,7 @@
 import { HTMLProps } from 'react';
 import { cn } from '@froxy/design/utils';
 import { Markdown } from '@froxy/react-markdown';
-import { useCodeViewContext } from './useCodeViewContext';
+import { useCodeViewContext } from '@/feature/codeView/hook';
 
 type CodeViewerProps = {
   children?: string;

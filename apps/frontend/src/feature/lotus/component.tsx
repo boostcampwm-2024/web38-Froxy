@@ -2,8 +2,8 @@ import { ComponentProps, HTMLProps, createContext, useContext } from 'react';
 import { Badge, Text } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
 import { Link } from '@tanstack/react-router';
-import { BadgeVariantType, LotusType } from '@/feature/Lotus/type';
-import { Time } from '@/shared/components/Time';
+import { BadgeVariantType, LotusType } from '@/feature/lotus/type';
+import { Time } from '@/shared';
 
 const lotusContext = createContext<LotusType | null>(null);
 
@@ -92,3 +92,12 @@ export function LotusLogo({ className, ...props }: LotusLogoProps) {
 export function LotusProvider({ children, lotus }: { children: React.ReactNode; lotus: LotusType }) {
   return <lotusContext.Provider value={lotus}>{children}</lotusContext.Provider>;
 }
+
+export const Lotus = Object.assign(LotusProvider, {
+  Title: LotusTitle,
+  Author: LotusAuthor,
+  Logo: LotusLogo,
+  CreateDate: LotusCreateDate,
+  TagList: LotusTagList,
+  Link: LotusLink
+});

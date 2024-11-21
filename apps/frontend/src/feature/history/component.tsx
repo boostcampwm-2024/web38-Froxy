@@ -1,29 +1,9 @@
 import { ComponentProps, HTMLProps, createContext, useContext } from 'react';
 import { Heading, Text } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
-import { FormatDateKey, Time } from '@/shared/components/Time';
-
-export const HISTORY_STATUS = {
-  SUCCESS: 'SUCCESS',
-  ERROR: 'ERROR',
-  PENDING: 'PENDING'
-} as const;
-
-export const HISTORY_STATUS_COLOR = {
-  [HISTORY_STATUS.SUCCESS]: 'bg-green-500',
-  [HISTORY_STATUS.ERROR]: 'bg-orange-500',
-  [HISTORY_STATUS.PENDING]: 'bg-sky-500'
-} as const;
-
-type HistoryStatus = (typeof HISTORY_STATUS)[keyof typeof HISTORY_STATUS];
-export interface HistoryType {
-  id: string;
-  status: HistoryStatus;
-  filename: string;
-  input: string;
-  output: string;
-  date: Date;
-}
+import { HISTORY_STATUS_COLOR } from './constant';
+import { HistoryType } from './type';
+import { FormatDateKey, Time } from '@/shared';
 
 const HistoryContext = createContext<HistoryType | null>(null);
 

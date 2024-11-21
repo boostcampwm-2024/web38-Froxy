@@ -1,7 +1,7 @@
 import { HTMLProps } from 'react';
 import { Button } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
-import { useCodeViewActionContext, useCodeViewContext } from './useCodeViewContext';
+import { useCodeViewActionContext, useCodeViewContext } from '@/feature/codeView/hook';
 
 type CodeSideBarProps = HTMLProps<HTMLDivElement>;
 
