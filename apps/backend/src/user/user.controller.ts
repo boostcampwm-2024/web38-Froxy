@@ -6,6 +6,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -108,8 +109,8 @@ export class UserController {
   @ApiQuery({ name: 'size', type: String, example: '10', required: false })
   getUserLotus(
     @Req() request: Request,
-    @Query('page') page: number,
-    @Query('size') size: number
+    @Query('page', ParseIntPipe) page: number,
+    @Query('size', ParseIntPipe) size: number
   ): Promise<LotusPublicDto> {
     const userId = this.authService.getIdFromRequest(request);
     return this.lotusService.getUserLotus(userId, page, size);
@@ -140,8 +141,8 @@ export class UserController {
   @ApiResponse({ status: 200, description: '실행 성공', type: ResponseAllGistsDto })
   async getGistPage(
     @Req() request: Request,
-    @Query('page') page: number,
-    @Query('perPage') perPage: number
+    @Query('page', ParseIntPipe) page: number,
+    @Query('perPage', ParseIntPipe) perPage: number
   ): Promise<ResponseAllGistsDto> {
     const gitToken = await this.authService.getUserGitToken(this.authService.getIdFromRequest(request));
     return await this.gistService.getGistList(gitToken, Number(page), Number(perPage));

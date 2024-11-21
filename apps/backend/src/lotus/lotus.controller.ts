@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Query, Req } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { Request } from 'express';
 import { LotusCreateRequestDto } from './dto/lotus.createRequest.dto';
@@ -61,8 +61,8 @@ export class LotusController {
   @ApiQuery({ name: 'size', type: String, example: '10', required: false })
   @ApiQuery({ name: 'search', type: String, example: 'Web', required: false })
   getPublicLotus(
-    @Query('page') page: number,
-    @Query('size') size: number,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('size', ParseIntPipe) size: number,
     @Query('search') search: string
   ): Promise<LotusPublicDto> {
     return this.lotusService.getPublicLotus(page, size, search);
