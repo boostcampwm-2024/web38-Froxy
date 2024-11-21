@@ -13,6 +13,8 @@ export function Header() {
     navigate({ to: '/lotus' });
   };
 
+  const image = data?.profile || '/image/exampleImage.jpeg';
+
   return (
     <header className="flex justify-center mb-7 w-full shadow-md">
       <div className="w-full max-w-screen-xl py-5 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
@@ -28,7 +30,7 @@ export function Header() {
                 <LogoutButton />
               </div>
 
-              <img className="w-10 h-10 rounded-full" src="/image/exampleImage.jpeg" alt="프로필 사진" />
+              <img className="w-10 h-10 rounded-full" src={image} alt="프로필 사진" />
             </>
           ) : (
             <LoginButton variant={'default'}>Login</LoginButton>
