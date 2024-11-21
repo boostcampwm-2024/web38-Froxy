@@ -11,3 +11,7 @@ export enum HISTORY_STATUS {
   ERROR = 'ERROR',
   SUCCESS = 'SUCCESS'
 }
+
+export enum SUPPORTED_LANGUAGES {
+  JS = '.js'
+}

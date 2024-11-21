@@ -8,4 +8,5 @@ export * from './ui/typography';
 export * from './ui/tabs';
 export * from './ui/switch';
 export * from './ui/accordion';
+export * from './ui/skeleton';
 export * from './Slot';

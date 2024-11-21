@@ -84,9 +84,11 @@ export function LotusLink({ children, className }: LotusLinkProps) {
 type LotusLogoProps = HTMLProps<HTMLImageElement>;
 
 export function LotusLogo({ className, ...props }: LotusLogoProps) {
-  const { logo, title } = useLotusContext();
+  const { title, author } = useLotusContext();
 
-  return <img src={logo} alt={title} className={cn('w-16 h-16 rounded-full', className)} {...props} />;
+  const image = author?.profile || '/image/logoIcon.svg';
+
+  return <img src={image} alt={title} className={cn('w-16 h-16 rounded-full', className)} {...props} />;
 }
 
 export function LotusProvider({ children, lotus }: { children: React.ReactNode; lotus: LotusType }) {

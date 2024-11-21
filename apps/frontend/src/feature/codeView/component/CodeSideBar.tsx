@@ -10,7 +10,7 @@ export function CodeSideBar({ className, ...props }: CodeSideBarProps) {
   const setCurrentCode = useCodeViewActionContext();
 
   return (
-    <div className={cn('flex flex-col rounded-lg shadow-md py-2 h-full', className)} {...props}>
+    <div className={cn('flex flex-col rounded-lg shadow-md py-2 h-full overflow-scroll', className)} {...props}>
       {value.map((v, i) => (
         <Button
           variant={'link'}

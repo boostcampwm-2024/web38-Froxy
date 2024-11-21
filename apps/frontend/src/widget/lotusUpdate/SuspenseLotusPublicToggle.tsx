@@ -40,3 +40,16 @@ export function SuspenseLotusPublicToggle({ lotus, className }: { lotus: LotusTy
     </div>
   );
 }
+
+function SkeletonSuspenseLotusPublicToggle() {
+  return (
+    <div className="flex items-center gap-2">
+      <Switch disabled />
+      <Text size="sm" variant="muted">
+        private / public
+      </Text>
+    </div>
+  );
+}
+
+SuspenseLotusPublicToggle.Skeleton = SkeletonSuspenseLotusPublicToggle;

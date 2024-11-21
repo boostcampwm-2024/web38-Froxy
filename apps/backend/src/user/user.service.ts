@@ -14,11 +14,15 @@ export class UserService {
     private authService: AuthService
   ) {}
 
-  findOne(gitId: number): Promise<User | null> {
-    return this.userRepository.findOneBy({ gitId });
+  async findOne(gitId: number): Promise<User | null> {
+    return this.userRepository.findOneBy({ gitId }).catch((error) => {
+      throw new HttpException('user findOneBy query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+    });
   }
-  findOneByUserId(userId: string): Promise<User | null> {
-    return this.userRepository.findOneBy({ userId });
+  async findOneByUserId(userId: string): Promise<User | null> {
+    return this.userRepository.findOneBy({ userId }).catch((error) => {
+      throw new HttpException('user findOneBy query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+    });
   }
 
   async getSimpleUserInfoByUserId(userId: string): Promise<SimpleUserResponseDto> {
@@ -52,7 +56,9 @@ export class UserService {
       await this.saveUser(new UserCreateDto(inputUser, accessToken));
       user = await this.findOne(inputUser.id);
     } else {
-      await this.userRepository.update({ gitId: inputUser.id }, { gitToken: accessToken });
+      await this.userRepository.update({ gitId: inputUser.id }, { gitToken: accessToken }).catch((error) => {
+        throw new HttpException('user update query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+      });
     }
     return this.authService.createJwt(user.userId);
   }
@@ -62,11 +68,15 @@ export class UserService {
   }
 
   async saveUser(user: User): Promise<void> {
-    await this.userRepository.save(user);
+    await this.userRepository.save(user).catch((error) => {
+      throw new HttpException('user save query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+    });
   }
 
   async findUserGistToken(userId: string): Promise<string> {
-    const foundUser = await this.userRepository.findOneBy({ userId });
+    const foundUser = await this.userRepository.findOneBy({ userId }).catch((error) => {
+      throw new HttpException('user findOneBy query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+    });
     if (!foundUser) throw new HttpException('user data not found', HttpStatus.NOT_FOUND);
     return foundUser.gitToken;
   }

@@ -10,6 +10,7 @@ type CodeViewProviderProps = {
 
 export function CodeViewProvider({ value, children, current: currentIndex = 0 }: CodeViewProviderProps) {
   const [current, setCurrent] = useState(currentIndex);
+
   const setCurrentCode = (index: number) => setCurrent(index);
 
   return (

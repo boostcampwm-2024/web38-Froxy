@@ -42,3 +42,14 @@ export function LotusUpdateButton({ lotusId }: { lotusId: string }) {
     </Button>
   );
 }
+
+function SkeletonLotusUpdateButton() {
+  return (
+    <Button variant={'default'} disabled>
+      <IoSettingsSharp />
+      <Text size="sm">수정하기</Text>
+    </Button>
+  );
+}
+
+LotusUpdateButton.Skeleton = SkeletonLotusUpdateButton;

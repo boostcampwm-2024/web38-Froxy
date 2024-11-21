@@ -9,9 +9,11 @@ export function SuspenseLotusHistoryList({ id }: { id: string }) {
     data: { list }
   } = useLotusHistoryListSuspenseQuery({ id });
 
+  const firstPendingIndex = list.findIndex((history) => history.status === 'PENDING');
+
   return (
     <div className="flex flex-col gap-5">
-      <Accordion type="single">
+      <Accordion type="single" defaultValue={list[firstPendingIndex]?.id}>
         {list.map((history) => (
           <AccordionItem
             key={history.id}

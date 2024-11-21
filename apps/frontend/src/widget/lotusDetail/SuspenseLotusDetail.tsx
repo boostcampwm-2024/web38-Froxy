@@ -1,3 +1,4 @@
+import { Skeleton } from '@froxy/design/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { Lotus, useLotusSuspenseQuery } from '@/feature/lotus';
 import { UserType } from '@/feature/user';
@@ -14,7 +15,7 @@ export function SuspenseLotusDetail({ id }: { id: string }) {
     <div className="flex justify-between items-start pb-4 border-b-2 border-slate-200">
       <div>
         <Lotus lotus={lotus}>
-          <div className=" mb-4">
+          <div className="mb-4">
             <Lotus.Title className="text-3xl font-bold mr-4" />
             <div>{lotus?.tags?.length > 0 && <Lotus.TagList className="pt-4 min-h-8" variant={'default'} />}</div>
           </div>
@@ -32,3 +33,29 @@ export function SuspenseLotusDetail({ id }: { id: string }) {
     </div>
   );
 }
+
+function SkeletonLotusDetail() {
+  return (
+    <div className="flex justify-between items-start pb-4 border-b-2 border-slate-200">
+      <div>
+        <div className="mb-4">
+          <Skeleton className="font-bold mr-4 w-32 h-10" />
+        </div>
+        <div className="flex gap-2 mb-4">
+          {new Array(3).fill(0).map((_, index) => (
+            <Skeleton key={index} className="w-10 h-6 rounded-sm" />
+          ))}
+        </div>
+        <Skeleton className="w-18 h-6 my-2" />
+        <Skeleton className="w-10 h-4" />
+      </div>
+      <div className="flex items-center gap-2 pt-2">
+        <SuspenseLotusPublicToggle.Skeleton />
+        <LotusUpdateButton.Skeleton />
+        <LotusDeleteButton.Skeleton />
+      </div>
+    </div>
+  );
+}
+
+SuspenseLotusDetail.Skeleton = SkeletonLotusDetail;
