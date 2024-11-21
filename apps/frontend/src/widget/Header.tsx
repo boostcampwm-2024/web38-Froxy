@@ -28,7 +28,12 @@ export function Header() {
                 <LogoutButton />
               </div>
 
-              <img className="w-10 h-10 rounded-full" src="/image/exampleImage.jpeg" alt="프로필 사진" />
+              <img
+                className="w-10 h-10 rounded-full"
+                src="/image/exampleImage.jpeg"
+                alt="프로필 사진"
+                onClick={() => navigate({ to: '/user' })}
+              />
             </>
           ) : (
             <LoginButton variant={'default'}>Login</LoginButton>
