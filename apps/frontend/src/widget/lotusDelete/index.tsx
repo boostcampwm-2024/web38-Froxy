@@ -51,3 +51,14 @@ export function LotusDeleteButton({ lotusId }: { lotusId: string }) {
     </Button>
   );
 }
+
+function SkeletonLotusDeleteButton() {
+  return (
+    <Button variant={'destructive'} disabled>
+      <RiDeleteBin5Fill />
+      <Text size="sm">삭제하기</Text>
+    </Button>
+  );
+}
+
+LotusDeleteButton.Skeleton = SkeletonLotusDeleteButton;
