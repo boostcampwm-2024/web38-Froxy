@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { getUserGistFile, getUserGistList, getUserInfo, getUserLotusList, postLogin } from './api';
+import { getUserGistFile, getUserGistList, getUserInfo, getUserLotusList, patchUserInfo, postLogin } from './api';
 
 export const useUserInfoSuspenseQuery = () => {
   const query = useSuspenseQuery({
@@ -49,6 +49,14 @@ export const useUserQuery = () => {
   });
 
   return query;
+};
+
+export const useUserMutation = () => {
+  const mutation = useMutation({
+    mutationFn: patchUserInfo
+  });
+
+  return mutation;
 };
 
 export const useLoginMutation = () => {
