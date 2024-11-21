@@ -92,7 +92,7 @@ export class DockerService {
     //desciption: 스트림 종료 후 결과 반환
     return new Promise((resolve, reject) => {
       stream.on('end', async () => {
-        // await container.remove({ force: true });
+        await container.remove({ force: true });
         let result = this.filterAnsiCode(output);
         if (inputs.length !== 0) {
           result = result.split('\n').slice(1).join('\n');
