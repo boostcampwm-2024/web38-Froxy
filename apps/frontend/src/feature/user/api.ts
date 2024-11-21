@@ -1,17 +1,18 @@
 import { UserType } from './type';
 import { LotusType } from '@/feature/lotus/type';
 import { api } from '@/shared/common/api';
+import { PageType } from '@/shared/pagination';
 
 // 사용자의 Lotus 목록 조회
 export const getUserLotusList = async ({ page = 1, size = 10 }: { page?: number; size?: number }) => {
   const response = await api.get(`/api/user/lotus?page=${page}&size=${size}`);
 
-  const { lotuses } = response.data;
-
-  return lotuses.map((lotus: LotusType) => ({
+  const lotuses: LotusType[] = response.data.lotuses.map((lotus: LotusType) => ({
     ...lotus,
     date: new Date(lotus.date)
-  })) as LotusType[];
+  }));
+
+  return { lotuses, page: response.data.page as PageType };
 };
 
 interface GistType {
@@ -63,6 +64,17 @@ export const postLogin = async () => {
 //사용자 기본 정보 조회
 export const getUserInfo = async () => {
   const res = await api.get<UserType>('/api/user');
+
+  return res.data;
+};
+
+interface PatchUserInfo {
+  nickname: string;
+}
+
+// 사용자 정보 수정하기
+export const patchUserInfo = async ({ body }: { body: PatchUserInfo }) => {
+  const res = await api.patch('/api/user', body);
 
   return res.data;
 };

@@ -1,16 +1,37 @@
 import { useState } from 'react';
 import { Text } from '@froxy/design/components';
+import { useQueryClient } from '@tanstack/react-query';
 import { GoPencil } from 'react-icons/go';
 import { UserInfoInputForm } from '@/feature/user/component';
-import { useUserInfoSuspenseQuery } from '@/feature/user/query';
+import { useUserInfoSuspenseQuery, useUserMutation } from '@/feature/user/query';
+import { useToast } from '@/shared/toast';
 
 export function SuspenseUserInfoBox() {
+  const queryClient = useQueryClient();
   const { data: user } = useUserInfoSuspenseQuery();
+  const { mutate } = useUserMutation();
+  const { toast } = useToast();
 
   const [isEdit, setIsEdit] = useState(false);
 
   const onToggleIsEdit = () => {
     setIsEdit(!isEdit);
+  };
+
+  const onEditUserInfo = (nickname: string) => {
+    mutate(
+      { body: { nickname } },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['user'] });
+          toast({
+            variant: 'success',
+            description: '닉네임이 수정되었습니다.',
+            duration: 2000
+          });
+        }
+      }
+    );
   };
 
   return (
@@ -25,9 +46,9 @@ export function SuspenseUserInfoBox() {
           <div className="col-span-2">
             {isEdit ? (
               <UserInfoInputForm
-                value={'froxy'}
+                value={user.nickname}
                 onToggleIsEdit={onToggleIsEdit}
-                onEditValue={(value) => console.log('편집:', value)}
+                onEditValue={(value) => onEditUserInfo(value)}
               />
             ) : (
               <div className="flex items-center gap-10">

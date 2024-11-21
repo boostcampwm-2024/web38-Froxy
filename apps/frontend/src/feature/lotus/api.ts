@@ -1,17 +1,17 @@
 import { LotusType } from './type';
-
 import { CodeViewValue } from '@/feature/codeView';
 import { api } from '@/shared/common/api';
+import { PageType } from '@/shared/pagination';
 
 export const getLotusList = async ({ page = 1 }: { page: number }) => {
   const response = await api.get(`/api/lotus?page=${page}`);
 
-  const { lotuses } = response.data;
-
-  return lotuses.map((lotus: LotusType) => ({
+  const lotuses: LotusType[] = response.data.lotuses.map((lotus: LotusType) => ({
     ...lotus,
     date: new Date(lotus.date)
-  })) as LotusType[];
+  }));
+
+  return { lotuses, page: response.data.page as PageType };
 };
 
 export const getLotusDetail = async ({

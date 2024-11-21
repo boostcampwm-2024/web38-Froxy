@@ -1,19 +1,16 @@
 import { createLazyFileRoute, getRouteApi } from '@tanstack/react-router';
 import { AsyncBoundary } from '@/shared/boundary';
-import { Pagination } from '@/shared/pagination/Pagination';
 import { LotusSearchBar, SuspenseLotusList } from '@/widget/lotusList';
+import { SuspenseLotusPagination } from '@/widget/lotusList/SuspenseLotusPagination';
 
-const { useSearch, useNavigate } = getRouteApi('/(main)/lotus/');
+const { useSearch } = getRouteApi('/(main)/lotus/');
 
 export const Route = createLazyFileRoute('/(main)/lotus/')({
   component: RouteComponent
 });
 
 function RouteComponent() {
-  const search = useSearch();
-  const navigate = useNavigate();
-
-  const page = search.page;
+  const { page } = useSearch();
 
   return (
     <div>
@@ -23,11 +20,9 @@ function RouteComponent() {
         <SuspenseLotusList page={page} />
       </AsyncBoundary>
 
-      <Pagination
-        totalPages={5}
-        initialPage={page}
-        onChangePage={(page) => navigate({ to: '/lotus', search: { page } })}
-      />
+      <AsyncBoundary pending={<div>Loading...</div>} rejected={() => <div>Error</div>}>
+        <SuspenseLotusPagination page={page} />
+      </AsyncBoundary>
     </div>
   );
 }

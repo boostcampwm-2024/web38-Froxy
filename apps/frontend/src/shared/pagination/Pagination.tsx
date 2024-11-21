@@ -10,12 +10,12 @@ import {
 import { usePagination } from '@/shared/pagination/usePagination';
 
 interface PaginationProps {
-  totalPages: number;
+  totalPages?: number;
   initialPage?: number;
   onChangePage?: (page: number) => void;
 }
 
-export function Pagination({ totalPages, initialPage = 1, onChangePage }: PaginationProps) {
+export function Pagination({ totalPages = 1, initialPage = 1, onChangePage }: PaginationProps) {
   const { currentPage, onClickPage, onClickPrevious, onClickNext, getPaginationItems } = usePagination({
     totalPages,
     initialPage,

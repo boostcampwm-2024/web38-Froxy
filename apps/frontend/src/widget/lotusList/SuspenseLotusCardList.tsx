@@ -5,7 +5,7 @@ export function SuspenseLotusList({ page = 1 }: { page?: number }) {
 
   return (
     <div className="w-full grid grid-cols-3 gap-8">
-      {lotusList.map((lotus) => (
+      {lotusList?.lotuses?.map((lotus) => (
         <Lotus lotus={lotus} key={lotus.id}>
           <Lotus.Link className="max-w-96 p-5 border-2 border-slate-200 rounded-xl">
             <Lotus.Title className="text-[#1C1D22]" />
