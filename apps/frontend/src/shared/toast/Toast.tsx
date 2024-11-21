@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Heading, Text } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useTimer } from '@/shared/hooks/useTimer';
+import { useTimer } from '@/shared/common';
 
 export interface ToastProps {
   variant?: 'default' | 'success' | 'error';

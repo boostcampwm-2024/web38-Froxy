@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { ErrorBoundary } from '@/shared/components/ErrorBoundary';
+import { ErrorBoundary } from './ErrorBoundary';
 
 export type AsyncBoundaryProps = {
   children: React.ReactNode;

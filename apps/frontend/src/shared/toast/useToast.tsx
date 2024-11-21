@@ -1,5 +1,5 @@
 import { Toast, ToastProps } from './Toast';
-import { useOverlay } from '@/shared/hooks/useOverlay';
+import { useOverlay } from '@/shared/overlay/useOverlay';
 
 export const useToast = () => {
   const { open, close } = useOverlay();

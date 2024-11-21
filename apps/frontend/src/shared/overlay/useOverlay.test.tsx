@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { render, renderHook, screen, waitFor } from '@testing-library/react';
 import { afterAll, beforeAll, describe, expect, test, vitest } from 'vitest';
-import { OverlayProvider, useOverlay } from '.';
+import { OverlayProvider, useOverlay } from './';
 
 describe('useOverlay', () => {
   beforeAll(() => {
