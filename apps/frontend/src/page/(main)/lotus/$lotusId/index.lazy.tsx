@@ -16,11 +16,11 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col gap-16">
-      <AsyncBoundary pending={<div>Loading...</div>} rejected={() => <div>Error!</div>}>
+      <AsyncBoundary pending={<SuspenseLotusDetail.Skeleton />} rejected={() => <div>Error!</div>}>
         <SuspenseLotusDetail id={id} />
       </AsyncBoundary>
 
-      <AsyncBoundary pending={<div>Loading...</div>} rejected={() => <div>Error!</div>}>
+      <AsyncBoundary pending={<SuspenseLotusFiles.Skeleton />} rejected={() => <div>Error!</div>}>
         <SuspenseLotusFiles id={id} />
       </AsyncBoundary>
 
