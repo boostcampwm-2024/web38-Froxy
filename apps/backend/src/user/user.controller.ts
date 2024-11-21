@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { FileDto } from './dto/file.dto';
 import { FileResponseDto } from './dto/file.response.dto';
 import { TokenDTO } from './dto/token.dto';
@@ -69,7 +69,7 @@ export class UserController {
     return TokenDTO.of(await this.userService.makeTestUser(testUser));
   }
 
-  @Post('login')
+  @Get('login')
   @Redirect()
   getGithubLoginPage() {
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${this.OAUTH_CLIENT_ID}&redirect_uri=${this.OAUTH_LOGIN_CALLBACK_URL}&scope=gist`;
@@ -77,7 +77,8 @@ export class UserController {
   }
 
   @Get('login/callback')
-  async githubCallback(@Query('code') code: string): Promise<TokenDTO> {
+  async githubCallback(@Query('code') code: string, @Res() res: Response): Promise<void> {
+    const clientUrl = this.configService.get<string>('CLIENT_REDIRECT_URL');
     try {
       const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
         method: 'POST',
@@ -93,10 +94,9 @@ export class UserController {
       });
       const tokenData = await tokenResponse.json();
       const token = await this.userService.loginUser(tokenData);
-      return TokenDTO.of(token);
+      res.redirect(`${clientUrl}/login/success?token=${token}`);
     } catch (error) {
-      console.error('GitHub OAuth 오류:', error);
-      throw new HttpException('GitHub 인증에 실패했습니다.', HttpStatus.INTERNAL_SERVER_ERROR);
+      res.redirect(`${clientUrl}/login/error`);
     }
   }
 
