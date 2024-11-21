@@ -4,7 +4,7 @@ import { QueryProvider } from './query';
 import { RouteProvider } from './router';
 
 import './style/index.css';
-import { OverlayProvider } from '@/shared/hooks/useOverlay';
+import { OverlayProvider } from '@/shared/overlay';
 
 async function enableMocking() {
   if (process.env.NODE_ENV !== 'development') {

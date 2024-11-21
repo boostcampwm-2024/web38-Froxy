@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Heading, Text } from '@froxy/design/components';
 import { LotusCodeDynamicInput } from './LotusCodeDynamicInput';
 import { SuspenseLotusRunFileSelect } from './LotusRunFileSelect';
-import { AsyncBoundary } from '@/shared/components/AsyncBoundary';
+import { AsyncBoundary } from '@/shared/boundary';
 
 interface LotusRunCodeFormProps {
   lotusId: string;

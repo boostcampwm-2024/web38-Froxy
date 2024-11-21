@@ -2,8 +2,8 @@ import { Button } from '@froxy/design/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { LotusRunCodeForm } from './LotusRunCodeForm';
 import { useCodeRunMutation } from '@/feature/history/query';
-import { ModalBox } from '@/shared/components/Overlay';
-import { useOverlay } from '@/shared/hooks/useOverlay';
+import { ModalBox } from '@/shared';
+import { useOverlay } from '@/shared/overlay';
 
 export function CodeRunButton({ lotusId }: { lotusId: string }) {
   const { open, exit } = useOverlay();

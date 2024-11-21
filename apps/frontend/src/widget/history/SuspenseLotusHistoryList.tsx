@@ -2,7 +2,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@f
 import { HistoryTrigger } from './HistoryTrigger';
 import { SuspenseLotusHistoryDetail } from './SuspenseLotusHistoryDetail';
 import { useLotusHistoryListSuspenseQuery } from '@/feature/history/query';
-import { AsyncBoundary } from '@/shared/components/AsyncBoundary';
+import { AsyncBoundary } from '@/shared/boundary';
 
 export function SuspenseLotusHistoryList({ id }: { id: string }) {
   const {
