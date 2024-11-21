@@ -96,7 +96,6 @@ export class UserController {
       });
       const tokenData = await tokenResponse.json();
       const token = await this.userService.loginUser(tokenData);
-      console.log(token);
       res.redirect(`${clientUrl}/login/success?token=${token}`);
     } catch (error) {
       res.redirect(`${clientUrl}/login/error`);
