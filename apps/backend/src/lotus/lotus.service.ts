@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { title } from 'process';
 import { In } from 'typeorm';
 import { LotusCreateRequestDto } from './dto/lotus.createRequest.dto';
 import { LotusDetailDto } from './dto/lotus.detail.dto';
@@ -65,17 +66,24 @@ export class LotusService {
   ): Promise<LotusResponseDto> {
     const updateLotus = await this.lotusRepository.findOne({
       where: { lotusId },
-      relations: ['user']
+      relations: ['user', 'tags']
     });
     if (updateLotus.user.userId !== userIdWhoWantToUpdate) {
       throw new HttpException('this is not allowed req', HttpStatus.FORBIDDEN);
     }
     if (!updateLotus) throw new HttpException('invalid lotusId', HttpStatus.NOT_FOUND);
-    const result = await this.lotusRepository.update(
-      { lotusId },
-      { title: lotusUpdateRequestDto.title, isPublic: lotusUpdateRequestDto.isPublic }
-    );
-    if (!result.affected) throw new HttpException('update fail', HttpStatus.BAD_REQUEST);
+    if (lotusUpdateRequestDto.tags) {
+      const tags = await Promise.all(lotusUpdateRequestDto.tags.map((tag) => this.tagService.getTag(tag)));
+      updateLotus.tags = tags;
+    }
+    if (lotusUpdateRequestDto.title) {
+      updateLotus.title = lotusUpdateRequestDto.title;
+    }
+    if (lotusUpdateRequestDto.isPublic !== undefined) {
+      updateLotus.isPublic = lotusUpdateRequestDto.isPublic;
+    }
+    const result = await this.lotusRepository.save(updateLotus);
+    if (!result) throw new HttpException('update fail', HttpStatus.BAD_REQUEST);
     return LotusResponseDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(updateLotus.user), updateLotus);
   }
 
@@ -108,7 +116,7 @@ export class LotusService {
     return LotusDetailDto.ofGistFileListDto(commitFiles, lotusData);
   }
 
-  async getPublicLotus(page = 1, size = 10, search: string): Promise<LotusPublicDto> {
+  async getPublicLotus(page: number, size: number, search: string): Promise<LotusPublicDto> {
     const tags = await this.tagService.searchTag(search);
 
     const lotusData = await this.lotusRepository.find({
@@ -128,7 +136,7 @@ export class LotusService {
     return LotusPublicDto.ofLotusList(returnLotusData, page, Math.ceil(totalNum / size));
   }
 
-  async getUserLotus(userId: string, page = 1, size = 10) {
+  async getUserLotus(userId: string, page: number, size: number) {
     const lotusData = await this.lotusRepository.find({
       where: { user: { userId } },
       relations: ['tags', 'user']

@@ -29,7 +29,6 @@ export class HistoryPublicDto {
   date: Date;
 
   static of(history: History): HistoryPublicDto {
-    console.log(history);
     return {
       id: history.historyId,
       status: history.status,

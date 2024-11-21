@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  DefaultValuePipe,
   Get,
   HttpCode,
   HttpException,
@@ -109,8 +110,8 @@ export class UserController {
   @ApiQuery({ name: 'size', type: String, example: '10', required: false })
   getUserLotus(
     @Req() request: Request,
-    @Query('page', ParseIntPipe) page: number,
-    @Query('size', ParseIntPipe) size: number
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('size', new DefaultValuePipe(10), ParseIntPipe) size: number
   ): Promise<LotusPublicDto> {
     const userId = this.authService.getIdFromRequest(request);
     return this.lotusService.getUserLotus(userId, page, size);
@@ -141,11 +142,11 @@ export class UserController {
   @ApiResponse({ status: 200, description: '실행 성공', type: ResponseAllGistsDto })
   async getGistPage(
     @Req() request: Request,
-    @Query('page', ParseIntPipe) page: number,
-    @Query('perPage', ParseIntPipe) perPage: number
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('size', new DefaultValuePipe(10), ParseIntPipe) size: number
   ): Promise<ResponseAllGistsDto> {
     const gitToken = await this.authService.getUserGitToken(this.authService.getIdFromRequest(request));
-    return await this.gistService.getGistList(gitToken, Number(page), Number(perPage));
+    return await this.gistService.getGistList(gitToken, page, size);
   }
 
   @Get('gist/:gistId')

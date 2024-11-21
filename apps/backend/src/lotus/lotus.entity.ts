@@ -51,7 +51,7 @@ export class Lotus {
   @OneToMany(() => History, (history) => history.lotus, { cascade: ['remove'] })
   historys: History[];
 
-  @ManyToMany(() => Tag, { cascade: ['remove'] })
+  @ManyToMany(() => Tag, { cascade: ['insert', 'update', 'remove'] })
   @JoinTable({
     name: 'lotus_tags', // 교차 테이블 이름 지정
     joinColumn: {

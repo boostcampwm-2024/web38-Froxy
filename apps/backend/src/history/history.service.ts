@@ -51,9 +51,9 @@ export class HistoryService {
       take: size,
       order: { createdAt: 'DESC' }
     });
-    if (historys.length === 0) {
-      throw new HttpException('not exist history', HttpStatus.BAD_REQUEST);
-    }
+    // if (historys.length === 0) {
+    //   throw new HttpException('not exist history', HttpStatus.BAD_REQUEST);
+    // }
 
     return HistoryResponseListDto.of(historys, page, size, total);
   }
