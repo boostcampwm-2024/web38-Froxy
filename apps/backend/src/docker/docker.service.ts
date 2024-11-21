@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as Docker from 'dockerode';
 import { Container } from 'dockerode';
 import { promises as fs } from 'fs';
@@ -37,12 +37,10 @@ export class DockerService {
   ): Promise<string> {
     return this.runGistFiles(gitToken, gistId, commit_id, mainFileName, inputs)
       .then((result) => {
-        // console.log('Execution Result:', result);
         return result;
       })
       .catch((error) => {
-        // console.error('Execution Error:', error);
-        throw new Error('Execution Error');
+        throw new Error(`Execution Error: ${error.message}`);
       });
   }
 
@@ -56,11 +54,15 @@ export class DockerService {
     const gistData: GistApiFileListDto = await this.gistService.getCommit(gistId, commitId, gitToken);
     const files: GistApiFileDto[] = gistData.files;
 
+    if (!files || !files.some((file) => file.fileName === mainFileName)) {
+      throw new HttpException('execFile is not found', HttpStatus.NOT_FOUND);
+    }
+
     // 컨테이너 생성
     const container = await this.docker.createContainer({
       //todo: image version맞춰야함
       Image: 'node:latest',
-      Tty: true, //통합스트림
+      Tty: inputs.length !== 0, //통합스트림
       OpenStdin: true,
       AttachStdout: true,
       AttachStderr: true,
@@ -90,8 +92,11 @@ export class DockerService {
     //desciption: 스트림 종료 후 결과 반환
     return new Promise((resolve, reject) => {
       stream.on('end', async () => {
-        await container.remove({ force: true });
-        const result = this.filterAnsiCode(output);
+        // await container.remove({ force: true });
+        let result = this.filterAnsiCode(output);
+        if (inputs.length !== 0) {
+          result = result.split('\n').slice(1).join('\n');
+        }
         resolve(result);
       });
       stream.on('error', reject);
@@ -147,7 +152,7 @@ export class DockerService {
       AttachStdin: true,
       AttachStdout: true,
       AttachStderr: true,
-      Tty: true,
+      Tty: inputs.length !== 0,
       Cmd: ['node', mainFileName]
     });
 

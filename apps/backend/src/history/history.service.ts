@@ -3,7 +3,7 @@ import { HistoryExecResponseDto } from './dto/history.execResponse.dto';
 import { HistoryGetResponseDto } from './dto/history.getReponse.dto';
 import { HistoryResponseListDto } from './dto/history.responseList.dto';
 import { HistoryRepository } from './history.repository';
-import { HISTORY_STATUS } from '@/constants/constants';
+import { HISTORY_STATUS, SUPPORTED_LANGUAGES } from '@/constants/constants';
 import { DockerService } from '@/docker/docker.service';
 import { GistApiFileListDto } from '@/gist/dto/gistApiFileList.dto';
 import { GistService } from '@/gist/gist.service';
@@ -21,13 +21,20 @@ export class HistoryService {
   async saveHistory(gitToken: string, lotusId: string, execFilename: string, inputs: string[]): Promise<any> {
     const [lotus]: Lotus[] = await this.lotusRepository.findBy({ lotusId: lotusId });
     const file: GistApiFileListDto = await this.gistService.getCommit(lotus.gistRepositoryId, lotus.commitId, gitToken);
-    const history = await this.historyRepository.save({
-      input: JSON.stringify(inputs),
-      execFilename: execFilename,
-      result: null,
-      status: 'PENDING',
-      lotus: lotus
-    });
+    if (!execFilename.endsWith(SUPPORTED_LANGUAGES.JS)) {
+      throw new HttpException('not supported file extension', HttpStatus.BAD_REQUEST);
+    }
+    const history = await this.historyRepository
+      .save({
+        input: JSON.stringify(inputs),
+        execFilename: execFilename,
+        result: null,
+        status: 'PENDING',
+        lotus: lotus
+      })
+      .catch((error) => {
+        throw new HttpException('history save query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+      });
     this.execContainer(gitToken, lotus.gistRepositoryId, lotus.commitId, execFilename, inputs, history.historyId);
     return HistoryExecResponseDto.of(HISTORY_STATUS.PENDING);
   }
@@ -40,17 +47,38 @@ export class HistoryService {
     inputs: string[],
     historyId: string
   ) {
-    const result = await this.dockerService.getDocker(gitToken, lotusId, commitId, execFilename, inputs);
-    const updatehistory = await this.historyRepository.update(historyId, { status: HISTORY_STATUS.SUCCESS, result });
+    try {
+      const result = await this.dockerService.getDocker(gitToken, lotusId, commitId, execFilename, inputs);
+      const updatehistory = await this.historyRepository
+        .update(historyId, { status: HISTORY_STATUS.SUCCESS, result })
+        .catch((error) => {
+          console.error('success history update query failed');
+        });
+    } catch (error) {
+      const updatehistory = await this.historyRepository
+        .update(historyId, {
+          status: HISTORY_STATUS.ERROR,
+          result: error.message
+        })
+        .catch((error) => {
+          console.error('success history update query failed');
+        });
+    }
   }
 
   async getHistoryList(lotusId: string, page: number, size: number): Promise<HistoryResponseListDto> {
-    const [historys, total] = await this.historyRepository.findAndCount({
-      where: { lotus: { lotusId } },
-      skip: (page - 1) * size,
-      take: size,
-      order: { createdAt: 'DESC' }
-    });
+    const result = await this.historyRepository
+      .findAndCount({
+        where: { lotus: { lotusId } },
+        skip: (page - 1) * size,
+        take: size,
+        order: { createdAt: 'DESC' }
+      })
+      .catch((error) => {
+        throw new HttpException('history findAndCount query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+      });
+    const [historys, total] = result;
+
     // if (historys.length === 0) {
     //   throw new HttpException('not exist history', HttpStatus.BAD_REQUEST);
     // }
@@ -58,7 +86,9 @@ export class HistoryService {
     return HistoryResponseListDto.of(historys, page, size, total);
   }
   async getHistoryFromId(historyId: string): Promise<HistoryGetResponseDto> {
-    const history = await this.historyRepository.findOneBy({ historyId: historyId });
+    const history = await this.historyRepository.findOneBy({ historyId: historyId }).catch((error) => {
+      throw new HttpException('history findOneBy query failed', HttpStatus.INTERNAL_SERVER_ERROR);
+    });
     if (!history) {
       throw new HttpException('not exist history', HttpStatus.BAD_REQUEST);
     }

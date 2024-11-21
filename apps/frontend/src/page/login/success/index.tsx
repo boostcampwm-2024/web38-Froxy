@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { Navigate, createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
-import { useUserQuery } from '@/feature/User/query';
-import { useLocalStorage } from '@/shared/hooks/useLocalStorage';
-import { useToast } from '@/shared/hooks/useToast';
+import { useUserQuery } from '@/feature/user/query';
+import { useLocalStorage } from '@/shared';
+import { useToast } from '@/shared/toast';
 
 const loginTokenValidation = z.object({
   token: z.string().min(1, '토큰이 없습니다.')

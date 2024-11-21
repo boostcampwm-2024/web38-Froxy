@@ -13,6 +13,6 @@ export const typeORMConfig = async (configService: ConfigService): Promise<TypeO
   username: configService.get<string>('MYSQL_USER'),
   password: configService.get<string>('MYSQL_PASSWORD'),
   database: configService.get<string>('MYSQL_DATABASE'),
-  entities: [User, Lotus, Comment, Tag, History],
-  synchronize: true //todo: env로 release에서는 false가 되도록 해야함
+  entities: [User, Lotus, Comment, Tag, History]
+  // synchronize: true //todo: env로 release에서는 false가 되도록 해야함
 });

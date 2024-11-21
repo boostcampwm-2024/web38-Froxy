@@ -1,8 +1,8 @@
 import { Button, Heading } from '@froxy/design/components';
 import { useNavigate } from '@tanstack/react-router';
-import { LoginButton } from './LoginButton';
-import { CreateLotusButton, LogoutButton } from './Navigation';
-import { useUserQuery } from '@/feature/User/query';
+import { CreateLotusButton, LogoutButton } from './navigation';
+import { LoginButton } from './navigation/LoginButton';
+import { useUserQuery } from '@/feature/user/query';
 
 export function Header() {
   const { data } = useUserQuery();
@@ -12,6 +12,8 @@ export function Header() {
   const handleClick = () => {
     navigate({ to: '/lotus' });
   };
+
+  const image = data?.profile || '/image/exampleImage.jpeg';
 
   return (
     <header className="flex justify-center mb-7 w-full shadow-md">
@@ -28,7 +30,7 @@ export function Header() {
                 <LogoutButton />
               </div>
 
-              <img className="w-10 h-10 rounded-full" src="/image/exampleImage.jpeg" alt="프로필 사진" />
+              <img className="w-10 h-10 rounded-full" src={image} alt="프로필 사진" />
             </>
           ) : (
             <LoginButton variant={'default'}>Login</LoginButton>

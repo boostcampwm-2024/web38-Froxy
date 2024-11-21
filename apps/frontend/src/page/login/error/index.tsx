@@ -1,5 +1,5 @@
 import { Navigate, createFileRoute } from '@tanstack/react-router';
-import { useToast } from '@/shared/hooks/useToast';
+import { useToast } from '@/shared/toast';
 
 export const Route = createFileRoute('/login/error/')({
   component: RouteComponent,
