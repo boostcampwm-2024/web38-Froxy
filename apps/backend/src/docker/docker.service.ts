@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as Docker from 'dockerode';
 import { Container } from 'dockerode';
 import { promises as fs } from 'fs';
@@ -53,6 +53,10 @@ export class DockerService {
   ): Promise<string> {
     const gistData: GistApiFileListDto = await this.gistService.getCommit(gistId, commitId, gitToken);
     const files: GistApiFileDto[] = gistData.files;
+
+    if (!files || !files.some((file) => file.fileName === mainFileName)) {
+      throw new HttpException('execFile is not found', HttpStatus.NOT_FOUND);
+    }
 
     // 컨테이너 생성
     const container = await this.docker.createContainer({

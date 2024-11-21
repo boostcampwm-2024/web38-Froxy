@@ -3,7 +3,7 @@ import { HistoryExecResponseDto } from './dto/history.execResponse.dto';
 import { HistoryGetResponseDto } from './dto/history.getReponse.dto';
 import { HistoryResponseListDto } from './dto/history.responseList.dto';
 import { HistoryRepository } from './history.repository';
-import { HISTORY_STATUS } from '@/constants/constants';
+import { HISTORY_STATUS, SUPPORTED_LANGUAGES } from '@/constants/constants';
 import { DockerService } from '@/docker/docker.service';
 import { GistApiFileListDto } from '@/gist/dto/gistApiFileList.dto';
 import { GistService } from '@/gist/gist.service';
@@ -21,6 +21,9 @@ export class HistoryService {
   async saveHistory(gitToken: string, lotusId: string, execFilename: string, inputs: string[]): Promise<any> {
     const [lotus]: Lotus[] = await this.lotusRepository.findBy({ lotusId: lotusId });
     const file: GistApiFileListDto = await this.gistService.getCommit(lotus.gistRepositoryId, lotus.commitId, gitToken);
+    if (!execFilename.endsWith(SUPPORTED_LANGUAGES.JS)) {
+      throw new HttpException('not supported file extension', HttpStatus.BAD_REQUEST);
+    }
     const history = await this.historyRepository
       .save({
         input: JSON.stringify(inputs),
