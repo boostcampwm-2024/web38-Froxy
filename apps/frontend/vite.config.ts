@@ -15,7 +15,7 @@ export default defineConfig({
       generatedRouteTree: './src/app/router/routeTree.gen.ts'
     })
   ],
-  base: './',
+  base: '/',
   test: {
     globals: true,
     environment: 'jsdom',
