@@ -57,4 +57,4 @@ Gist에서 코드를 복제하고 실행 환경을 설정하는 번거로움 없
 
 ## [📚 팀 노션](https://freckle-calliandra-79a.notion.site/Team38-F-Rog-12d9038c617380509fbdf4eb928e4238)
 
-## [🐸 froxy](http://www.frog-froxy.site)
+## [🐸 froxy 배포주소](http://www.frog-froxy.site)
