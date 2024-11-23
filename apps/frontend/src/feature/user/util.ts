@@ -10,8 +10,7 @@ export const isAuthUser = async () => {
     });
 
     return !!user?.id && !!user?.nickname && !!user?.profile;
-  } catch (e) {
-    console.log('error:', e);
+  } catch {
     return false;
   }
 };
