@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Text } from '@froxy/design/components';
+import { Skeleton } from '@froxy/design/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { GoPencil } from 'react-icons/go';
 import { UserInfoInputForm } from '@/feature/user/component';
@@ -76,3 +77,23 @@ export function SuspenseUserInfoBox() {
     </div>
   );
 }
+
+function SkeletonUserInfoBox() {
+  return (
+    <div className="flex items-center gap-16 w-full p-14 border-2 border-slate-200 rounded-xl shadow-sm">
+      <Skeleton className="w-44 h-44 rounded-full" />
+      <div className="flex items-center gap-10">
+        <div className="grid grid-cols-3 items-end gap-5">
+          <Skeleton className="min-w-64 h-6" />
+          <Skeleton className="col-span-2 h-10 w-full" />
+          <Skeleton className="h-6" />
+          <Skeleton className="col-span-2 h-10 w-full" />
+          <Skeleton className="h-6" />
+          <Skeleton className="col-span-2 h-10 w-full" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+SuspenseUserInfoBox.Skeleton = SkeletonUserInfoBox;

@@ -17,7 +17,7 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col gap-28">
-      <AsyncBoundary pending={<div>Loading...</div>} rejected={() => <div>Error</div>}>
+      <AsyncBoundary pending={<SuspenseUserInfoBox.Skeleton />} rejected={() => <div>Error</div>}>
         <SuspenseUserInfoBox />
       </AsyncBoundary>
       <section>
@@ -25,11 +25,11 @@ function RouteComponent() {
           <Heading size="lg">내가 작성한 Lotus</Heading>
           <CreateLotusButton />
         </div>
-        <AsyncBoundary pending={<div>Loading...</div>} rejected={() => <div>Error</div>}>
+        <AsyncBoundary pending={<SuspenseUserLotusList.Skeleton />} rejected={() => <div>Error</div>}>
           <SuspenseUserLotusList page={page} />
         </AsyncBoundary>
 
-        <AsyncBoundary pending={<div>Loading...</div>} rejected={() => <div>Error</div>}>
+        <AsyncBoundary pending={<SuspenseUserLotusPagination.Skeleton />} rejected={() => <div>Error</div>}>
           <SuspenseUserLotusPagination page={page} />
         </AsyncBoundary>
       </section>
