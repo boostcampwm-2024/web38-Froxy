@@ -16,11 +16,11 @@ function RouteComponent() {
     <div>
       <LotusSearchBar />
 
-      <AsyncBoundary pending={<div>Loading...</div>} rejected={() => <div>Error</div>}>
+      <AsyncBoundary pending={<SuspenseLotusList.Skeleton />} rejected={() => <div>Error</div>}>
         <SuspenseLotusList page={page} />
       </AsyncBoundary>
 
-      <AsyncBoundary pending={<div>Loading...</div>} rejected={() => <div>Error</div>}>
+      <AsyncBoundary pending={<SuspenseLotusPagination.Skeleton />} rejected={() => <div>Error</div>}>
         <SuspenseLotusPagination page={page} />
       </AsyncBoundary>
     </div>

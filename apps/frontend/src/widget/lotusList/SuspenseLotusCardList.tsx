@@ -1,3 +1,4 @@
+import { Skeleton } from '@froxy/design/components';
 import { Lotus, useLotusListSuspenseQuery } from '@/feature/lotus';
 
 export function SuspenseLotusList({ page = 1 }: { page?: number }) {
@@ -28,3 +29,26 @@ export function SuspenseLotusList({ page = 1 }: { page?: number }) {
     </div>
   );
 }
+
+function SkeletonLotusCardList() {
+  return (
+    <div className="w-full grid grid-cols-3 gap-8">
+      {Array.from({ length: 6 }).map((_, index) => (
+        <div key={`card_${index}`} className="max-w-96 p-5 border-2 border-slate-200 rounded-xl">
+          <Skeleton className="h-6 w-3/4 mb-4" />
+          <Skeleton className="h-4 w-1/3 mb-4" />
+          <div className="w-full flex justify-between items-end">
+            <Skeleton className="h-4 w-1/4 rounded-3xl" />
+            <Skeleton className="h-10 w-10 rounded-full" />
+          </div>
+          <Skeleton className="mt-4 w-full h-1" />
+          <div className="pt-4 min-h-8 space-y-2">
+            <Skeleton className="h-4 w-1/4" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+SuspenseLotusList.Skeleton = SkeletonLotusCardList;
