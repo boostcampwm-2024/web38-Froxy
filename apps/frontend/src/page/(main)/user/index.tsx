@@ -7,8 +7,9 @@ const userLotusSearchValidation = z.object({
 });
 
 export const Route = createFileRoute('/(main)/user/')({
-  beforeLoad: () => {
-    if (!isAuthUser()) throw redirect({ to: '/' });
+  beforeLoad: async () => {
+    const isAuth = await isAuthUser();
+    if (!isAuth) throw redirect({ to: '/' });
   },
   validateSearch: (search) => userLotusSearchValidation.parse(search)
 });
