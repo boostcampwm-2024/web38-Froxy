@@ -1,6 +1,6 @@
 import { Skeleton } from '@froxy/design/components';
 import { Lotus, useLotusListSuspenseQuery } from '@/feature/lotus';
-import { Range } from '@/shared';
+import { range } from '@/shared';
 
 export function SuspenseLotusList({ page = 1 }: { page?: number }) {
   const { data: lotusList } = useLotusListSuspenseQuery({ page });
@@ -34,7 +34,7 @@ export function SuspenseLotusList({ page = 1 }: { page?: number }) {
 function SkeletonLotusCardList() {
   return (
     <div className="w-full grid grid-cols-3 gap-8">
-      {Range(5).map((value) => (
+      {range(5).map((value) => (
         <div key={`card_${value}`} className="max-w-96 p-5 border-2 border-slate-200 rounded-xl">
           <Skeleton className="h-6 w-3/4 mb-4" />
           <Skeleton className="h-4 w-1/3 mb-4" />

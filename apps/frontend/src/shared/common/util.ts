@@ -1,1 +1,1 @@
-export const Range = (length: number) => Array.from({ length }, (_, index) => index);
+export const range = (length: number) => Array.from({ length }, (_, index) => index);

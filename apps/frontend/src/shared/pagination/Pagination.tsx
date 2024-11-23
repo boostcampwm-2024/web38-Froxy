@@ -8,7 +8,7 @@ import {
   PaginationPrevious
 } from '@froxy/design/components';
 import { Skeleton } from '@froxy/design/components';
-import { Range } from '@/shared/common';
+import { range } from '@/shared/common';
 import { usePagination } from '@/shared/pagination/usePagination';
 
 interface PaginationProps {
@@ -53,7 +53,7 @@ export function SkeletonPagination() {
   return (
     <div className="pt-12 flex justify-center items-center space-x-2">
       <Skeleton className="h-10 w-20 rounded-md" />
-      {Range(5).map((value) => (
+      {range(5).map((value) => (
         <Skeleton key={`page_${value}`} className="h-10 w-10 rounded-md" />
       ))}
       <Skeleton className="h-10 w-20 rounded-md" />
