@@ -12,6 +12,7 @@ export interface ToastProps {
   isOpen: boolean;
   close: () => void;
   duration?: number;
+  exit?: () => void;
 }
 
 const TOAST_VARIANT_STYLE = {
@@ -27,17 +28,21 @@ export function Toast({
   action,
   isOpen,
   close,
+  exit,
   duration = Infinity
 }: ToastProps) {
-  const { time, pauseTimer, startTimer } = useTimer(() => close(), duration);
+  const { time, pauseTimer, startTimer, isTimeEnd } = useTimer(() => {
+    close();
+  }, duration);
 
   const progress = ((duration - time) / duration) * 100;
 
   useEffect(() => {
+    if (isTimeEnd) return exit?.();
+
     if (isOpen) startTimer();
 
     return () => pauseTimer();
-
     //NOTE: timer와 startTimer를 deps에 추가하면 무한루프가 발생합니다.
   }, [isOpen, duration, close]);
 
