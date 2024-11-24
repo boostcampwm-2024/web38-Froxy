@@ -154,17 +154,7 @@ export class LotusService {
   }
 
   async getPublicLotus(page: number, size: number, search: string): Promise<LotusPublicDto> {
-    const tags = await this.tagService.searchTag(search);
-
-    const lotusData = await this.lotusRepository.find({
-      where: {
-        isPublic: true,
-        tags: {
-          tagId: In(tags)
-        }
-      },
-      relations: ['tags', 'user']
-    });
+    const lotusData = await this.getLotusByTags(search);
 
     const totalNum = lotusData.length;
     const maxPage = Math.ceil(totalNum / size);
@@ -178,6 +168,27 @@ export class LotusService {
     const returnLotusData = lotusData.splice(firstIdx, size);
 
     return LotusPublicDto.ofLotusList(returnLotusData, page, maxPage);
+  }
+
+  async getLotusByTags(search: string) {
+    if (!search) {
+      return await this.lotusRepository.find({
+        where: {
+          isPublic: true
+        },
+        relations: ['tags', 'user']
+      });
+    }
+    const tags = await this.tagService.searchTag(search);
+    return await this.lotusRepository.find({
+      where: {
+        isPublic: true,
+        tags: {
+          tagId: In(tags)
+        }
+      },
+      relations: ['tags', 'user']
+    });
   }
 
   async getUserLotus(userId: string, page: number, size: number) {
