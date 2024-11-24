@@ -6,7 +6,7 @@ import { SuspenseGistFiles } from './SuspenseGistFiles';
 import { SuspenseUserGistSelect } from './SuspenseUserGistSelect';
 import { useLotusCreateMutation } from '@/feature/lotus';
 import { AsyncBoundary } from '@/shared/boundary';
-import { TagInput } from '@/shared/common/component/TagInput';
+import { TagInput } from '@/shared/tagInput/TagInput';
 
 interface LotusCreateFormValue {
   title: string;
