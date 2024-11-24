@@ -36,7 +36,9 @@ function RouteComponent() {
 function SuccessComponent({ nickname }: { nickname: string }) {
   const { toast } = useToast();
 
-  toast({ description: `${nickname}님 환영합니다!`, duration: 2000 });
+  useEffect(() => {
+    toast({ description: `${nickname}님 환영합니다!`, duration: 2000 });
+  }, [toast, nickname]);
 
   return <Navigate to="/lotus" />;
 }
@@ -44,7 +46,9 @@ function SuccessComponent({ nickname }: { nickname: string }) {
 function ErrorComponent() {
   const { toast } = useToast();
 
-  toast({ variant: 'error', description: '로그인에 실패했습니다.', duration: 2000 });
+  useEffect(() => {
+    toast({ variant: 'error', description: '로그인에 실패했습니다.', duration: 2000 });
+  }, [toast]);
 
   return <Navigate to="/" />;
 }
