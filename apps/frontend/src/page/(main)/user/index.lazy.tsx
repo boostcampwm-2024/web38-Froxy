@@ -1,10 +1,11 @@
 import { Heading } from '@froxy/design/components';
 import { createLazyFileRoute, getRouteApi } from '@tanstack/react-router';
+import { userQueryOptions } from '@/feature/user';
 import { AsyncBoundary } from '@/shared/boundary';
-import { SuspenseUserLotusPagination } from '@/widget/lotusList/SuspenseUserLotusPagination';
+import { SuspenseLotusList } from '@/widget/lotusList';
+import { SuspenseLotusPagination } from '@/widget/lotusList/SuspenseLotusPagination';
 import { CreateLotusButton } from '@/widget/navigation';
 import { SuspenseUserInfoBox } from '@/widget/user/SuspenseUserInfoBox';
-import { SuspenseUserLotusList } from '@/widget/user/SuspenseUserLotusList';
 
 const { useSearch } = getRouteApi('/(main)/user/');
 
@@ -14,6 +15,8 @@ export const Route = createLazyFileRoute('/(main)/user/')({
 
 function RouteComponent() {
   const { page } = useSearch();
+
+  const userLotusListQueryOptions = userQueryOptions.lotusList({ page });
 
   return (
     <div className="flex flex-col gap-28">
@@ -25,12 +28,12 @@ function RouteComponent() {
           <Heading size="lg">내가 작성한 Lotus</Heading>
           <CreateLotusButton />
         </div>
-        <AsyncBoundary pending={<SuspenseUserLotusList.Skeleton />} rejected={() => <div>Error</div>}>
-          <SuspenseUserLotusList page={page} />
+        <AsyncBoundary pending={<SuspenseLotusList.Skeleton />} rejected={() => <div>Error</div>}>
+          <SuspenseLotusList queryOptions={userLotusListQueryOptions} />
         </AsyncBoundary>
 
-        <AsyncBoundary pending={<SuspenseUserLotusPagination.Skeleton />} rejected={() => <div>Error</div>}>
-          <SuspenseUserLotusPagination page={page} />
+        <AsyncBoundary pending={<SuspenseLotusPagination.Skeleton />} rejected={() => <div>Error</div>}>
+          <SuspenseLotusPagination queryOptions={userLotusListQueryOptions} />
         </AsyncBoundary>
       </section>
     </div>

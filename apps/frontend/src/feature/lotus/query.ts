@@ -1,23 +1,11 @@
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { createLotus, deleteLotus, getLotusDetail, getLotusList, updateLotus } from './api';
+import { createQueryOptions } from '@/shared/createQueryOptions';
 
-export const useLotusListSuspenseQuery = ({ page = 1 }: { page?: number } = {}) => {
-  const query = useSuspenseQuery({
-    queryKey: ['lotus', page],
-    queryFn: async () => getLotusList({ page })
-  });
-
-  return query;
-};
-
-export const useLotusSuspenseQuery = ({ id }: { id: string }) => {
-  const query = useSuspenseQuery({
-    queryKey: ['lotus', 'detail', id],
-    queryFn: async () => getLotusDetail({ id })
-  });
-
-  return query;
-};
+export const lotusQueryOptions = createQueryOptions('lotus', {
+  list: getLotusList,
+  detail: getLotusDetail
+});
 
 export const useLotusDeleteMutation = () => {
   const mutation = useMutation({

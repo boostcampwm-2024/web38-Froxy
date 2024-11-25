@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Navigate, createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
-import { useUserQuery } from '@/feature/user/query';
+import { userQueryOptions } from '@/feature/user/query';
 import { LoadingPage } from '@/page/-LoadingPage';
 import { useLocalStorage } from '@/shared';
 import { useToast } from '@/shared/toast';
@@ -21,7 +22,7 @@ function RouteComponent() {
 
   const { token } = Route.useSearch();
 
-  const { data: user, error, isLoading } = useUserQuery();
+  const { data: user, error, isLoading } = useQuery(userQueryOptions.info());
 
   useEffect(() => {
     set(token);

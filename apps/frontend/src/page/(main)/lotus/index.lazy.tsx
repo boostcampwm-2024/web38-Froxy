@@ -1,4 +1,5 @@
 import { createLazyFileRoute, getRouteApi } from '@tanstack/react-router';
+import { lotusQueryOptions } from '@/feature/lotus';
 import { AsyncBoundary } from '@/shared/boundary';
 import { LotusSearchBar, SuspenseLotusList } from '@/widget/lotusList';
 import { SuspenseLotusPagination } from '@/widget/lotusList/SuspenseLotusPagination';
@@ -12,16 +13,18 @@ export const Route = createLazyFileRoute('/(main)/lotus/')({
 function RouteComponent() {
   const { page } = useSearch();
 
+  const lotusListQueryOptions = lotusQueryOptions.list({ page });
+
   return (
     <div>
       <LotusSearchBar />
 
       <AsyncBoundary pending={<SuspenseLotusList.Skeleton />} rejected={() => <div>Error</div>}>
-        <SuspenseLotusList page={page} />
+        <SuspenseLotusList queryOptions={lotusListQueryOptions} />
       </AsyncBoundary>
 
       <AsyncBoundary pending={<SuspenseLotusPagination.Skeleton />} rejected={() => <div>Error</div>}>
-        <SuspenseLotusPagination page={page} />
+        <SuspenseLotusPagination queryOptions={lotusListQueryOptions} />
       </AsyncBoundary>
     </div>
   );
