@@ -2,6 +2,7 @@ import { Button } from '@froxy/design/components';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { Link } from '@tanstack/react-router';
 
+// NOTE: createRouter에서 defaultNotFoundComponent 호출 시 사용됨
 export function NotFoundPage() {
   return (
     <div className="w-screen h-screen flex flex-col justify-center items-center">
