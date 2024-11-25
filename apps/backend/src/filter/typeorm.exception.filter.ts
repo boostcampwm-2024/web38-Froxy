@@ -21,7 +21,7 @@ export class typeOrmExceptionFilter implements ExceptionFilter {
 
     // Send only status code and message to the client
     const errorResponse = {
-      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      code: HttpStatus.INTERNAL_SERVER_ERROR,
       message: 'Database query failed'
     };
 
