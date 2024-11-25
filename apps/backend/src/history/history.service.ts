@@ -75,18 +75,20 @@ export class HistoryService {
         order: { createdAt: 'DESC' }
       })
       .catch((error) => {
+        console.error(error);
         throw new HttpException('history findAndCount query failed', HttpStatus.INTERNAL_SERVER_ERROR);
       });
     const [historys, total] = result;
 
     // if (historys.length === 0) {
     //   throw new HttpException('not exist history', HttpStatus.BAD_REQUEST);
-    // }
+    // } s
 
     return HistoryResponseListDto.of(historys, page, size, total);
   }
   async getHistoryFromId(historyId: string): Promise<HistoryGetResponseDto> {
     const history = await this.historyRepository.findOneBy({ historyId: historyId }).catch((error) => {
+      console.error(error);
       throw new HttpException('history findOneBy query failed', HttpStatus.INTERNAL_SERVER_ERROR);
     });
     if (!history) {
