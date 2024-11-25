@@ -1,9 +1,10 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { useLotusListSuspenseQuery } from '@/feature/lotus';
+import { lotusQueryOptions } from '@/feature/lotus';
 import { Pagination } from '@/shared/pagination';
 
 export function SuspenseLotusPagination({ page = 1 }: { page?: number }) {
-  const { data: lotusList } = useLotusListSuspenseQuery({ page });
+  const { data: lotusList } = useSuspenseQuery(lotusQueryOptions.list({ page }));
   const navigate = useNavigate();
 
   return (

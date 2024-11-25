@@ -1,6 +1,7 @@
 import { LotusType } from './type';
 import { CodeViewValue } from '@/feature/codeView';
 import { api } from '@/shared/common/api';
+import { createQueryOptions } from '@/shared/createQueryOptions';
 import { PageType } from '@/shared/pagination';
 
 export const getLotusList = async ({ page = 1 }: { page: number }) => {
@@ -76,3 +77,8 @@ export const createLotus = async ({
 
   return data;
 };
+
+export const lotusQueryOptions = createQueryOptions('lotus', {
+  list: getLotusList,
+  detail: getLotusDetail
+});

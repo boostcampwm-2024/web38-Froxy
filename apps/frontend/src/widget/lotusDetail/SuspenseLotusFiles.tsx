@@ -1,11 +1,12 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components';
 import { CodeView } from '@/feature/codeView';
-import { useLotusSuspenseQuery } from '@/feature/lotus';
+import { lotusQueryOptions } from '@/feature/lotus';
 
 export function SuspenseLotusFiles({ id }: { id: string }) {
   const {
     data: { files }
-  } = useLotusSuspenseQuery({ id });
+  } = useSuspenseQuery(lotusQueryOptions.detail({ id }));
 
   const defaultIndex = files.findIndex(({ filename }) => filename === 'README.md');
 

@@ -1,13 +1,14 @@
 import { ComponentProps } from 'react';
 import { Heading, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Text } from '@froxy/design/components';
-import { useLotusSuspenseQuery } from '@/feature/lotus';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { lotusQueryOptions } from '@/feature/lotus';
 
 type LotusRunFileSelectProps = ComponentProps<typeof Select> & { lotusId: string };
 
 export function SuspenseLotusRunFileSelect({ lotusId, onValueChange }: LotusRunFileSelectProps) {
   const {
     data: { files }
-  } = useLotusSuspenseQuery({ id: lotusId });
+  } = useSuspenseQuery(lotusQueryOptions.detail({ id: lotusId }));
 
   return (
     <div className="m-10">

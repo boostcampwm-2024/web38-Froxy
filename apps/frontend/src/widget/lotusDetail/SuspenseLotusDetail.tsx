@@ -1,6 +1,7 @@
 import { Skeleton } from '@froxy/design/components';
-import { useQueryClient } from '@tanstack/react-query';
-import { Lotus, useLotusSuspenseQuery } from '@/feature/lotus';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { Lotus } from '@/feature/lotus';
+import { lotusQueryOptions } from '@/feature/lotus';
 import { UserType } from '@/feature/user';
 import { LotusDeleteButton } from '@/widget/lotusDelete';
 import { LotusUpdateButton, SuspenseLotusPublicToggle } from '@/widget/lotusUpdate';
@@ -8,7 +9,8 @@ import { LotusUpdateButton, SuspenseLotusPublicToggle } from '@/widget/lotusUpda
 export function SuspenseLotusDetail({ id }: { id: string }) {
   const queryClient = useQueryClient();
 
-  const { data: lotus } = useLotusSuspenseQuery({ id });
+  const { data: lotus } = useSuspenseQuery(lotusQueryOptions.detail({ id }));
+
   const user = queryClient.getQueryData<UserType>(['user']);
 
   return (
