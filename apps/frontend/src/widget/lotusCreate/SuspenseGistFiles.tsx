@@ -1,10 +1,11 @@
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { CodeView } from '@/feature/codeView';
-import { useUserGistFileSuspenseQuery } from '@/feature/user/query';
+import { userQueryOptions } from '@/feature/user/query';
 
 import '@/app/style/github.css';
 
 export function SuspenseGistFiles({ gistId }: { gistId: string }) {
-  const { data: files } = useUserGistFileSuspenseQuery({ gistId });
+  const { data: files } = useSuspenseQuery(userQueryOptions.gistFile({ gistId }));
 
   const defaultIndex = files.findIndex(({ filename }) => filename === 'README.md') || 0;
 

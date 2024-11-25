@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { Text } from '@froxy/design/components';
 import { Skeleton } from '@froxy/design/components';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { GoPencil } from 'react-icons/go';
 import { UserInfoInputForm } from '@/feature/user/component';
-import { useUserInfoSuspenseQuery, useUserMutation } from '@/feature/user/query';
+import { useUserMutation, userQueryOptions } from '@/feature/user/query';
 import { useToast } from '@/shared/toast';
 
 export function SuspenseUserInfoBox() {
   const queryClient = useQueryClient();
-  const { data: user } = useUserInfoSuspenseQuery();
+  const { data: user } = useSuspenseQuery(userQueryOptions.info());
+
   const { mutate } = useUserMutation();
   const { toast } = useToast();
 
@@ -24,7 +25,7 @@ export function SuspenseUserInfoBox() {
       { body: { nickname } },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['user'] });
+          queryClient.invalidateQueries(userQueryOptions.info());
           toast({
             variant: 'success',
             description: '닉네임이 수정되었습니다.',
