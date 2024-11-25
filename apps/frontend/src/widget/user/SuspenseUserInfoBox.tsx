@@ -11,9 +11,9 @@ export function SuspenseUserInfoBox() {
   const queryClient = useQueryClient();
   const { data: user } = useSuspenseQuery(userQueryOptions.info());
 
-  const { mutate } = useUserMutation();
-  const { toast } = useToast();
+  const { mutate, isPending } = useUserMutation();
 
+  const { toast } = useToast();
   const [isEdit, setIsEdit] = useState(false);
 
   const onToggleIsEdit = () => {
@@ -26,9 +26,17 @@ export function SuspenseUserInfoBox() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries(userQueryOptions.info());
+
           toast({
             variant: 'success',
             description: '닉네임이 수정되었습니다.',
+            duration: 2000
+          });
+        },
+        onError: () => {
+          toast({
+            variant: 'error',
+            description: '닉네임 수정 중 오류가 발생했습니다. 다시 시도해 주세요.',
             duration: 2000
           });
         }
@@ -48,6 +56,7 @@ export function SuspenseUserInfoBox() {
           <div className="col-span-2">
             {isEdit ? (
               <UserInfoInputForm
+                disabled={isPending}
                 value={user.nickname}
                 onToggleIsEdit={onToggleIsEdit}
                 onEditValue={(value) => onEditUserInfo(value)}
