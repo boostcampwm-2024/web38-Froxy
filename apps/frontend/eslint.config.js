@@ -7,15 +7,12 @@ import eslintImport from 'eslint-plugin-import';
 import prettierPlugin from 'eslint-plugin-prettier';
 import noRelativeImportPathsPlugin from 'eslint-plugin-no-relative-import-paths';
 
-import typescriptParser from '@typescript-eslint/parser';
-
 export default tseslint.config(
   { ignores: ['dist'] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
-      parser: typescriptParser,
       ecmaVersion: 2020,
       globals: globals.browser
     },
@@ -30,6 +27,7 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       'prettier/prettier': 'error', // Prettier 규칙을 ESLint에서 에러로 표시
       '@typescript-eslint/no-unnecessary-type-constraint': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
       'import/order': [
         'error',
         {
