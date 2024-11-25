@@ -52,14 +52,11 @@ export class HistoryService {
       const result = await this.dockerService.getDocker(gitToken, lotusId, commitId, execFilename, inputs);
       await this.historyRepository.update(historyId, { status: HISTORY_STATUS.SUCCESS, result });
     } catch (error) {
-      await this.historyRepository
-        .update(historyId, {
-          status: HISTORY_STATUS.ERROR,
-          result: error.message
-        })
-        .catch((error) => {
-          console.error('error history update query failed', error);
-        });
+      console.error(error);
+      await this.historyRepository.update(historyId, {
+        status: HISTORY_STATUS.ERROR,
+        result: error.message
+      });
     }
   }
 
@@ -76,10 +73,6 @@ export class HistoryService {
         throw new HttpException('history findAndCount query failed', HttpStatus.INTERNAL_SERVER_ERROR);
       });
     const [historys, total] = result;
-
-    // if (historys.length === 0) {
-    //   throw new HttpException('not exist history', HttpStatus.BAD_REQUEST);
-    // } s
 
     return HistoryResponseListDto.of(historys, page, size, total);
   }
