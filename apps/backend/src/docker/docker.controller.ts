@@ -14,13 +14,7 @@ export class DockerController {
     const gitToken = this.configService.get<string>('GIT_TOKEN');
     const inputs = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
     const commit = '654dd3f1d7f17d172132aebae283e73356197d18';
-    const value = await this.dockerService.getDocker(
-      gitToken,
-      '25cf4713b2386b4ad4ce7c8dbbecebe8',
-      '08155adb2bef45de188ccdeca29395f9b3363520',
-      'main.js',
-      inputs
-    );
+    const value = await this.dockerService.getDocker(gitToken, gistId, commit, mainFileName, inputs);
     return value;
   }
 }
