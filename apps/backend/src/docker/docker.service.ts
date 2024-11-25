@@ -99,7 +99,7 @@ export class DockerService {
       });
 
       stream.on('end', async () => {
-        await container.remove({ force: true });
+        // await container.remove({ force: true });
         let result = this.filterAnsiCode(output);
         if (inputs.length !== 0) {
           result = result.split('\n').slice(1).join('\n');
@@ -183,7 +183,7 @@ export class DockerService {
 
     const stream = await exec.start();
     return new Promise((resolve, reject) => {
-      stream.on('data');
+      stream.on('data', {});
       stream.on('end', resolve);
       stream.on('error', reject);
     });
