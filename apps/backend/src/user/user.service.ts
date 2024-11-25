@@ -16,14 +16,10 @@ export class UserService {
   ) {}
 
   async findOne(gitId: number): Promise<User | null> {
-    return this.userRepository.findOneBy({ gitId }).catch((error) => {
-      throw new HttpException('user findOneBy query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-    });
+    return this.userRepository.findOneBy({ gitId });
   }
   async findOneByUserId(userId: string): Promise<User | null> {
-    return this.userRepository.findOneBy({ userId }).catch((error) => {
-      throw new HttpException('user findOneBy query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-    });
+    return this.userRepository.findOneBy({ userId });
   }
 
   async getSimpleUserInfoByUserId(userId: string): Promise<SimpleUserResponseDto> {
@@ -70,9 +66,7 @@ export class UserService {
       await this.saveUser(new UserCreateDto(inputUser, accessToken));
       user = await this.findOne(inputUser.id);
     } else {
-      await this.userRepository.update({ gitId: inputUser.id }, { gitToken: accessToken }).catch((error) => {
-        throw new HttpException('user update query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-      });
+      await this.userRepository.update({ gitId: inputUser.id }, { gitToken: accessToken });
     }
     return this.authService.createJwt(user.userId);
   }
@@ -82,15 +76,11 @@ export class UserService {
   }
 
   async saveUser(user: User): Promise<void> {
-    await this.userRepository.save(user).catch((error) => {
-      throw new HttpException('user save query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-    });
+    await this.userRepository.save(user);
   }
 
   async findUserGistToken(userId: string): Promise<string> {
-    const foundUser = await this.userRepository.findOneBy({ userId }).catch((error) => {
-      throw new HttpException('user findOneBy query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-    });
+    const foundUser = await this.userRepository.findOneBy({ userId });
     if (!foundUser) throw new HttpException('user data not found', HttpStatus.NOT_FOUND);
     return foundUser.gitToken;
   }

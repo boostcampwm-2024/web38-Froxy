@@ -2,8 +2,8 @@ import { ArgumentsHost, Catch, ExceptionFilter, HttpException, Logger } from '@n
 import { Request, Response } from 'express';
 
 @Catch(HttpException)
-export class ExceptionHandler implements ExceptionFilter {
-  private readonly logger = new Logger(ExceptionHandler.name);
+export class httpExceptionFilter implements ExceptionFilter {
+  private readonly logger = new Logger(httpExceptionFilter.name);
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -13,7 +13,7 @@ export class ExceptionHandler implements ExceptionFilter {
     this.logger.error(`HTTP ${status} Error: ${exception.getResponse()} | Path: ${request.url}`);
 
     response.status(status).json({
-      statusCode: status,
+      code: status,
       message: exception.getResponse(),
       timestamp: new Date().toISOString(),
       path: request.url
