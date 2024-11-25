@@ -183,7 +183,9 @@ export class DockerService {
 
     const stream = await exec.start();
     return new Promise((resolve, reject) => {
-      stream.on('data', {});
+      stream.on('data', (chunk) => {
+        const c = chunk;
+      });
       stream.on('end', resolve);
       stream.on('error', reject);
     });
