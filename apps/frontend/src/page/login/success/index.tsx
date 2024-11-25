@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Navigate, createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 import { useUserQuery } from '@/feature/user/query';
-import { useLocalStorage } from '@/shared';
+import { Loading, useLocalStorage } from '@/shared';
 import { useToast } from '@/shared/toast';
 
 const loginTokenValidation = z.object({
@@ -28,7 +28,7 @@ function RouteComponent() {
 
   if (error) throw new Error('유저 정보 조회에 실패했습니다.');
 
-  if (isLoading) return <div>...Loading</div>;
+  if (isLoading) return <Loading />;
 
   return <SuccessComponent nickname={user?.nickname ?? ''} />;
 }
