@@ -91,8 +91,14 @@ export class DockerService {
 
     //desciption: 스트림 종료 후 결과 반환
     return new Promise((resolve, reject) => {
+      const timeout = setTimeout(async () => {
+        await container.remove({ force: true });
+        reject(new Error('Execution timed out after 5 seconds'));
+      }, 5000);
+
       stream.on('end', async () => {
         await container.remove({ force: true });
+        clearTimeout(timeout);
         let result = this.filterAnsiCode(output);
         if (inputs.length !== 0) {
           result = result.split('\n').slice(1).join('\n');
