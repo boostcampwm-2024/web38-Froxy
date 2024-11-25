@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import e from 'express';
 import { HistoryExecResponseDto } from './dto/history.execResponse.dto';
 import { HistoryGetResponseDto } from './dto/history.getReponse.dto';
 import { HistoryResponseListDto } from './dto/history.responseList.dto';
@@ -52,7 +53,7 @@ export class HistoryService {
       const updatehistory = await this.historyRepository
         .update(historyId, { status: HISTORY_STATUS.SUCCESS, result })
         .catch((error) => {
-          console.error('success history update query failed');
+          console.error('success history update query failed', error);
         });
     } catch (error) {
       const updatehistory = await this.historyRepository
@@ -61,7 +62,7 @@ export class HistoryService {
           result: error.message
         })
         .catch((error) => {
-          console.error('success history update query failed');
+          console.error('success history update query failed', error);
         });
     }
   }
