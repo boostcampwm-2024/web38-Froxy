@@ -7,6 +7,7 @@ import { SuspenseUserGistSelect } from './SuspenseUserGistSelect';
 import { useLotusCreateMutation } from '@/feature/lotus';
 import { AsyncBoundary } from '@/shared/boundary';
 import { TagInput } from '@/shared/tagInput/TagInput';
+import { useToast } from '@/shared/toast';
 
 interface LotusCreateFormValue {
   title: string;
@@ -17,6 +18,8 @@ interface LotusCreateFormValue {
 
 export function LotusCreateForm() {
   const { mutate, isPending } = useLotusCreateMutation();
+
+  const { toast } = useToast({ isCloseOnUnmount: false });
 
   const navigate = useNavigate();
 
@@ -39,6 +42,15 @@ export function LotusCreateForm() {
       {
         onSuccess: ({ id }) => {
           navigate({ to: `/lotus/$lotusId`, params: { lotusId: id } });
+
+          toast({ description: 'Lotus가 생성되었습니다.', variant: 'success', duration: 2000 });
+        },
+        onError: () => {
+          toast({
+            description: 'Lotus 생성 중 오류가 발생했습니다. 다시 시도해 주세요.',
+            variant: 'error',
+            duration: 2000
+          });
         }
       }
     );
