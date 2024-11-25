@@ -47,23 +47,17 @@ export class LotusService {
     if (await this.checkAlreadyExist(lotusInputData.gistUuid, currentCommitId)) {
       throw new HttpException('same commit Lotus already exist.', HttpStatus.CONFLICT);
     }
-    const userData = await this.userService.findOneByUserId(userId).catch((error) => {
-      throw new HttpException('user findOneByUserId query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-    });
+    const userData = await this.userService.findOneByUserId(userId);
     const tags: Tag[] = await Promise.all(
       lotusInputData.tags.map((tag) => {
         return this.tagService.getTag(tag);
       })
     );
     await this.saveLotus(new LotusDto(currentCommitId, userData, lotusInputData, tags));
-    const lotusData = await this.lotusRepository
-      .findOne({
-        where: { gistRepositoryId: lotusInputData.gistUuid, commitId: currentCommitId },
-        relations: ['tags']
-      })
-      .catch((error) => {
-        throw new HttpException('lotus findOne query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-      });
+    const lotusData = await this.lotusRepository.findOne({
+      where: { gistRepositoryId: lotusInputData.gistUuid, commitId: currentCommitId },
+      relations: ['tags']
+    });
 
     return LotusResponseDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(userData), lotusData);
   }
@@ -75,14 +69,10 @@ export class LotusService {
   ): Promise<LotusResponseDto> {
     const foundUser = await this.userService.findOneByUserId(userIdWhoWantToUpdate);
     if (!foundUser) throw new HttpException('user data not found', HttpStatus.NOT_FOUND);
-    const updateLotus = await this.lotusRepository
-      .findOne({
-        where: { lotusId },
-        relations: ['user', 'tags']
-      })
-      .catch((error) => {
-        throw new HttpException('lotus findOne query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-      });
+    const updateLotus = await this.lotusRepository.findOne({
+      where: { lotusId },
+      relations: ['user', 'tags']
+    });
     if (!updateLotus) throw new HttpException('lotusId is not exist', HttpStatus.NOT_FOUND);
     if (updateLotus.user.userId !== userIdWhoWantToUpdate) {
       throw new HttpException("can't modify this lotus", HttpStatus.FORBIDDEN);
@@ -101,9 +91,7 @@ export class LotusService {
         updateLotus.tags = tags;
       }
     }
-    const result = await this.lotusRepository.save(updateLotus).catch((error) => {
-      throw new HttpException('lotus save query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-    });
+    const result = await this.lotusRepository.save(updateLotus);
     if (!result) throw new HttpException('update fail', HttpStatus.BAD_REQUEST);
     return LotusResponseDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(updateLotus.user), updateLotus);
   }
@@ -111,36 +99,26 @@ export class LotusService {
   async deleteLotus(lotusId: string, userIdWhoWantToDelete: string): Promise<MessageDto> {
     const foundUser = await this.userService.findOneByUserId(userIdWhoWantToDelete);
     if (!foundUser) throw new HttpException('user data not found', HttpStatus.NOT_FOUND);
-    const deleteLotus = await this.lotusRepository
-      .findOne({
-        where: { lotusId },
-        relations: ['user']
-      })
-      .catch((error) => {
-        throw new HttpException('lotus findOne query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-      });
+    const deleteLotus = await this.lotusRepository.findOne({
+      where: { lotusId },
+      relations: ['user']
+    });
     if (!deleteLotus) throw new HttpException('lotusId is not exist', HttpStatus.NOT_FOUND);
     if (deleteLotus.user.userId !== userIdWhoWantToDelete) {
       throw new HttpException("can't remove this lotus", HttpStatus.FORBIDDEN);
     }
 
-    const result = await this.lotusRepository.delete({ lotusId }).catch((error) => {
-      throw new HttpException('lotus delete query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-    });
+    const result = await this.lotusRepository.delete({ lotusId });
     if (!result.affected) throw new HttpException('delete fail', HttpStatus.NOT_FOUND);
 
     return new MessageDto('ok');
   }
 
   async getLotusFile(userId: string, gitToken: string, lotusId: string): Promise<LotusDetailDto> {
-    const lotusData = await this.lotusRepository
-      .findOne({
-        where: { lotusId },
-        relations: ['tags', 'user']
-      })
-      .catch((error) => {
-        throw new HttpException('lotus findOne query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-      });
+    const lotusData = await this.lotusRepository.findOne({
+      where: { lotusId },
+      relations: ['tags', 'user']
+    });
     if (!lotusData) {
       throw new HttpException('lotusId is not exist', HttpStatus.NOT_FOUND);
     }
@@ -154,17 +132,7 @@ export class LotusService {
   }
 
   async getPublicLotus(page: number, size: number, search: string): Promise<LotusPublicDto> {
-    const tags = await this.tagService.searchTag(search);
-
-    const lotusData = await this.lotusRepository.find({
-      where: {
-        isPublic: true,
-        tags: {
-          tagId: In(tags)
-        }
-      },
-      relations: ['tags', 'user']
-    });
+    const lotusData = await this.getLotusByTags(search);
 
     const totalNum = lotusData.length;
     const maxPage = Math.ceil(totalNum / size);
@@ -180,20 +148,37 @@ export class LotusService {
     return LotusPublicDto.ofLotusList(returnLotusData, page, maxPage);
   }
 
+  async getLotusByTags(search: string) {
+    if (!search) {
+      return await this.lotusRepository.find({
+        where: {
+          isPublic: true
+        },
+        relations: ['tags', 'user']
+      });
+    }
+    const tags = await this.tagService.searchTag(search);
+    return await this.lotusRepository.find({
+      where: {
+        isPublic: true,
+        tags: {
+          tagId: In(tags)
+        }
+      },
+      relations: ['tags', 'user']
+    });
+  }
+
   async getUserLotus(userId: string, page: number, size: number) {
     const user = this.userService.findOneByUserId(userId);
     if (!user) {
       throw new HttpException('user data is not found', HttpStatus.NOT_FOUND);
     }
 
-    const lotusData = await this.lotusRepository
-      .find({
-        where: { user: { userId } },
-        relations: ['tags', 'user']
-      })
-      .catch((error) => {
-        throw new HttpException('lotus find query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-      });
+    const lotusData = await this.lotusRepository.find({
+      where: { user: { userId } },
+      relations: ['tags', 'user']
+    });
     const totalNum = lotusData.length;
     const maxPage = Math.ceil(totalNum / size);
     if (page > maxPage && maxPage !== 0) {
@@ -209,16 +194,10 @@ export class LotusService {
   }
 
   async checkAlreadyExist(gistUuid: string, commitId: string) {
-    return await this.lotusRepository
-      .exists({ where: { gistRepositoryId: gistUuid, commitId: commitId } })
-      .catch((error) => {
-        throw new HttpException('lotus exists query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-      });
+    return await this.lotusRepository.exists({ where: { gistRepositoryId: gistUuid, commitId: commitId } });
   }
 
   async saveLotus(lotus: Lotus): Promise<void> {
-    await this.lotusRepository.save(lotus).catch((error) => {
-      throw new HttpException('lotus save query failed', HttpStatus.INTERNAL_SERVER_ERROR);
-    });
+    await this.lotusRepository.save(lotus);
   }
 }

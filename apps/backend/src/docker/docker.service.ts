@@ -152,7 +152,7 @@ export class DockerService {
       AttachStdin: true,
       AttachStdout: true,
       AttachStderr: true,
-      Tty: inputs.length !== 0,
+      Tty: inputs.length !== 0, //true
       Cmd: ['node', mainFileName]
     });
 

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Button, Heading, Input, Text } from '@froxy/design/components';
-import { useLotusSuspenseQuery } from '@/feature/lotus';
-import { TagInput } from '@/shared';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import { lotusQueryOptions } from '@/feature/lotus';
+import { TagInput } from '@/shared/tagInput';
 
 interface LotusUpdateFormProps {
   lotusId: string;
@@ -10,7 +11,7 @@ interface LotusUpdateFormProps {
 }
 
 export function LotusUpdateForm({ lotusId, onSubmit, onCancel }: LotusUpdateFormProps) {
-  const { data: lotus } = useLotusSuspenseQuery({ id: lotusId });
+  const { data: lotus } = useSuspenseQuery(lotusQueryOptions.detail({ id: lotusId }));
 
   const [title, setTitle] = useState(lotus.title);
 

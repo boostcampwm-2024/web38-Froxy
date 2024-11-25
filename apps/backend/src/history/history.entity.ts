@@ -14,10 +14,10 @@ export class History {
   @Column({ name: 'exec_filename' })
   execFilename: string;
 
-  @Column()
+  @Column({ type: 'text' })
   input: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   result: string;
 
   @Column()

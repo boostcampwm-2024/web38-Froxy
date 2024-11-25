@@ -1,6 +1,7 @@
 import { Button, Text } from '@froxy/design/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
+import { userQueryOptions } from '@/feature/user';
 import { useLocalStorage } from '@/shared';
 
 export function LogoutButton() {
@@ -12,7 +13,8 @@ export function LogoutButton() {
 
   const handleClick = () => {
     set('');
-    queryClient.removeQueries({ queryKey: ['user'] });
+
+    queryClient.removeQueries(userQueryOptions.info());
     navigate({ to: '/' });
   };
 

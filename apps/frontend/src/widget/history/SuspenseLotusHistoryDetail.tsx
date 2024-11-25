@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 import { Text } from '@froxy/design/components';
 import { Markdown } from '@froxy/react-markdown';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { HistoryType } from '@/feature/history';
-import { useLotusHistorySuspenseQuery } from '@/feature/history/query';
+import { lotusHistoryQueryOptions } from '@/feature/history/query';
 
 export function SuspenseLotusHistoryDetail({ lotusId, historyId }: { lotusId: string; historyId: string }) {
-  const { data } = useLotusHistorySuspenseQuery({ lotusId, historyId });
+  const lotusDetailQueryOptions = lotusHistoryQueryOptions.detail({ id: lotusId, historyId });
+
+  const { data } = useSuspenseQuery(lotusDetailQueryOptions);
 
   const queryClient = useQueryClient();
 
@@ -14,24 +16,18 @@ export function SuspenseLotusHistoryDetail({ lotusId, historyId }: { lotusId: st
   useEffect(() => {
     if (data.status !== 'PENDING') return;
 
-    const interval = setInterval(() => {
-      queryClient
-        .refetchQueries({
-          queryKey: ['lotus', 'detail', lotusId, 'history', historyId]
-        })
-        .then(() => {
-          const updatedData = queryClient.getQueryData<HistoryType>(['lotus', 'detail', lotusId, 'history', historyId]);
+    const interval = setInterval(async () => {
+      await queryClient.refetchQueries(lotusDetailQueryOptions);
 
-          if (updatedData && updatedData.status !== 'PENDING') {
-            queryClient.invalidateQueries({
-              queryKey: ['lotus', 'detail', lotusId, 'history']
-            });
-          }
-        });
+      const updatedData = queryClient.getQueryData<HistoryType>(lotusDetailQueryOptions.queryKey);
+
+      if (!updatedData || updatedData.status === 'PENDING') return;
+
+      queryClient.invalidateQueries(lotusHistoryQueryOptions.list({ id: lotusId }));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [data]);
+  }, [data, lotusDetailQueryOptions, lotusId, queryClient]);
 
   const terminal = '```bash\n' + data.output + '\n```';
 

@@ -20,6 +20,7 @@
     "@froxy/design": "workspace:^",
     "@froxy/react-markdown": "workspace:^",
     "@hookform/resolvers": "^3.9.1",
+    "@lottiefiles/dotlottie-react": "^0.10.0",
     "@tanstack/react-query": "^5.59.19",
     "@tanstack/react-router": "^1.78.3",
     "axios": "^1.7.7",

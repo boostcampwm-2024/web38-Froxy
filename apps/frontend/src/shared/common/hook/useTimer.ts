@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 /**
  * 타이머 기능을 제공하는 커스텀 훅입니다.
@@ -33,18 +33,20 @@ export const useTimer = (callback: () => void, ms: number) => {
     if (ms === Infinity) return;
 
     timerRef.current = setInterval(() => {
-      setTime((prev) => {
-        if (prev < ms) return prev + 5;
-
-        clearInterval(timerRef.current!);
-        callback();
-
-        return prev;
-      });
+      setTime((prev) => (prev < ms ? prev + 5 : prev));
     }, 5);
-  }, [callback, ms]);
+  }, [ms]);
 
-  const value = useMemo(() => ({ time, pauseTimer, startTimer }), [time, pauseTimer, startTimer]);
+  useEffect(() => {
+    if (time < ms) return;
+
+    clearInterval(timerRef.current!);
+    callback();
+  }, [callback, ms, time]);
+
+  const isTimeEnd = time >= ms;
+
+  const value = useMemo(() => ({ time, pauseTimer, startTimer, isTimeEnd }), [time, pauseTimer, startTimer, isTimeEnd]);
 
   return value;
 };

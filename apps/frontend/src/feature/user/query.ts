@@ -1,28 +1,20 @@
-import { useMutation, useQuery, useSuspenseInfiniteQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useSuspenseInfiniteQuery } from '@tanstack/react-query';
 import { getUserGistFile, getUserGistList, getUserInfo, getUserLotusList, patchUserInfo, postLogin } from './api';
+import { createQueryOptions } from '@/shared/createQueryOptions';
 
-export const useUserInfoSuspenseQuery = () => {
-  const query = useSuspenseQuery({
-    queryKey: ['user'],
-    queryFn: async () => getUserInfo()
-  });
-
-  return query;
-};
-
-export const useUserLotusListSuspenseQuery = ({ page, size }: { page?: number; size?: number }) => {
-  const query = useSuspenseQuery({
-    queryKey: ['lotus', page],
-    queryFn: async () => getUserLotusList({ page, size })
-  });
-
-  return query;
-};
+export const userQueryOptions = createQueryOptions('user', {
+  info: getUserInfo,
+  lotusList: getUserLotusList,
+  gistList: getUserGistList,
+  gistFile: getUserGistFile
+});
 
 export const useUserGistListSuspenseInfinity = ({ page = 1, size }: { page?: number; size?: number } = {}) => {
+  const { queryKey } = userQueryOptions.gistList({ page, size });
+
   const { data: res, ...query } = useSuspenseInfiniteQuery({
-    queryKey: ['gist', page],
-    queryFn: async ({ pageParam }) => getUserGistList({ page: pageParam, size }),
+    queryKey: [...queryKey, 'infinity'],
+    queryFn: async ({ pageParam }) => userQueryOptions.gistList({ page: pageParam, size }).queryFn(),
     getNextPageParam: (prev) => prev.page + 1,
     initialPageParam: page
   });
@@ -30,25 +22,6 @@ export const useUserGistListSuspenseInfinity = ({ page = 1, size }: { page?: num
   const data = res.pages.flatMap((res) => [...res.gists]);
 
   return { data, ...query };
-};
-
-export const useUserGistFileSuspenseQuery = ({ gistId }: { gistId: string }) => {
-  const query = useSuspenseQuery({
-    queryKey: ['gist', gistId],
-    queryFn: async () => getUserGistFile({ gistId })
-  });
-
-  return query;
-};
-
-export const useUserQuery = () => {
-  const query = useQuery({
-    queryKey: ['user'],
-    queryFn: getUserInfo,
-    retry: 1
-  });
-
-  return query;
 };
 
 export const useUserMutation = () => {

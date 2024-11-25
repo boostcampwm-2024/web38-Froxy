@@ -28,6 +28,8 @@ Gist에서 코드를 복제하고 실행 환경을 설정하는 번거로움 없
 ## 🔧 프로젝트 아키텍처
 ![image](https://github.com/user-attachments/assets/3b99d8b7-84e7-4555-a397-25757a067f2e)
 
+## 🔧 실행 흐름
+![sequence](https://github.com/user-attachments/assets/15b83e30-7036-456f-aad8-7c2fd5d48d15)
 
 ## 👥 팀원
 
@@ -54,3 +56,5 @@ Gist에서 코드를 복제하고 실행 환경을 설정하는 번거로움 없
 </table>
 
 ## [📚 팀 노션](https://freckle-calliandra-79a.notion.site/Team38-F-Rog-12d9038c617380509fbdf4eb928e4238)
+
+## [🐸 froxy 배포주소](http://www.frog-froxy.site)

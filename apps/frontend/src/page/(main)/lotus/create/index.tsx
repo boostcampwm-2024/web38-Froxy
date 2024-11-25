@@ -3,6 +3,7 @@ import { isAuthUser } from '@/feature/user/util';
 
 export const Route = createFileRoute('/(main)/lotus/create/')({
   beforeLoad: async () => {
-    if (!(await isAuthUser())) throw redirect({ to: '/' });
+    const isAuth = await isAuthUser();
+    if (!isAuth) throw redirect({ to: '/' });
   }
 });

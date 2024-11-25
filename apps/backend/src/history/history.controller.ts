@@ -5,6 +5,8 @@ import {
   Get,
   Headers,
   HttpCode,
+  HttpException,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -13,6 +15,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiHeader, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { error } from 'console';
 import { Request } from 'express';
 import { HistoryExecRequestDto } from './dto/history.execRequest.dto';
 import { HistoryExecResponseDto } from './dto/history.execResponse.dto';
@@ -27,6 +30,11 @@ import { UserService } from '@/user/user.service';
 export class HistoryController {
   constructor(private historyService: HistoryService, private authServer: AuthService) {}
 
+  @Get('error')
+  async errorQuery() {
+    return this.historyService.errorQuery();
+  }
+
   @Post()
   @HttpCode(200)
   @ApiOperation({ summary: '코드 실행 & history 추가' })
@@ -37,11 +45,15 @@ export class HistoryController {
     @Param('lotusId') lotusId: string,
     @Body() historyExecRequestDto: HistoryExecRequestDto
   ): Promise<any> {
-    const gitToken = await this.authServer.getUserGitToken(this.authServer.getIdFromRequest(request));
-    // const execFileName = 'FunctionDivide.js';
-    // const input = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
     const { input, execFileName } = historyExecRequestDto;
-    return await this.historyService.saveHistory(gitToken, lotusId, execFileName, input);
+    try {
+      const gitToken = await this.authServer.getUserGitToken(this.authServer.getIdFromRequest(request));
+      // const execFileName = 'FunctionDivide.js';
+      // const input = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
+      return await this.historyService.saveHistory(gitToken, lotusId, execFileName, input);
+    } catch (e) {
+      return await this.historyService.saveHistory(null, lotusId, execFileName, input);
+    }
   }
 
   @Get()
