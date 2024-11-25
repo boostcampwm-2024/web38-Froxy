@@ -37,11 +37,15 @@ export class HistoryController {
     @Param('lotusId') lotusId: string,
     @Body() historyExecRequestDto: HistoryExecRequestDto
   ): Promise<any> {
-    const gitToken = await this.authServer.getUserGitToken(this.authServer.getIdFromRequest(request));
-    // const execFileName = 'FunctionDivide.js';
-    // const input = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
     const { input, execFileName } = historyExecRequestDto;
-    return await this.historyService.saveHistory(gitToken, lotusId, execFileName, input);
+    try {
+      const gitToken = await this.authServer.getUserGitToken(this.authServer.getIdFromRequest(request));
+      // const execFileName = 'FunctionDivide.js';
+      // const input = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
+      return await this.historyService.saveHistory(gitToken, lotusId, execFileName, input);
+    } catch (e) {
+      return await this.historyService.saveHistory(null, lotusId, execFileName, input);
+    }
   }
 
   @Get()
