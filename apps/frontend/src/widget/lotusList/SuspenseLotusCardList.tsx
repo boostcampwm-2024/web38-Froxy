@@ -1,11 +1,11 @@
 import { Skeleton } from '@froxy/design/components';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { LotusLostQueryOptions } from './type';
 import { Lotus } from '@/feature/lotus';
-import { lotusQueryOptions } from '@/feature/lotus';
 import { range } from '@/shared';
 
-export function SuspenseLotusList({ page = 1 }: { page?: number }) {
-  const { data: lotusList } = useSuspenseQuery(lotusQueryOptions.list({ page }));
+export function SuspenseLotusList({ queryOptions }: { queryOptions: LotusLostQueryOptions }) {
+  const { data: lotusList } = useSuspenseQuery(queryOptions);
 
   return (
     <div className="w-full grid grid-cols-3 gap-8">
