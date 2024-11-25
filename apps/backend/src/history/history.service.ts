@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import e from 'express';
 import { HistoryExecResponseDto } from './dto/history.execResponse.dto';
 import { HistoryGetResponseDto } from './dto/history.getReponse.dto';
 import { HistoryResponseListDto } from './dto/history.responseList.dto';
@@ -49,19 +50,15 @@ export class HistoryService {
   ) {
     try {
       const result = await this.dockerService.getDocker(gitToken, lotusId, commitId, execFilename, inputs);
-      const updatehistory = await this.historyRepository
-        .update(historyId, { status: HISTORY_STATUS.SUCCESS, result })
-        .catch((error) => {
-          console.error('success history update query failed');
-        });
+      await this.historyRepository.update(historyId, { status: HISTORY_STATUS.SUCCESS, result });
     } catch (error) {
-      const updatehistory = await this.historyRepository
+      await this.historyRepository
         .update(historyId, {
           status: HISTORY_STATUS.ERROR,
           result: error.message
         })
         .catch((error) => {
-          console.error('success history update query failed');
+          console.error('error history update query failed', error);
         });
     }
   }
@@ -75,18 +72,20 @@ export class HistoryService {
         order: { createdAt: 'DESC' }
       })
       .catch((error) => {
+        console.error(error);
         throw new HttpException('history findAndCount query failed', HttpStatus.INTERNAL_SERVER_ERROR);
       });
     const [historys, total] = result;
 
     // if (historys.length === 0) {
     //   throw new HttpException('not exist history', HttpStatus.BAD_REQUEST);
-    // }
+    // } s
 
     return HistoryResponseListDto.of(historys, page, size, total);
   }
   async getHistoryFromId(historyId: string): Promise<HistoryGetResponseDto> {
     const history = await this.historyRepository.findOneBy({ historyId: historyId }).catch((error) => {
+      console.error(error);
       throw new HttpException('history findOneBy query failed', HttpStatus.INTERNAL_SERVER_ERROR);
     });
     if (!history) {
