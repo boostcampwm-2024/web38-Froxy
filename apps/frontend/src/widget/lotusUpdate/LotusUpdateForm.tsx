@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Heading, Input, Text } from '@froxy/design/components';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { lotusQueryOptions } from '@/feature/lotus';
-import { TagInput } from '@/shared';
+import { TagInput } from '@/shared/tagInput';
 
 interface LotusUpdateFormProps {
   lotusId: string;

@@ -34,7 +34,7 @@ function RouteComponent() {
 }
 
 function SuccessComponent({ nickname }: { nickname: string }) {
-  const { toast } = useToast();
+  const { toast } = useToast({ isCloseOnUnmount: false });
 
   useEffect(() => {
     toast({ description: `${nickname}님 환영합니다!`, duration: 2000 });
@@ -44,7 +44,7 @@ function SuccessComponent({ nickname }: { nickname: string }) {
 }
 
 function ErrorComponent() {
-  const { toast } = useToast();
+  const { toast } = useToast({ isCloseOnUnmount: false });
 
   useEffect(() => {
     toast({ variant: 'error', description: '로그인에 실패했습니다.', duration: 2000 });
