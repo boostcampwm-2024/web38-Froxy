@@ -1,7 +1,7 @@
 import { Button } from '@froxy/design/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { LotusRunCodeForm } from './LotusRunCodeForm';
-import { useCodeRunMutation } from '@/feature/history/query';
+import { lotusHistoryQueryOptions, useCodeRunMutation } from '@/feature/history/query';
 import { ModalBox } from '@/shared';
 import { useOverlay } from '@/shared/overlay';
 
@@ -18,8 +18,7 @@ export function CodeRunButton({ lotusId }: { lotusId: string }) {
       {
         onSuccess: () => {
           exit();
-          console.log('생성!');
-          queryClient.invalidateQueries({ queryKey: ['lotus', 'detail', lotusId, 'history'] });
+          queryClient.invalidateQueries(lotusHistoryQueryOptions.list({ id: lotusId }));
         }
       }
     );
@@ -28,7 +27,7 @@ export function CodeRunButton({ lotusId }: { lotusId: string }) {
   const handleOpenModal = () =>
     open(() => (
       <ModalBox onClose={exit}>
-        <LotusRunCodeForm onCancel={() => close()} onSubmit={handleCodeRun} lotusId={lotusId} />
+        <LotusRunCodeForm onCancel={() => exit()} onSubmit={handleCodeRun} lotusId={lotusId} />
       </ModalBox>
     ));
 

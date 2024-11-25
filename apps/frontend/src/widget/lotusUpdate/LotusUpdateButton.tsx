@@ -2,7 +2,7 @@ import { Button, Text } from '@froxy/design/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { LotusUpdateForm } from './LotusUpdateForm';
-import { useLotusUpdateMutation } from '@/feature/lotus';
+import { lotusQueryOptions, useLotusUpdateMutation } from '@/feature/lotus';
 import { ModalBox } from '@/shared';
 import { useOverlay } from '@/shared/overlay';
 
@@ -18,7 +18,7 @@ export function LotusUpdateButton({ lotusId }: { lotusId: string }) {
       { body, id: lotusId },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['lotus', 'detail', lotusId] });
+          queryClient.invalidateQueries(lotusQueryOptions.detail({ id: lotusId }));
         }
       }
     );
