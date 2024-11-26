@@ -2,9 +2,9 @@ import { createLazyFileRoute, getRouteApi } from '@tanstack/react-router';
 import { lotusQueryOptions } from '@/feature/lotus';
 import { AsyncBoundary } from '@/shared/boundary';
 import { LotusSearchBar, SuspenseLotusList } from '@/widget/lotusList';
-import { SuspenseLotusPagination } from '@/widget/lotusList/SuspenseLotusPagination';
+import { SuspensePagination } from '@/widget/SuspensePagination';
 
-const { useSearch } = getRouteApi('/(main)/lotus/');
+const { useSearch, useNavigate } = getRouteApi('/(main)/lotus/');
 
 export const Route = createLazyFileRoute('/(main)/lotus/')({
   component: RouteComponent
@@ -15,6 +15,10 @@ function RouteComponent() {
 
   const lotusListQueryOptions = lotusQueryOptions.list({ page });
 
+  const navigate = useNavigate();
+
+  const changePage = (page: number) => navigate({ to: '/lotus', search: { page } });
+
   return (
     <div>
       <LotusSearchBar />
@@ -23,8 +27,8 @@ function RouteComponent() {
         <SuspenseLotusList queryOptions={lotusListQueryOptions} />
       </AsyncBoundary>
 
-      <AsyncBoundary pending={<SuspenseLotusPagination.Skeleton />} rejected={() => <div>Error</div>}>
-        <SuspenseLotusPagination queryOptions={lotusListQueryOptions} />
+      <AsyncBoundary pending={<SuspensePagination.Skeleton />} rejected={() => <div>Error</div>}>
+        <SuspensePagination queryOptions={lotusListQueryOptions} onChangePage={changePage} activeScrollTop />
       </AsyncBoundary>
     </div>
   );
