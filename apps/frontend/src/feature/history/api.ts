@@ -2,15 +2,15 @@ import { HistoryType } from '.';
 import { api } from '@/shared/common/api';
 
 export const getLotusHistoryList = async ({
-  id
+  id,
+  page = 1
 }: {
   id: string;
+  page?: number;
 }): Promise<{ list: HistoryType[]; page: { current: number; max: number } }> => {
-  const response = await api.get(`/api/lotus/${id}/history`);
+  const response = await api.get(`/api/lotus/${id}/history?page=${page}&size=${5}`);
 
   const data = response.data as { list: HistoryType[]; page: { current: number; max: number } };
-
-  console.log(data);
 
   const body = {
     ...data,

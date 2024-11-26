@@ -2,10 +2,14 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerCustomOptions, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { httpExceptionFilter } from './filter/http.exception.filter';
+import { typeOrmExceptionFilter } from './filter/typeorm.exception.filter';
 
 async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
+  app.useGlobalFilters(new typeOrmExceptionFilter());
+  app.useGlobalFilters(new httpExceptionFilter());
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors({
     origin: '*', // 필요에 따라 특정 도메인만 허용

@@ -2,27 +2,38 @@ import { Button, Text } from '@froxy/design/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { LotusUpdateForm } from './LotusUpdateForm';
-import { useLotusUpdateMutation } from '@/feature/lotus';
+import { getLotusMutationErrorToastData, lotusQueryOptions, useLotusUpdateMutation } from '@/feature/lotus';
 import { ModalBox } from '@/shared';
 import { useOverlay } from '@/shared/overlay';
+import { useToast } from '@/shared/toast';
 
 export function LotusUpdateButton({ lotusId }: { lotusId: string }) {
-  const { mutate } = useLotusUpdateMutation();
+  const { mutate, isPending } = useLotusUpdateMutation();
 
   const { open, exit } = useOverlay();
+  const { toast } = useToast();
 
   const queryClient = useQueryClient();
 
   const onSubmit = (body: { title: string; tags: string[] }) => {
+    exit();
+
     mutate(
       { body, id: lotusId },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['lotus', 'detail', lotusId] });
+          queryClient.invalidateQueries(lotusQueryOptions.detail({ id: lotusId }));
+
+          toast({ description: 'Lotus가 수정되었습니다.', variant: 'success', duration: 2000 });
+        },
+        onError: (error) => {
+          toast({
+            ...getLotusMutationErrorToastData(error),
+            duration: 2000
+          });
         }
       }
     );
-    exit();
   };
 
   const handleOpenUpdateModal = () => {
@@ -36,7 +47,7 @@ export function LotusUpdateButton({ lotusId }: { lotusId: string }) {
   };
 
   return (
-    <Button variant={'default'} onClick={handleOpenUpdateModal}>
+    <Button variant={'default'} onClick={handleOpenUpdateModal} disabled={isPending}>
       <IoSettingsSharp />
       <Text size="sm">수정하기</Text>
     </Button>

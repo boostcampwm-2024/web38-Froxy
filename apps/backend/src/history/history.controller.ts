@@ -5,6 +5,8 @@ import {
   Get,
   Headers,
   HttpCode,
+  HttpException,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -13,6 +15,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiHeader, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { error } from 'console';
 import { Request } from 'express';
 import { HistoryExecRequestDto } from './dto/history.execRequest.dto';
 import { HistoryExecResponseDto } from './dto/history.execResponse.dto';
@@ -26,6 +29,11 @@ import { UserService } from '@/user/user.service';
 @Controller('lotus/:lotusId/history')
 export class HistoryController {
   constructor(private historyService: HistoryService, private authServer: AuthService) {}
+
+  @Get('error')
+  async errorQuery() {
+    return this.historyService.errorQuery();
+  }
 
   @Post()
   @HttpCode(200)

@@ -4,9 +4,10 @@ import { useNavigate } from '@tanstack/react-router';
 import { TiPencil } from 'react-icons/ti';
 import { SuspenseGistFiles } from './SuspenseGistFiles';
 import { SuspenseUserGistSelect } from './SuspenseUserGistSelect';
-import { useLotusCreateMutation } from '@/feature/lotus';
+import { getLotusMutationErrorToastData, useLotusCreateMutation } from '@/feature/lotus';
 import { AsyncBoundary } from '@/shared/boundary';
 import { TagInput } from '@/shared/tagInput/TagInput';
+import { useToast } from '@/shared/toast';
 
 interface LotusCreateFormValue {
   title: string;
@@ -17,6 +18,8 @@ interface LotusCreateFormValue {
 
 export function LotusCreateForm() {
   const { mutate, isPending } = useLotusCreateMutation();
+
+  const { toast } = useToast({ isCloseOnUnmount: false });
 
   const navigate = useNavigate();
 
@@ -39,6 +42,14 @@ export function LotusCreateForm() {
       {
         onSuccess: ({ id }) => {
           navigate({ to: `/lotus/$lotusId`, params: { lotusId: id } });
+
+          toast({ description: 'Lotus가 생성되었습니다.', variant: 'success', duration: 2000 });
+        },
+        onError: (error) => {
+          toast({
+            ...getLotusMutationErrorToastData(error),
+            duration: 2000
+          });
         }
       }
     );

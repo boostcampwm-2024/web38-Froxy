@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 interface UserEditableInfoProps {
+  disabled?: boolean;
   value: string;
   onToggleIsEdit: () => void;
   onEditValue: (value: string) => void;
@@ -13,7 +14,7 @@ const userInfoInputValue = z.object({
   value: z.string().min(1, { message: '입력값이 존재하지 않습니다.' })
 });
 
-export function UserInfoInputForm({ value, onToggleIsEdit, onEditValue }: UserEditableInfoProps) {
+export function UserInfoInputForm({ value, onToggleIsEdit, onEditValue, disabled }: UserEditableInfoProps) {
   const {
     register,
     reset,
@@ -37,7 +38,9 @@ export function UserInfoInputForm({ value, onToggleIsEdit, onEditValue }: UserEd
   return (
     <form onSubmit={handleSubmit(onSubmit, onError)} className="flex items-center gap-2">
       <Input className={'min-w-80 mr-4'} {...register('value')} placeholder={`값을 입력해주세요.`} />
-      <Button type="submit">수정하기</Button>
+      <Button type="submit" disabled={disabled}>
+        수정하기
+      </Button>
       <Button type="button" onClick={onToggleIsEdit} variant={'secondary'}>
         취소하기
       </Button>

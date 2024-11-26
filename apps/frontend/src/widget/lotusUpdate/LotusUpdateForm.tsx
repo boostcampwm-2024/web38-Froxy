@@ -15,7 +15,7 @@ export function LotusUpdateForm({ lotusId, onSubmit, onCancel }: LotusUpdateForm
 
   const [title, setTitle] = useState(lotus.title);
 
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>(lotus.tags);
 
   const handleSubmit = () => {
     onSubmit?.({ title, tags });
@@ -30,7 +30,7 @@ export function LotusUpdateForm({ lotusId, onSubmit, onCancel }: LotusUpdateForm
       <Input
         className={'min-w-80 mr-4 mb-4'}
         placeholder={`제목을 입력해주세요.`}
-        title={title}
+        value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
       <Text className="mb-2">태그</Text>

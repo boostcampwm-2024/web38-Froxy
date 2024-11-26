@@ -1,27 +1,38 @@
 import { Button, Heading, Text } from '@froxy/design/components';
 import { useNavigate } from '@tanstack/react-router';
 import { RiDeleteBin5Fill } from 'react-icons/ri';
-import { useLotusDeleteMutation } from '@/feature/lotus';
+import { getLotusMutationErrorToastData, useLotusDeleteMutation } from '@/feature/lotus';
 import { ModalBox } from '@/shared';
 import { useOverlay } from '@/shared/overlay';
+import { useToast } from '@/shared/toast';
 
 export function LotusDeleteButton({ lotusId }: { lotusId: string }) {
-  const { mutate } = useLotusDeleteMutation();
+  const { mutate, isPending } = useLotusDeleteMutation();
+
   const { open, exit } = useOverlay();
+  const { toast } = useToast({ isCloseOnUnmount: false });
 
   const navigate = useNavigate();
 
   const handleDeleteLotus = () => {
+    exit();
+
     mutate(
       { id: lotusId },
       {
         onSuccess: () => {
-          console.log('성공');
+          toast({ description: 'Lotus가 삭제되었습니다.', variant: 'success', duration: 2000 });
+
           navigate({ to: '/lotus' });
+        },
+        onError: (error) => {
+          toast({
+            ...getLotusMutationErrorToastData(error),
+            duration: 2000
+          });
         }
       }
     );
-    exit();
   };
 
   const handleOpenDeleteModal = () => {
@@ -45,7 +56,7 @@ export function LotusDeleteButton({ lotusId }: { lotusId: string }) {
   };
 
   return (
-    <Button variant={'destructive'} onClick={handleOpenDeleteModal}>
+    <Button variant={'destructive'} onClick={handleOpenDeleteModal} disabled={isPending}>
       <RiDeleteBin5Fill />
       <Text size="sm">삭제하기</Text>
     </Button>

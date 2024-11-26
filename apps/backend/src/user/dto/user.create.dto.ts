@@ -19,6 +19,9 @@ export class UserCreateDto {
   @IsNumber()
   gitId: number;
 
+  @IsString()
+  gistUrl: string;
+
   @ValidateNested({ each: true })
   @Type(() => Lotus)
   lotuses: Lotus[];
@@ -32,6 +35,7 @@ export class UserCreateDto {
     this.profilePath = response.avatar_url;
     this.gitToken = accessToken;
     this.gitId = response.id;
+    this.gistUrl = `https://gist.github.com/${response.login}`;
     this.lotuses = [];
     this.comments = [];
   }
