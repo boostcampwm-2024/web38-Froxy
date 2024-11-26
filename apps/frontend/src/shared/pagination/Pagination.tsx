@@ -15,13 +15,15 @@ interface PaginationProps {
   totalPages?: number;
   initialPage?: number;
   onChangePage?: (page: number) => void;
+  activeScrollTop?: true;
 }
 
-export function Pagination({ totalPages = 1, initialPage = 1, onChangePage }: PaginationProps) {
+export function Pagination({ totalPages = 1, initialPage = 1, onChangePage, activeScrollTop }: PaginationProps) {
   const { currentPage, onClickPage, onClickPrevious, onClickNext, getPaginationItems } = usePagination({
     totalPages,
     initialPage,
-    onChangePage
+    onChangePage,
+    activeScrollTop
   });
 
   return (
