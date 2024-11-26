@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Button, Heading, Input, Switch, Text } from '@froxy/design/components';
 import { useNavigate } from '@tanstack/react-router';
 import { TiPencil } from 'react-icons/ti';
@@ -95,13 +95,16 @@ export function LotusCreateForm() {
         <TagInput value={formValue.tags} onChange={(tags) => setFormValue((prev) => ({ ...prev, tags }))} />
         <Text className="mb-2 mt-10">불러올 Gist</Text>
 
-        <AsyncBoundary pending={<div>Loading</div>} rejected={() => <div>Error!!</div>}>
+        <Suspense fallback={<SuspenseUserGistSelect.Skeleton />}>
           <SuspenseUserGistSelect onValueChange={(gistUuid) => setFormValue((prev) => ({ ...prev, gistUuid }))} />
-        </AsyncBoundary>
+        </Suspense>
       </form>
 
       {formValue.gistUuid && (
-        <AsyncBoundary pending={<div>Loading...</div>} rejected={() => <div>Error</div>}>
+        <AsyncBoundary
+          pending={<SuspenseGistFiles.Skeleton />}
+          rejected={({ error, retry }) => <SuspenseGistFiles.Error error={error} retry={retry} />}
+        >
           <SuspenseGistFiles gistId={formValue.gistUuid} />
         </AsyncBoundary>
       )}
