@@ -2,8 +2,8 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerCustomOptions, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { typeOrmExceptionFilter } from './filter/\btypeorm.exception.filter';
 import { httpExceptionFilter } from './filter/http.exception.filter';
+import { typeOrmExceptionFilter } from './filter/typeorm.exception.filter';
 
 async function bootstrap() {
   const app: INestApplication = await NestFactory.create(AppModule);
