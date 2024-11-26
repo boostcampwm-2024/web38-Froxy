@@ -8,7 +8,11 @@ export function SuspenseLotusFiles({ id }: { id: string }) {
     data: { files }
   } = useSuspenseQuery(lotusQueryOptions.detail({ id }));
 
-  const defaultIndex = files.findIndex(({ filename }) => filename === 'README.md');
+  const readmeIndex = files.findIndex(({ filename }) => filename === 'README.md');
+
+  const firstMdIndex = files.findIndex(({ filename }) => filename.endsWith('.md'));
+
+  const defaultIndex = readmeIndex > 0 ? readmeIndex : firstMdIndex > 0 ? firstMdIndex : 0;
 
   return (
     <CodeView value={files} current={defaultIndex}>

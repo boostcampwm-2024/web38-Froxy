@@ -3,25 +3,25 @@ import { createLazyFileRoute, getRouteApi, useNavigate } from '@tanstack/react-r
 import { lotusQueryOptions } from '@/feature/lotus';
 import { ErrorBoundary } from '@/shared/boundary';
 import { LotusSearchBar, SuspenseLotusList } from '@/widget/lotusList';
-import { SuspenseLotusPagination } from '@/widget/lotusList/SuspenseLotusPagination';
+import { SuspensePagination } from '@/widget/SuspensePagination';
 
-const { useSearch } = getRouteApi('/(main)/lotus/');
+const { useSearch, useNavigate } = getRouteApi('/(main)/lotus/');
 
 export const Route = createLazyFileRoute('/(main)/lotus/')({
   component: RouteComponent
 });
 
 function RouteComponent() {
-  const { page } = useSearch();
+  const { page, keyword } = useSearch();
   const navigate = useNavigate();
 
-  const lotusListQueryOptions = lotusQueryOptions.list({ page });
+  const lotusListQueryOptions = lotusQueryOptions.list({ page, keyword });
 
   const onChangePage = (page: number = 1) => navigate({ to: '/lotus', search: { page } });
 
   return (
     <div>
-      <LotusSearchBar />
+      <LotusSearchBar current={keyword} />
 
       <ErrorBoundary
         fallback={({ error, reset }) => (
@@ -32,8 +32,8 @@ function RouteComponent() {
           <SuspenseLotusList queryOptions={lotusListQueryOptions} />
         </Suspense>
 
-        <Suspense fallback={<SuspenseLotusPagination.Skeleton />}>
-          <SuspenseLotusPagination queryOptions={lotusListQueryOptions} onChangePage={onChangePage} />
+        <Suspense fallback={<SuspensePagination.Skeleton />}>
+          <SuspensePagination queryOptions={lotusListQueryOptions} onChangePage={onChangePage} activeScrollTop />
         </Suspense>
       </ErrorBoundary>
     </div>

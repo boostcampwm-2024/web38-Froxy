@@ -7,11 +7,11 @@ import axios from 'axios';
 import { userQueryOptions } from '@/feature/user';
 import { AsyncBoundary, ErrorBoundary } from '@/shared/boundary';
 import { SuspenseLotusList } from '@/widget/lotusList';
-import { SuspenseLotusPagination } from '@/widget/lotusList/SuspenseLotusPagination';
 import { CreateLotusButton } from '@/widget/navigation';
+import { SuspensePagination } from '@/widget/SuspensePagination';
 import { SuspenseUserInfoBox } from '@/widget/user/SuspenseUserInfoBox';
 
-const { useSearch } = getRouteApi('/(main)/user/');
+const { useSearch, useNavigate } = getRouteApi('/(main)/user/');
 
 export const Route = createLazyFileRoute('/(main)/user/')({
   component: RouteComponent,
@@ -48,8 +48,8 @@ function RouteComponent() {
             <SuspenseLotusList queryOptions={userLotusListQueryOptions} />
           </Suspense>
 
-          <Suspense fallback={<SuspenseLotusPagination.Skeleton />}>
-            <SuspenseLotusPagination queryOptions={userLotusListQueryOptions} onChangePage={onChangePage} />
+          <Suspense fallback={<SuspensePagination.Skeleton />}>
+            <SuspensePagination queryOptions={userLotusListQueryOptions} onChangePage={onChangePage} />
           </Suspense>
         </ErrorBoundary>
       </section>
