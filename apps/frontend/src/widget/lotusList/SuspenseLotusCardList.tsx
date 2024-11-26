@@ -1,5 +1,7 @@
-import { Skeleton } from '@froxy/design/components';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { Button, Heading, Skeleton } from '@froxy/design/components';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { useQueryErrorResetBoundary, useSuspenseQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { LotusLostQueryOptions } from './type';
 import { Lotus } from '@/feature/lotus';
 import { range } from '@/shared';
@@ -55,3 +57,34 @@ function SkeletonLotusCardList() {
 }
 
 SuspenseLotusList.Skeleton = SkeletonLotusCardList;
+
+interface ErrorFallbackProps {
+  error: unknown;
+  retry: () => void;
+  onChangePage: (page?: number) => Promise<void>;
+}
+
+function ErrorFallbackLotusCardList({ error, retry, onChangePage }: ErrorFallbackProps) {
+  const { reset } = useQueryErrorResetBoundary();
+
+  if (axios.isAxiosError(error) && error?.status === 401) throw error;
+
+  const handleRetry = async () => {
+    if (axios.isAxiosError(error) && error?.status === 404) {
+      await onChangePage(1);
+    } else {
+      reset();
+    }
+    retry();
+  };
+
+  return (
+    <div className="w-full h-full flex flex-col justify-center items-center">
+      <DotLottieReact src="/json/errorAnimation.json" loop autoplay className="w-96" />
+      <Heading className="py-4">Lotus 목록 조회에 실패했습니다</Heading>
+      <Button onClick={handleRetry}>재시도</Button>
+    </div>
+  );
+}
+
+SuspenseLotusList.ErrorFallback = ErrorFallbackLotusCardList;
