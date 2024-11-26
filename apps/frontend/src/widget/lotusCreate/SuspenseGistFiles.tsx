@@ -48,7 +48,7 @@ function ErrorGistFiles({ error, retry }: ErrorProps) {
   };
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center">
+    <div className="w-full h-[600px] mt-20 pb-10 flex flex-col justify-center items-center">
       <DotLottieReact src="/json/errorAnimation.json" loop autoplay className="w-96" />
       <Heading className="py-4">선택한 Gist의 파일 조회에 실패했습니다</Heading>
       <Button onClick={handleRetry}>재시도</Button>
