@@ -173,7 +173,7 @@ export class LotusService {
   async getUserLotus(userId: string, page: number, size: number) {
     const user = this.userService.findOneByUserId(userId);
     if (!user) {
-      throw new HttpException('user data is not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('user data is not found', HttpStatus.UNAUTHORIZED);
     }
 
     const [lotusData, totalNum] = await this.lotusRepository.findAndCount({
