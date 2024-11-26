@@ -1,18 +1,24 @@
-import { UserType } from './type';
-import { LotusType } from '@/feature/lotus/type';
+import { UserDto, UserModel } from './model';
+import { CodeFileDto, CodeFileModel } from '@/feature/codeView';
+import { LotusDto, LotusModel } from '@/feature/lotus';
+import { PageDto } from '@/feature/pagination';
 import { api } from '@/shared/common/api';
-import { PageType } from '@/shared/pagination';
+
+interface UserLotusListDto {
+  lotuses: (LotusDto & { author: UserDto })[];
+  page: PageDto;
+}
 
 // 사용자의 Lotus 목록 조회
 export const getUserLotusList = async ({ page = 1, size = 6 }: { page?: number; size?: number }) => {
-  const response = await api.get(`/api/user/lotus?page=${page}&size=${size}`);
+  const response = await api.get<UserLotusListDto>(`/api/user/lotus?page=${page}&size=${size}`);
 
-  const lotuses: LotusType[] = response.data.lotuses.map((lotus: LotusType) => ({
-    ...lotus,
-    date: new Date(lotus.date)
+  const lotuses = response.data.lotuses.map((lotus) => ({
+    lotus: new LotusModel(lotus),
+    author: new UserModel(lotus.author)
   }));
 
-  return { lotuses, page: response.data.page as PageType };
+  return { lotuses, page: response.data.page };
 };
 
 interface GistType {
@@ -21,7 +27,7 @@ interface GistType {
   nickname: string;
 }
 
-interface UserGistListResponse {
+interface UserGistListDto {
   gists: GistType[];
   page: number;
   size: number;
@@ -30,27 +36,25 @@ interface UserGistListResponse {
 
 // 사용자의 Gist 목록 조회
 export const getUserGistList = async ({ page = 1, size = 10 }: { page?: number; size?: number }) => {
-  const response = await api.get(`/api/user/gist?page=${page}&size=${size}`);
+  const response = await api.get<UserGistListDto>(`/api/user/gist?page=${page}&size=${size}`);
 
   const data = response.data;
 
-  return data as UserGistListResponse;
+  return data;
 };
 
 // TODO : Gist Feature 분리 고려
 // 특정 gist의 파일 조회
-interface GistFileType {
-  filename: string;
-  language: string;
-  content: string;
+interface GistFilesDto {
+  files: CodeFileDto[];
 }
 
 export const getUserGistFile = async ({ gistId }: { gistId: string }) => {
-  const response = await api.get(`/api/user/gist/${gistId}`);
+  const response = await api.get<GistFilesDto>(`/api/user/gist/${gistId}`);
 
-  const { files } = await response.data;
+  const { files } = response.data;
 
-  return files as GistFileType[];
+  return files.map((file) => new CodeFileModel(file));
 };
 
 export const postLogin = async () => {
@@ -63,17 +67,17 @@ export const postLogin = async () => {
 
 //사용자 기본 정보 조회
 export const getUserInfo = async () => {
-  const res = await api.get<UserType>('/api/user');
+  const res = await api.get<UserDto>('/api/user');
 
-  return res.data;
+  return new UserModel(res.data);
 };
 
-interface PatchUserInfo {
+interface UpdateUserDto {
   nickname: string;
 }
 
 // 사용자 정보 수정하기
-export const patchUserInfo = async ({ body }: { body: PatchUserInfo }) => {
+export const patchUserInfo = async ({ body }: { body: UpdateUserDto }) => {
   const res = await api.patch('/api/user', body);
 
   return res.data;
