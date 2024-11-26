@@ -6,7 +6,10 @@ import { LoginButton } from './navigation/LoginButton';
 import { userQueryOptions } from '@/feature/user/query';
 
 export function Header() {
-  const { data } = useQuery(userQueryOptions.info());
+  const { data } = useQuery({
+    ...userQueryOptions.info(),
+    retry: 0
+  });
 
   const navigate = useNavigate();
 
