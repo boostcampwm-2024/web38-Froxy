@@ -15,8 +15,6 @@ export function LotusRunCodeForm({ lotusId, onCancel, onSubmit }: LotusRunCodeFo
   const [inputs, setInputs] = useState<string[]>([]);
 
   const handleSubmit = () => {
-    console.log(execFileName, inputs);
-
     onSubmit?.({ execFileName, inputs });
   };
 

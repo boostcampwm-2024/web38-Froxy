@@ -22,8 +22,9 @@ export function CodeRunButton({ lotusId }: { lotusId: string }) {
       { lotusId, input: inputs, execFileName },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries(lotusHistoryQueryOptions.list({ id: lotusId }));
           toast({ description: '코드가 실행되었습니다.', variant: 'success', duration: 2000 });
+
+          queryClient.invalidateQueries(lotusHistoryQueryOptions.list({ id: lotusId }));
         },
         onError: () => {
           toast({
