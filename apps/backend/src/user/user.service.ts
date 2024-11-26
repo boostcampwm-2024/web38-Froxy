@@ -42,14 +42,19 @@ export class UserService {
   }
 
   getObjUser(updateData: UserPatchDTO) {
-    let nickname = '';
-    let profilePath = '';
-    if (updateData.nickname && isString(updateData.nickname)) nickname = updateData.nickname;
-    if (updateData.profile) profilePath = updateData.profile;
-    if (!nickname && !profilePath) {
+    const obj: any = {};
+
+    if (updateData.nickname && isString(updateData.nickname)) {
+      obj.nickname = updateData.nickname;
+    }
+    if (updateData.profile) {
+      obj.profilePath = updateData.profile;
+    }
+    if (Object.keys(obj).length === 0) {
       throw new HttpException('wrong user data', HttpStatus.BAD_REQUEST);
     }
-    return { nickname, profilePath };
+
+    return obj;
   }
 
   async loginUser(tokenData) {
