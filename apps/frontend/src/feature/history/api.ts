@@ -1,31 +1,27 @@
-import { HistoryType } from '.';
+import { HistoryDto, HistoryModel } from '.';
+import { PageDto, PageModel } from '@/feature/pagination';
 import { api } from '@/shared/common/api';
 
-export const getLotusHistoryList = async ({
-  id,
-  page = 1
-}: {
-  id: string;
-  page?: number;
-}): Promise<{ list: HistoryType[]; page: { current: number; max: number } }> => {
-  const response = await api.get(`/api/lotus/${id}/history?page=${page}&size=${5}`);
+interface LotusHistoryListDto {
+  list: HistoryDto[];
+  page: PageDto;
+}
 
-  const data = response.data as { list: HistoryType[]; page: { current: number; max: number } };
+export const getLotusHistoryList = async ({ id, page = 1 }: { id: string; page?: number }) => {
+  const response = await api.get<LotusHistoryListDto>(`/api/lotus/${id}/history?page=${page}&size=${5}`);
 
-  const body = {
-    ...data,
-    list: data.list.map(({ date, ...rest }) => ({ ...rest, date: new Date(date) }))
+  const list = response.data.list.map((history) => new HistoryModel(history));
+
+  return {
+    list,
+    page: new PageModel(response.data.page)
   };
-
-  return body;
 };
 
-export const getLotusHistory = async ({ id, historyId }: { id: string; historyId: string }): Promise<HistoryType> => {
-  const response = await api.get(`/api/lotus/${id}/history/${historyId}`);
+export const getLotusHistory = async ({ id, historyId }: { id: string; historyId: string }) => {
+  const { data } = await api.get<HistoryDto>(`/api/lotus/${id}/history/${historyId}`);
 
-  const data = response.data as HistoryType;
-
-  return data;
+  return new HistoryModel(data);
 };
 
 export interface PostCodeRunProps {

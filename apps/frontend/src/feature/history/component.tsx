@@ -2,10 +2,10 @@ import { ComponentProps, HTMLProps, createContext, useContext } from 'react';
 import { Heading, Text } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
 import { HISTORY_STATUS_COLOR } from './constant';
-import { HistoryType } from './type';
+import { HistoryModel } from './model';
 import { FormatDateKey, Time } from '@/shared';
 
-const HistoryContext = createContext<HistoryType | null>(null);
+const HistoryContext = createContext<HistoryModel | null>(null);
 
 const useHistoryContext = () => {
   const context = useContext(HistoryContext);
@@ -19,7 +19,7 @@ const useHistoryContext = () => {
 
 type HistoryProviderProps = {
   children: React.ReactNode;
-  value: HistoryType;
+  value: HistoryModel;
 };
 
 export function HistoryProvider({ children, value }: HistoryProviderProps) {
