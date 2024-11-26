@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { CodeViewActionContext, CodeViewContext } from '@/feature/codeView/hook';
-import { CodeViewValue } from '@/feature/codeView/type';
+import { CodeFileModel } from '@/feature/codeView/model';
 
 type CodeViewProviderProps = {
-  value: CodeViewValue[];
+  value: CodeFileModel[];
   children: React.ReactNode;
   current?: number;
 };
