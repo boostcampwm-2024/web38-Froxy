@@ -80,19 +80,26 @@ export class DockerService {
     //desciption: tarBuffer를 Docker 컨테이너에 업로드
     await container.putArchive(tarBuffer, { path: '/' });
 
+    if (files.some((file) => file.fileName === 'package.json')) {
+      await this.packageInstall(container);
+    }
+
     const stream = await this.dockerExcution(inputs, mainFileName, container);
     let output = '';
 
-    //desciption: 스트림에서 데이터 수집
-    //todo: 입력값이 있으면 첫줄 slice
-    stream.on('data', (chunk) => {
-      output += chunk.toString();
-    });
+    setTimeout(async () => {
+      stream.end();
+    }, 5000);
 
     //desciption: 스트림 종료 후 결과 반환
     return new Promise((resolve, reject) => {
+      //desciption: 스트림에서 데이터 수집
+      stream.on('data', (chunk) => {
+        output += chunk.toString();
+      });
+
       stream.on('end', async () => {
-        await container.remove({ force: true });
+        // await container.remove({ force: true });
         let result = this.filterAnsiCode(output);
         if (inputs.length !== 0) {
           result = result.split('\n').slice(1).join('\n');
@@ -162,8 +169,26 @@ export class DockerService {
       await stream.write(input + '\n');
       await this.delay(100); //각 입력 term
     }
-    stream.end();
+    // stream.end();
     return stream;
+  }
+
+  async packageInstall(container: Container): Promise<void> {
+    const exec = await container.exec({
+      AttachStdin: false,
+      AttachStdout: true,
+      AttachStderr: true,
+      Cmd: ['npm', 'install']
+    });
+
+    const stream = await exec.start();
+    return new Promise((resolve, reject) => {
+      stream.on('data', (chunk) => {
+        const c = chunk;
+      });
+      stream.on('end', resolve);
+      stream.on('error', reject);
+    });
   }
 
   filterAnsiCode(output: string): string {
