@@ -16,22 +16,20 @@ async function enableMocking() {
   return worker.start({
     onUnhandledRequest: (request, print) => {
       if (!request.url.includes('/api/')) return;
-
       print.warning();
     }
   });
 }
+enableMocking();
 
-enableMocking().then(() => {
-  const root = ReactDOM.createRoot(document.getElementById('root')!);
+const root = ReactDOM.createRoot(document.getElementById('root')!);
 
-  root.render(
-    <StrictMode>
-      <QueryProvider>
-        <OverlayProvider>
-          <RouteProvider />
-        </OverlayProvider>
-      </QueryProvider>
-    </StrictMode>
-  );
-});
+root.render(
+  <StrictMode>
+    <QueryProvider>
+      <OverlayProvider>
+        <RouteProvider />
+      </OverlayProvider>
+    </QueryProvider>
+  </StrictMode>
+);

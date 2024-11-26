@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Pagination } from '@/shared/pagination';
+import { Pagination } from '@/feature/pagination';
 
 interface Page {
   max: number;

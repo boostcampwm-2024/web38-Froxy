@@ -40,8 +40,8 @@ export function LotusCreateForm() {
         body: formValue
       },
       {
-        onSuccess: ({ id }) => {
-          navigate({ to: `/lotus/$lotusId`, params: { lotusId: id } });
+        onSuccess: ({ lotus }) => {
+          navigate({ to: `/lotus/$lotusId`, params: { lotusId: lotus.id } });
 
           toast({ description: 'Lotus가 생성되었습니다.', variant: 'success', duration: 2000 });
         },

@@ -2,6 +2,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@f
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { HistoryTrigger } from './HistoryTrigger';
 import { SuspenseLotusHistoryDetail } from './SuspenseLotusHistoryDetail';
+import { HistoryModel } from '@/feature/history';
 import { lotusHistoryQueryOptions } from '@/feature/history/query';
 import { AsyncBoundary } from '@/shared/boundary';
 
@@ -10,9 +11,9 @@ export function SuspenseLotusHistoryList({ id, page = 1 }: { id: string; page?: 
     data: { list }
   } = useSuspenseQuery(lotusHistoryQueryOptions.list({ id, page }));
 
-  const pendingHistoriesId = list.filter((history) => history.status === 'PENDING').map((history) => history.id);
+  const pendingHistoriesId = HistoryModel.getPendingHistoriesId(list);
 
-  const firstPageFirstItem = page === 1 ? [list[0].id] : [];
+  const firstPageFirstItem = page === 1 ? [list[0]?.id] : [];
 
   return (
     <div className="flex flex-col gap-5 min-h-[700px]">
