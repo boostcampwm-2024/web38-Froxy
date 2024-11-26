@@ -4,7 +4,7 @@ import { api } from '@/shared/common/api';
 import { PageType } from '@/shared/pagination';
 
 export const getLotusList = async ({ page = 1 }: { page?: number }) => {
-  const response = await api.get(`/api/lotus?page=${page}`);
+  const response = await api.get(`/api/lotus?page=${page}&size=9`);
 
   const lotuses: LotusType[] = response.data.lotuses.map((lotus: LotusType) => ({
     ...lotus,
