@@ -15,7 +15,7 @@ export function SuspenseLotusHistoryList({ id, page = 1 }: { id: string; page?: 
   const firstPageFirstItem = page === 1 ? [list[0].id] : [];
 
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5 min-h-[700px]">
       {/* NOTE : key를 이용해 갱신해야 Pending 상태인 Content 고정 가능 */}
       <Accordion
         key={new Date().getTime()}
