@@ -1,9 +1,10 @@
+import { Process, Processor } from '@nestjs/bull';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Job } from 'bull';
 import * as Docker from 'dockerode';
 import { Container } from 'dockerode';
-import { promises as fs } from 'fs';
-import * as path from 'path';
 import * as tar from 'tar-stream';
+import { DockerProducer } from './docker.producer';
 import { GistApiFileDto } from '@/gist/dto/gistApiFile.dto';
 import { GistApiFileListDto } from '@/gist/dto/gistApiFileList.dto';
 import { GistService } from '@/gist/gist.service';
@@ -23,25 +24,23 @@ interface GistFile {
   attr: GistFileAttributes;
 }
 
+@Processor('docker-queue')
 @Injectable()
-export class DockerService {
+export class DockerConsumer {
   docker = new Docker();
-  constructor(private gistService: GistService) {}
+  constructor(private readonly dockerProducer: DockerProducer, private gistService: GistService) {}
 
-  async getDocker(
-    gitToken: string,
-    gistId: string,
-    commit_id: string,
-    mainFileName: string,
-    inputs: any[]
-  ): Promise<string> {
-    return this.runGistFiles(gitToken, gistId, commit_id, mainFileName, inputs)
-      .then((result) => {
-        return result;
-      })
-      .catch((error) => {
-        throw new Error(`Execution Error: ${error.message}`);
-      });
+  @Process({ name: 'docker-run', concurrency: 2 })
+  async handleDockerRun(job: Job) {
+    const { gitToken, gistId, commitId, mainFileName, inputs } = job.data;
+
+    try {
+      const result = await this.runGistFiles(gitToken, gistId, commitId, mainFileName, inputs);
+
+      return result;
+    } catch (error) {
+      throw new Error(`Execution failed: ${error.message}`);
+    }
   }
 
   async runGistFiles(
@@ -104,6 +103,7 @@ export class DockerService {
         if (inputs.length !== 0) {
           result = result.split('\n').slice(1).join('\n');
         }
+        this.initWorkDir(container);
         resolve(result);
       });
       stream.on('error', reject);
@@ -189,6 +189,28 @@ export class DockerService {
       stream.on('end', resolve);
       stream.on('error', reject);
     });
+  }
+
+  async initWorkDir(container: Container): Promise<void> {
+    try {
+      const exec = await container.exec({
+        AttachStdin: false,
+        AttachStdout: true,
+        AttachStderr: true,
+        Cmd: ['rm', '-rf', '/tmp/*']
+      });
+
+      const stream = await exec.start();
+      return new Promise((resolve, reject) => {
+        stream.on('data', (chunk) => {
+          const c = chunk;
+        });
+        stream.on('end', resolve);
+        stream.on('error', reject);
+      });
+    } catch (error) {
+      throw new Error('Cleanup failed');
+    }
   }
 
   filterAnsiCode(output: string): string {

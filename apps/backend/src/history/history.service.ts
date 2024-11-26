@@ -5,7 +5,7 @@ import { HistoryGetResponseDto } from './dto/history.getReponse.dto';
 import { HistoryResponseListDto } from './dto/history.responseList.dto';
 import { HistoryRepository } from './history.repository';
 import { HISTORY_STATUS, SUPPORTED_LANGUAGES } from '@/constants/constants';
-import { DockerService } from '@/docker/docker.service';
+import { DockerProducer } from '@/docker/docker.producer';
 import { GistApiFileListDto } from '@/gist/dto/gistApiFileList.dto';
 import { GistService } from '@/gist/gist.service';
 import { Lotus } from '@/lotus/lotus.entity';
@@ -15,7 +15,7 @@ import { LotusRepository } from '@/lotus/lotus.repository';
 export class HistoryService {
   constructor(
     private historyRepository: HistoryRepository,
-    private dockerService: DockerService,
+    private dockerProducer: DockerProducer,
     private lotusRepository: LotusRepository,
     private gistService: GistService
   ) {}
@@ -45,7 +45,7 @@ export class HistoryService {
     historyId: string
   ) {
     try {
-      const result = await this.dockerService.getDocker(gitToken, lotusId, commitId, execFilename, inputs);
+      const result = await this.dockerProducer.getDocker(gitToken, lotusId, commitId, execFilename, inputs);
       await this.historyRepository.update(historyId, { status: HISTORY_STATUS.SUCCESS, result });
     } catch (error) {
       await this.historyRepository.update(historyId, {
