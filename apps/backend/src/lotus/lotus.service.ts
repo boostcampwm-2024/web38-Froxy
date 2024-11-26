@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { title } from 'process';
-import { In } from 'typeorm';
+import { In, Like } from 'typeorm';
 import { LotusCreateRequestDto } from './dto/lotus.createRequest.dto';
 import { LotusDetailDto } from './dto/lotus.detail.dto';
 import { LotusDto } from './dto/lotus.dto';
@@ -132,7 +132,8 @@ export class LotusService {
   }
 
   async getPublicLotus(page: number, size: number, search: string): Promise<LotusPublicDto> {
-    const [lotusData, totalNum] = await this.getLotusByTags(page, size, search);
+    //const [lotusData, totalNum] = await this.getLotusByTags(page, size, search);
+    const [lotusData, totalNum] = await this.getLotusByTitle(page, size, search);
     const maxPage = Math.ceil(totalNum / size);
     if (page > maxPage && maxPage !== 0) {
       throw new HttpException('page must be lower than max page', HttpStatus.NOT_FOUND);
@@ -143,26 +144,32 @@ export class LotusService {
     return LotusPublicDto.ofLotusList(lotusData, page, maxPage);
   }
 
-  async getLotusByTags(page: number, size: number, search: string) {
-    if (!search) {
-      return await this.lotusRepository.findAndCount({
-        where: {
-          isPublic: true
-        },
-        skip: (page - 1) * size,
-        take: size,
-        relations: ['tags', 'user'],
-        order: { createdAt: 'DESC' }
-      });
+  async getLotusByTitle(page: number, size: number, search: string) {
+    const whereData = {
+      isPublic: true
+    };
+    if (search) {
+      whereData['title'] = Like(`%${search}%`);
     }
-    const tags = await this.tagService.searchTag(search);
     return await this.lotusRepository.findAndCount({
-      where: {
-        isPublic: true,
-        tags: {
-          tagId: In(tags)
-        }
-      },
+      where: whereData,
+      skip: (page - 1) * size,
+      take: size,
+      relations: ['tags', 'user'],
+      order: { createdAt: 'DESC' }
+    });
+  }
+
+  async getLotusByTags(page: number, size: number, search: string) {
+    const whereData = {
+      isPublic: true
+    };
+    if (search) {
+      const tags = await this.tagService.searchTag(search);
+      whereData['tags'] = { tagId: In(tags) };
+    }
+    return await this.lotusRepository.findAndCount({
+      where: whereData,
       skip: (page - 1) * size,
       take: size,
       relations: ['tags', 'user'],
