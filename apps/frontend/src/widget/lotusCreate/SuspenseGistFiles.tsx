@@ -1,10 +1,9 @@
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useQueryErrorResetBoundary, useSuspenseQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { Button, Heading, Skeleton } from '@/components';
 import { CodeFileModel, CodeView } from '@/feature/codeView';
 import { userQueryOptions } from '@/feature/user/query';
-import { Button, Heading, Skeleton } from '@/components';
-import axios from 'axios';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-
 import '@/app/style/github.css';
 
 export function SuspenseGistFiles({ gistId }: { gistId: string }) {
