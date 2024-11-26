@@ -52,7 +52,7 @@ export function Toast({
         <motion.div
           className={cn(
             TOAST_VARIANT_STYLE[variant],
-            'w-96 h-20 rounded-md shadow-lg border-[0.1rem] m-5 p-2 px-4 border-gray-300 fixed bottom-0 right-0'
+            'w-96 min-h-20 rounded-md shadow-lg border-[0.1rem] m-5 p-2 px-4 border-gray-300 fixed bottom-0 right-0'
           )}
           key="toast"
           initial={{ opacity: 0, y: 24 }}
@@ -70,7 +70,7 @@ export function Toast({
           </div>
 
           {duration !== Infinity && (
-            <div className="absolute bottom-0 left-0 w-full h-1 bg-gray-200">
+            <div className="absolute bottom-0 left-0 w-full h-1">
               <div
                 className="h-1 bg-black"
                 style={{
