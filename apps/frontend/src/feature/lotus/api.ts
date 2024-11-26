@@ -3,8 +3,8 @@ import { CodeViewValue } from '@/feature/codeView';
 import { api } from '@/shared/common/api';
 import { PageType } from '@/shared/pagination';
 
-export const getLotusList = async ({ page = 1 }: { page?: number }) => {
-  const response = await api.get(`/api/lotus?page=${page}&size=${9}`);
+export const getLotusList = async ({ page = 1, keyword }: { page?: number; keyword?: string }) => {
+  const response = await api.get(`/api/lotus?page=${page}&size=${9}${keyword ? `&search=${keyword}` : ''}`);
 
   const lotuses: LotusType[] = response.data.lotuses.map((lotus: LotusType) => ({
     ...lotus,

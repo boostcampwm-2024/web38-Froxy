@@ -1,12 +1,23 @@
+import { useState } from 'react';
 import { Button, Heading, Input, Text } from '@froxy/design/components';
+import { getRouteApi } from '@tanstack/react-router';
 import { IoIosSearch } from 'react-icons/io';
-import { useLotusSearch } from '@/feature/lotus/hook';
 
-export function LotusSearchBar() {
-  const { search, onChangeSearch, onClickSearchLotus, onSearchInputKeyDown } = useLotusSearch();
+const { useNavigate } = getRouteApi('/(main)/lotus/');
+
+export function LotusSearchBar({ current = '' }: { current?: string }) {
+  const [keyword, setKeyword] = useState(current);
+
+  const navigate = useNavigate();
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    navigate({ search: { keyword } });
+  };
 
   return (
-    <div className="flex justify-between items-center w-full p-6 border-2 border-slate-200 rounded-xl shadow-sm mb-10">
+    <form className="flex justify-between items-center w-full p-6 border-2 border-slate-200 rounded-xl shadow-sm mb-10">
       <div>
         <Heading size="lg" variant="bold" className="pb-1">
           Lotus
@@ -22,16 +33,15 @@ export function LotusSearchBar() {
           </div>
           <Input
             className={'pl-9 min-w-[21rem]'}
-            value={search}
-            onChange={(e) => onChangeSearch(e.target.value)}
-            placeholder="제목 및 태그를 검색해주세요"
-            onKeyDown={(e) => onSearchInputKeyDown(e, search)}
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value.trim())}
+            placeholder="제목을 검색해주세요"
           />
         </div>
-        <Button variant={'outline'} className={'px-8'} onClick={() => onClickSearchLotus(search)}>
+        <Button variant={'outline'} className={'px-8'} onClick={submit}>
           검색하기
         </Button>
       </div>
-    </div>
+    </form>
   );
 }

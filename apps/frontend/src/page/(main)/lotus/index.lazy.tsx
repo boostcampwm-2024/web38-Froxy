@@ -11,9 +11,9 @@ export const Route = createLazyFileRoute('/(main)/lotus/')({
 });
 
 function RouteComponent() {
-  const { page } = useSearch();
+  const { page, keyword } = useSearch();
 
-  const lotusListQueryOptions = lotusQueryOptions.list({ page });
+  const lotusListQueryOptions = lotusQueryOptions.list({ page, keyword });
 
   const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ function RouteComponent() {
 
   return (
     <div>
-      <LotusSearchBar />
+      <LotusSearchBar current={keyword} />
 
       <AsyncBoundary pending={<SuspenseLotusList.Skeleton />} rejected={() => <div>Error</div>}>
         <SuspenseLotusList queryOptions={lotusListQueryOptions} />
