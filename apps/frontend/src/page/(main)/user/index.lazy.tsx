@@ -1,10 +1,10 @@
 import { Suspense } from 'react';
-import { Button, Heading } from '@froxy/design/components';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { Heading } from '@froxy/design/components';
+import { useQueryErrorResetBoundary } from '@tanstack/react-query';
 import { createLazyFileRoute, getRouteApi } from '@tanstack/react-router';
-import { Link } from '@tanstack/react-router';
 import axios from 'axios';
 import { userQueryOptions } from '@/feature/user';
+import { GlobalError } from '@/shared';
 import { AsyncBoundary, ErrorBoundary } from '@/shared/boundary';
 import { SuspenseLotusList } from '@/widget/lotusList';
 import { CreateLotusButton } from '@/widget/navigation';
@@ -57,16 +57,20 @@ function RouteComponent() {
   );
 }
 
-function ErrorComponent({ error }: { error: Error }) {
+function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+  const { reset: retry } = useQueryErrorResetBoundary();
+
   const isLoginRequired = axios.isAxiosError(error) && error?.status === 401;
 
+  const handleRetry = () => {
+    retry();
+    reset();
+  };
+
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center">
-      <DotLottieReact src="/json/errorAnimation.json" loop autoplay className="w-96" />
-      <Heading className="py-4">{isLoginRequired ? '로그인이 필요합니다.' : '오류가 발생했습니다.'}</Heading>
-      <Button asChild>
-        <Link to={'/'}>시작 페이지로 이동하기</Link>
-      </Button>
-    </div>
+    <GlobalError
+      description={isLoginRequired ? '로그인이 필요합니다.' : '오류가 발생했습니다.'}
+      handleRetry={handleRetry}
+    />
   );
 }
