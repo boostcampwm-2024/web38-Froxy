@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { Button, Heading } from '@froxy/design/components';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import { createLazyFileRoute, getRouteApi, useNavigate } from '@tanstack/react-router';
+import { createLazyFileRoute, getRouteApi } from '@tanstack/react-router';
 import { Link } from '@tanstack/react-router';
 import axios from 'axios';
 import { userQueryOptions } from '@/feature/user';
@@ -30,7 +30,7 @@ function RouteComponent() {
     <div className="flex flex-col gap-28">
       <AsyncBoundary
         pending={<SuspenseUserInfoBox.Skeleton />}
-        rejected={({ error, retry }) => <SuspenseUserInfoBox.ErrorFallback error={error} retry={retry} />}
+        rejected={({ error, retry }) => <SuspenseUserInfoBox.Error error={error} retry={retry} />}
       >
         <SuspenseUserInfoBox />
       </AsyncBoundary>
@@ -41,7 +41,7 @@ function RouteComponent() {
         </div>
         <ErrorBoundary
           fallback={({ error, reset }) => (
-            <SuspenseLotusList.ErrorFallback error={error} retry={reset} onChangePage={onChangePage} />
+            <SuspenseLotusList.Error error={error} retry={reset} onChangePage={onChangePage} />
           )}
         >
           <Suspense fallback={<SuspenseLotusList.Skeleton />}>

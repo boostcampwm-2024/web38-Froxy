@@ -110,12 +110,12 @@ function SkeletonUserInfoBox() {
 
 SuspenseUserInfoBox.Skeleton = SkeletonUserInfoBox;
 
-interface ErrorFallbackProps {
+interface ErrorProps {
   error: unknown;
   retry: () => void;
 }
 
-function ErrorFallbackUserInfoBox({ error, retry }: ErrorFallbackProps) {
+function ErrorUserInfoBox({ error, retry }: ErrorProps) {
   const { reset } = useQueryErrorResetBoundary();
 
   if (axios.isAxiosError(error)) throw error;
@@ -134,4 +134,4 @@ function ErrorFallbackUserInfoBox({ error, retry }: ErrorFallbackProps) {
   );
 }
 
-SuspenseUserInfoBox.ErrorFallback = ErrorFallbackUserInfoBox;
+SuspenseUserInfoBox.Error = ErrorUserInfoBox;

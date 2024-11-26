@@ -32,12 +32,12 @@ export function SkeletonGistFiles() {
 
 SuspenseGistFiles.Skeleton = SkeletonGistFiles;
 
-interface ErrorFallbackProps {
+interface ErrorProps {
   error: unknown;
   retry: () => void;
 }
 
-function ErrorFallbackGistFiles({ error, retry }: ErrorFallbackProps) {
+function ErrorGistFiles({ error, retry }: ErrorProps) {
   const { reset } = useQueryErrorResetBoundary();
 
   if (axios.isAxiosError(error) && error?.status === 401) throw error;
@@ -56,4 +56,4 @@ function ErrorFallbackGistFiles({ error, retry }: ErrorFallbackProps) {
   );
 }
 
-SuspenseGistFiles.ErrorFallback = ErrorFallbackGistFiles;
+SuspenseGistFiles.Error = ErrorGistFiles;

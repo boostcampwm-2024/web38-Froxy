@@ -44,7 +44,7 @@ function RouteComponent() {
 
       <ErrorBoundary
         fallback={({ error, reset }) => (
-          <SuspenseLotusHistoryList.ErrorFallback error={error} retry={reset} onChangePage={handleChangePage} />
+          <SuspenseLotusHistoryList.Error error={error} retry={reset} onChangePage={handleChangePage} />
         )}
       >
         <Suspense fallback={<SuspenseLotusHistoryList.Skeleton />}>

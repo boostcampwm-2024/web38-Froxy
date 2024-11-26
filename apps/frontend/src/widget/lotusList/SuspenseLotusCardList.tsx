@@ -58,13 +58,13 @@ function SkeletonLotusCardList() {
 
 SuspenseLotusList.Skeleton = SkeletonLotusCardList;
 
-interface ErrorFallbackProps {
+interface ErrorProps {
   error: unknown;
   retry: () => void;
   onChangePage: (page?: number) => Promise<void>;
 }
 
-function ErrorFallbackLotusCardList({ error, retry, onChangePage }: ErrorFallbackProps) {
+function ErrorLotusCardList({ error, retry, onChangePage }: ErrorProps) {
   const { reset } = useQueryErrorResetBoundary();
 
   if (axios.isAxiosError(error) && error?.status === 401) throw error;
@@ -87,4 +87,4 @@ function ErrorFallbackLotusCardList({ error, retry, onChangePage }: ErrorFallbac
   );
 }
 
-SuspenseLotusList.ErrorFallback = ErrorFallbackLotusCardList;
+SuspenseLotusList.Error = ErrorLotusCardList;

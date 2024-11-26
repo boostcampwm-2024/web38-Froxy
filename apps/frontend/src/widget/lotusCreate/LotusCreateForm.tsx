@@ -103,7 +103,7 @@ export function LotusCreateForm() {
       {formValue.gistUuid && (
         <AsyncBoundary
           pending={<SuspenseGistFiles.Skeleton />}
-          rejected={({ error, retry }) => <SuspenseGistFiles.ErrorFallback error={error} retry={retry} />}
+          rejected={({ error, retry }) => <SuspenseGistFiles.Error error={error} retry={retry} />}
         >
           <SuspenseGistFiles gistId={formValue.gistUuid} />
         </AsyncBoundary>

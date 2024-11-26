@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { createLazyFileRoute, getRouteApi, useNavigate } from '@tanstack/react-router';
+import { createLazyFileRoute, getRouteApi } from '@tanstack/react-router';
 import { lotusQueryOptions } from '@/feature/lotus';
 import { ErrorBoundary } from '@/shared/boundary';
 import { LotusSearchBar, SuspenseLotusList } from '@/widget/lotusList';
@@ -25,7 +25,7 @@ function RouteComponent() {
 
       <ErrorBoundary
         fallback={({ error, reset }) => (
-          <SuspenseLotusList.ErrorFallback error={error} retry={reset} onChangePage={onChangePage} />
+          <SuspenseLotusList.Error error={error} retry={reset} onChangePage={onChangePage} />
         )}
       >
         <Suspense fallback={<SuspenseLotusList.Skeleton />}>
