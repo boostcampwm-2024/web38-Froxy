@@ -27,7 +27,9 @@ export const AxiosErrorToastData = {
 export const getLotusMutationErrorToastData = (error?: unknown) => {
   if (!(error instanceof AxiosError)) return AxiosErrorToastData['DEFAULT'];
 
-  const status = error?.status || 'DEFAULT';
+  if (error.status && !(error.status in AxiosErrorToastData)) return AxiosErrorToastData['DEFAULT'];
+
+  const status = error.status || 'DEFAULT';
 
   return AxiosErrorToastData[status as keyof typeof AxiosErrorToastData];
 };
