@@ -4,7 +4,7 @@ import { api } from '@/shared/common/api';
 import { PageType } from '@/shared/pagination';
 
 // 사용자의 Lotus 목록 조회
-export const getUserLotusList = async ({ page = 1, size = 10 }: { page?: number; size?: number }) => {
+export const getUserLotusList = async ({ page = 1, size = 6 }: { page?: number; size?: number }) => {
   const response = await api.get(`/api/user/lotus?page=${page}&size=${size}`);
 
   const lotuses: LotusType[] = response.data.lotuses.map((lotus: LotusType) => ({
