@@ -1,7 +1,9 @@
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { useQueryErrorResetBoundary, useSuspenseQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { Button, Heading, Skeleton } from '@/components';
 import { CodeView } from '@/feature/codeView';
 import { userQueryOptions } from '@/feature/user/query';
-
 import '@/app/style/github.css';
 
 export function SuspenseGistFiles({ gistId }: { gistId: string }) {
@@ -18,3 +20,40 @@ export function SuspenseGistFiles({ gistId }: { gistId: string }) {
     </CodeView>
   );
 }
+
+export function SkeletonGistFiles() {
+  return (
+    <div className="flex github gap-6 w-full h-[600px] mt-20 pb-10 px-2 overflow-hidden">
+      <Skeleton className="h-full min-w-48" />
+      <Skeleton className="block w-full" />
+    </div>
+  );
+}
+
+SuspenseGistFiles.Skeleton = SkeletonGistFiles;
+
+interface ErrorFallbackProps {
+  error: unknown;
+  retry: () => void;
+}
+
+function ErrorFallbackGistFiles({ error, retry }: ErrorFallbackProps) {
+  const { reset } = useQueryErrorResetBoundary();
+
+  if (axios.isAxiosError(error) && error?.status === 401) throw error;
+
+  const handleRetry = async () => {
+    reset();
+    retry();
+  };
+
+  return (
+    <div className="w-full h-full flex flex-col justify-center items-center">
+      <DotLottieReact src="/json/errorAnimation.json" loop autoplay className="w-96" />
+      <Heading className="py-4">선택한 Gist의 파일 조회에 실패했습니다</Heading>
+      <Button onClick={handleRetry}>재시도</Button>
+    </div>
+  );
+}
+
+SuspenseGistFiles.ErrorFallback = ErrorFallbackGistFiles;
