@@ -2,7 +2,7 @@ import { Button, Heading } from '@froxy/design/components';
 import { createLazyFileRoute, getRouteApi } from '@tanstack/react-router';
 import { FaGithub } from 'react-icons/fa';
 import { LoginButton } from '@/widget/navigation/LoginButton';
-import { OnBoardingCarousel } from '@/widget/onboarding/OnboardingCarousel';
+import { OnBoardingCarousel } from '@/widget/onboarding/OnBoardingCarousel';
 
 const { useNavigate } = getRouteApi('/');
 
