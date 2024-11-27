@@ -22,16 +22,16 @@ function RouteComponent() {
 
   const [, set] = useLocalStorage({ key: 'token', initialValue: '' });
 
-  const { data: token, error: loginError } = useLoginQuery({ code });
+  const { data, error: loginError } = useLoginQuery({ code });
 
-  const { data: user, error: userInfoError, refetch } = useQuery(userQueryOptions.info());
+  const { data: user, error: userInfoError } = useQuery({
+    ...userQueryOptions.info(),
+    enabled: !!data?.token
+  });
 
   useEffect(() => {
-    if (token?.token) {
-      set(token.token);
-      refetch();
-    }
-  }, [token, set, refetch]);
+    if (data?.token) set(data.token);
+  }, [set, data]);
 
   if (loginError || userInfoError) throw new Error('유저 정보 조회에 실패했습니다.');
 
