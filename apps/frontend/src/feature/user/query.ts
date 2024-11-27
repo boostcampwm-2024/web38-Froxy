@@ -34,7 +34,7 @@ export const useUserMutation = () => {
 
 export const useLoginQuery = ({ code }: { code: string }) => {
   const query = useQuery({
-    queryKey: ['auth'],
+    queryKey: ['token'],
     queryFn: () => getLogin({ code })
   });
 
