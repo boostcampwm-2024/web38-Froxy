@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsBoolean, IsDate, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsDate, IsString, IsUrl, ValidateNested } from 'class-validator';
 import { SimpleUserResponseDto } from './simple.user.response.dto';
 import { Lotus } from '@/lotus/lotus.entity';
 
@@ -29,6 +29,12 @@ export class LotusResponseDto {
   })
   language: string;
 
+  @IsUrl()
+  @ApiProperty({
+    example: 'https://gist.github.com/gistId~~/commitId~~'
+  })
+  gistUrl: string;
+
   @IsDate()
   @ApiProperty({
     example: '로투스 생성 일시'
@@ -54,6 +60,7 @@ export class LotusResponseDto {
       author: user,
       title: lotus.title,
       language: lotus.language,
+      gistUrl: `https://gist.github.com/${lotus.gistRepositoryId}/${lotus.commitId}`,
       isPublic: lotus.isPublic,
       date: lotus.createdAt,
       tags
@@ -67,6 +74,7 @@ export class LotusResponseDto {
       id: lotus.lotusId,
       author: simpleUser,
       title: lotus.title,
+      gistUrl: `https://gist.github.com/${lotus.gistRepositoryId}/${lotus.commitId}`,
       language: lotus.language,
       isPublic: lotus.isPublic,
       date: lotus.createdAt,

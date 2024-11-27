@@ -21,11 +21,18 @@ export class SimpleUserResponseDto {
   })
   profile: string;
 
+  @IsUrl()
+  @ApiProperty({
+    example: 'https://gist.github.com/nickname'
+  })
+  gistUrl: string;
+
   static ofUserDto(userData: User) {
     return {
       id: userData.userId,
       nickname: userData.nickname,
-      profile: userData.profilePath
+      profile: userData.profilePath,
+      gistUrl: userData.gistUrl
     };
   }
 }

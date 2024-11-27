@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Skeleton } from '@/components';
-import { CodeView } from '@/feature/codeView';
+import { CodeFileModel, CodeView } from '@/feature/codeView';
 import { lotusQueryOptions } from '@/feature/lotus';
 
 export function SuspenseLotusFiles({ id }: { id: string }) {
@@ -8,13 +8,14 @@ export function SuspenseLotusFiles({ id }: { id: string }) {
     data: { files }
   } = useSuspenseQuery(lotusQueryOptions.detail({ id }));
 
-  const defaultIndex = files.findIndex(({ filename }) => filename === 'README.md');
+  const defaultFile = CodeFileModel.getDefaultFile(files);
+  const defaultFileIndex = defaultFile ? files.findIndex((file) => defaultFile?.filename === file.filename) : 0;
 
   return (
-    <CodeView value={files} current={defaultIndex}>
-      <div className="flex github gap-4 w-full h-[600px] pb-10 px-2 overflow-hidden">
-        <CodeView.SideBar className="h-full min-w-48" />
-        <CodeView.Viewer className="block h-full" />
+    <CodeView value={files} current={defaultFileIndex}>
+      <div className="flex github gap-4 w-full h-[600px] py-5 px-2 overflow-hidden rounded-lg">
+        <CodeView.SideBar className="h-full min-w-48 bg-white" />
+        <CodeView.Viewer className="block h-full px-2" />
       </div>
     </CodeView>
   );

@@ -1,7 +1,7 @@
 import { Text } from '@froxy/design/components';
-import { History, HistoryType } from '@/feature/history';
+import { History, HistoryModel } from '@/feature/history';
 
-export function HistoryTrigger({ history }: { history: HistoryType }) {
+export function HistoryTrigger({ history }: { history: HistoryModel }) {
   return (
     <History value={history}>
       <div className="flex gap-7 items-center">

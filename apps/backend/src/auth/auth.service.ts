@@ -14,7 +14,7 @@ export class AuthService {
   ) {}
 
   private JWT_SECRET_KEY = this.configService.get<string>('JWT_SECRET_KEY');
-  createJwt(userId: string) {
+  createJwt(userId: string): string {
     const payload = { userId };
     return this.jwtService.sign(payload, {
       secret: this.JWT_SECRET_KEY

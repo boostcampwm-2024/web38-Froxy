@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Button, Heading, Input, Switch, Text } from '@froxy/design/components';
 import { useNavigate } from '@tanstack/react-router';
 import { TiPencil } from 'react-icons/ti';
 import { SuspenseGistFiles } from './SuspenseGistFiles';
 import { SuspenseUserGistSelect } from './SuspenseUserGistSelect';
-import { useLotusCreateMutation } from '@/feature/lotus';
+import { getLotusMutationErrorToastData, useLotusCreateMutation } from '@/feature/lotus';
 import { AsyncBoundary } from '@/shared/boundary';
 import { TagInput } from '@/shared/tagInput/TagInput';
 import { useToast } from '@/shared/toast';
@@ -40,15 +40,14 @@ export function LotusCreateForm() {
         body: formValue
       },
       {
-        onSuccess: ({ id }) => {
-          navigate({ to: `/lotus/$lotusId`, params: { lotusId: id } });
+        onSuccess: ({ lotus }) => {
+          navigate({ to: `/lotus/$lotusId`, params: { lotusId: lotus.id } });
 
           toast({ description: 'Lotus가 생성되었습니다.', variant: 'success', duration: 2000 });
         },
-        onError: () => {
+        onError: (error) => {
           toast({
-            description: 'Lotus 생성 중 오류가 발생했습니다. 다시 시도해 주세요.',
-            variant: 'error',
+            ...getLotusMutationErrorToastData(error),
             duration: 2000
           });
         }
@@ -96,13 +95,16 @@ export function LotusCreateForm() {
         <TagInput value={formValue.tags} onChange={(tags) => setFormValue((prev) => ({ ...prev, tags }))} />
         <Text className="mb-2 mt-10">불러올 Gist</Text>
 
-        <AsyncBoundary pending={<div>Loading</div>} rejected={() => <div>Error!!</div>}>
+        <Suspense fallback={<SuspenseUserGistSelect.Skeleton />}>
           <SuspenseUserGistSelect onValueChange={(gistUuid) => setFormValue((prev) => ({ ...prev, gistUuid }))} />
-        </AsyncBoundary>
+        </Suspense>
       </form>
 
       {formValue.gistUuid && (
-        <AsyncBoundary pending={<div>Loading...</div>} rejected={() => <div>Error</div>}>
+        <AsyncBoundary
+          pending={<SuspenseGistFiles.Skeleton />}
+          rejected={({ error, retry }) => <SuspenseGistFiles.Error error={error} retry={retry} />}
+        >
           <SuspenseGistFiles gistId={formValue.gistUuid} />
         </AsyncBoundary>
       )}

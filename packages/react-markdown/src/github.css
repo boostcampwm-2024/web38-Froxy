@@ -152,5 +152,5 @@ code span[data-highlighted-line-id='rm'] {
 }
 
 .terminal code > [data-line]::before {
-  content: '>';
+  content: '❯';
 }

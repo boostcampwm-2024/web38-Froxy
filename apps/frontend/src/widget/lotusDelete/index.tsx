@@ -1,7 +1,7 @@
 import { Button, Heading, Text } from '@froxy/design/components';
 import { useNavigate } from '@tanstack/react-router';
 import { RiDeleteBin5Fill } from 'react-icons/ri';
-import { useLotusDeleteMutation } from '@/feature/lotus';
+import { getLotusMutationErrorToastData, useLotusDeleteMutation } from '@/feature/lotus';
 import { ModalBox } from '@/shared';
 import { useOverlay } from '@/shared/overlay';
 import { useToast } from '@/shared/toast';
@@ -25,10 +25,9 @@ export function LotusDeleteButton({ lotusId }: { lotusId: string }) {
 
           navigate({ to: '/lotus' });
         },
-        onError: () => {
+        onError: (error) => {
           toast({
-            description: 'Lotus 삭제 중 오류가 발생했습니다. 다시 시도해 주세요.',
-            variant: 'error',
+            ...getLotusMutationErrorToastData(error),
             duration: 2000
           });
         }

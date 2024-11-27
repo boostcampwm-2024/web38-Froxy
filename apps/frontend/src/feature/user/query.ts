@@ -1,5 +1,5 @@
-import { useMutation, useSuspenseInfiniteQuery } from '@tanstack/react-query';
-import { getUserGistFile, getUserGistList, getUserInfo, getUserLotusList, patchUserInfo, postLogin } from './api';
+import { useMutation, useQuery, useSuspenseInfiniteQuery } from '@tanstack/react-query';
+import { getLogin, getUserGistFile, getUserGistList, getUserInfo, getUserLotusList, patchUserInfo } from './api';
 import { createQueryOptions } from '@/shared/createQueryOptions';
 
 export const userQueryOptions = createQueryOptions('user', {
@@ -32,10 +32,11 @@ export const useUserMutation = () => {
   return mutation;
 };
 
-export const useLoginMutation = () => {
-  const mutation = useMutation({
-    mutationFn: postLogin
+export const useLoginQuery = ({ code }: { code: string }) => {
+  const query = useQuery({
+    queryKey: ['token'],
+    queryFn: () => getLogin({ code })
   });
 
-  return mutation;
+  return query;
 };

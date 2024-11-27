@@ -11,7 +11,9 @@ interface LotusUpdateFormProps {
 }
 
 export function LotusUpdateForm({ lotusId, onSubmit, onCancel }: LotusUpdateFormProps) {
-  const { data: lotus } = useSuspenseQuery(lotusQueryOptions.detail({ id: lotusId }));
+  const {
+    data: { lotus }
+  } = useSuspenseQuery(lotusQueryOptions.detail({ id: lotusId }));
 
   const [title, setTitle] = useState(lotus.title);
 

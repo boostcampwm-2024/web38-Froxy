@@ -17,6 +17,9 @@ export class User {
   @Column({ name: 'git_token' })
   gitToken: string;
 
+  @Column({ name: 'gist_url' })
+  gistUrl: string;
+
   @Column({ name: 'git_id', unique: true })
   gitId: number;
 

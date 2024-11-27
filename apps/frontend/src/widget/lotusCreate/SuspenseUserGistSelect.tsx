@@ -1,5 +1,15 @@
-import { Button, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Text } from '@froxy/design/components';
+import {
+  Button,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Skeleton,
+  Text
+} from '@froxy/design/components';
 import { useUserGistListSuspenseInfinity } from '@/feature/user/query';
+import { range } from '@/shared';
 
 export function SuspenseUserGistSelect({ onValueChange }: { onValueChange: (value: string) => void }) {
   const { data, fetchNextPage, isFetchingNextPage } = useUserGistListSuspenseInfinity();
@@ -43,3 +53,22 @@ function SkeletonNextPages({ size = 5 }: { size?: number }) {
     </SelectItem>
   ));
 }
+
+function SkeletonUserGistSelect() {
+  return (
+    <div>
+      <Select>
+        <SelectTrigger disabled>
+          <SelectValue placeholder="Loading..." />
+        </SelectTrigger>
+        <SelectContent>
+          {range(5).map((value) => (
+            <Skeleton key={`gist_${value}`} className="h-10 w-full my-1" />
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+SuspenseUserGistSelect.Skeleton = SkeletonUserGistSelect;

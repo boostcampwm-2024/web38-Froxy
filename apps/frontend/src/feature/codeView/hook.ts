@@ -1,8 +1,8 @@
 import { createContext, useContext } from 'react';
-import { CodeViewValue } from '.';
+import { CodeFileModel } from '.';
 
 export interface CodeViewContext {
-  value: CodeViewValue[];
+  value: CodeFileModel[];
   current: number;
 }
 export type CodeViewActionContext = (arg: number) => void;

@@ -4,15 +4,17 @@ interface UsePaginationProps {
   totalPages: number;
   initialPage?: number;
   onChangePage?: (page: number) => void;
+  activeScrollTop?: true;
 }
 
-export function usePagination({ totalPages, initialPage = 1, onChangePage }: UsePaginationProps) {
+export function usePagination({ totalPages, initialPage = 1, onChangePage, activeScrollTop }: UsePaginationProps) {
   const [currentPage, setCurrentPage] = useState(initialPage);
 
   const onClickPage = (page: number) => {
     setCurrentPage(page);
     onChangePage?.(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (activeScrollTop) window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const onClickPrevious = () => {

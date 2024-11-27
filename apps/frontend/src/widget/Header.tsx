@@ -6,7 +6,10 @@ import { LoginButton } from './navigation/LoginButton';
 import { userQueryOptions } from '@/feature/user/query';
 
 export function Header() {
-  const { data } = useQuery(userQueryOptions.info());
+  const { data } = useQuery({
+    ...userQueryOptions.info(),
+    retry: 0
+  });
 
   const navigate = useNavigate();
 
@@ -17,7 +20,7 @@ export function Header() {
   const image = data?.profile || '/image/exampleImage.jpeg';
 
   return (
-    <header className="flex justify-center mb-7 w-full shadow-md">
+    <header className="flex justify-center mb-7 w-full shadow-md bg-white">
       <div className="w-full max-w-screen-xl py-5 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
         <Button className="flex items-center gap-4" variant={null} onClick={() => handleClick()}>
           <img className="w-14 h-14" src="/image/logoIcon.svg" alt="로고" />

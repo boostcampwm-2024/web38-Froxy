@@ -1,12 +1,16 @@
 import { Switch, Text } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
 import { useQueryClient } from '@tanstack/react-query';
-import { useLotusUpdateMutation } from '@/feature/lotus';
+import { LotusDetailModel, useLotusUpdateMutation } from '@/feature/lotus';
 import { lotusQueryOptions } from '@/feature/lotus';
-import { LotusType } from '@/feature/lotus/type';
 import { useDebounce } from '@/shared';
 
-export function SuspenseLotusPublicToggle({ lotus, className }: { lotus: LotusType; className?: string }) {
+interface SuspenseLotusPublicToggleProps {
+  data: LotusDetailModel;
+  className?: string;
+}
+
+export function SuspenseLotusPublicToggle({ data: { lotus }, className }: SuspenseLotusPublicToggleProps) {
   const { mutate } = useLotusUpdateMutation();
 
   const queryClient = useQueryClient();
@@ -29,10 +33,15 @@ export function SuspenseLotusPublicToggle({ lotus, className }: { lotus: LotusTy
   //낙관적 업데이트
   const optimisticToggle = () => {
     debounceToggleClick();
-    queryClient.setQueryData(lotusDetailOptions.queryKey, (oldData: LotusType) => ({
-      ...oldData,
-      isPublic: !oldData.isPublic
-    }));
+
+    queryClient.setQueryData(lotusDetailOptions.queryKey, (oldData: LotusDetailModel) => {
+      const lotus = oldData.lotus.clone({ isPublic: !oldData.lotus.isPublic });
+
+      return {
+        ...oldData,
+        lotus
+      };
+    });
   };
 
   return (
