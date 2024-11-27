@@ -17,8 +17,8 @@ export function LotusSearchBar({ current = '' }: { current?: string }) {
   };
 
   return (
-    <form className="flex justify-between items-center w-full p-6 bg-white rounded-xl shadow-md mb-10">
-      <div>
+    <form className="block md:flex justify-between items-center w-full p-6 bg-white rounded-xl shadow-md mb-10">
+      <div className="mb-5 md:mb-0">
         <Heading size="lg" variant="bold" className="pb-1">
           Lotus
         </Heading>
@@ -32,13 +32,13 @@ export function LotusSearchBar({ current = '' }: { current?: string }) {
             <IoIosSearch />
           </div>
           <Input
-            className={'pl-9 min-w-[21rem]'}
+            className={'pl-9 md:min-w-[21rem]'}
             value={keyword}
             onChange={(e) => setKeyword(e.target.value.trim())}
             placeholder="제목을 검색해주세요"
           />
         </div>
-        <Button variant={'outline'} className={'px-8'} onClick={submit}>
+        <Button variant={'outline'} className={'px-8 hidden md:block'} onClick={submit}>
           검색하기
         </Button>
       </div>
