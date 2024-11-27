@@ -17,7 +17,7 @@ export function LotusSearchBar({ current = '' }: { current?: string }) {
   };
 
   return (
-    <form className="flex justify-between items-center w-full p-6 border-2 border-slate-200 rounded-xl shadow-sm mb-10">
+    <form className="flex justify-between items-center w-full p-6 bg-white rounded-xl shadow-md mb-10">
       <div>
         <Heading size="lg" variant="bold" className="pb-1">
           Lotus

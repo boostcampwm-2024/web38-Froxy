@@ -27,7 +27,7 @@ export function SuspenseLotusDetail({ id }: { id: string }) {
 
 function SkeletonLotusDetail() {
   return (
-    <div className="flex justify-between items-start pb-4 border-b-2 border-slate-200">
+    <div className="flex justify-between items-start pb-4 border-slate-200">
       <div>
         <div className="mb-4">
           <Skeleton className="font-bold mr-4 w-32 h-10" />
