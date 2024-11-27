@@ -57,8 +57,9 @@ export const getUserGistFile = async ({ gistId }: { gistId: string }) => {
   return files.map((file) => new CodeFileModel(file));
 };
 
-export const postLogin = async () => {
-  const res = await api.post<{ token: string }>('/api/user/login');
+// 로그인하기
+export const getLogin = async ({ code }: { code: string }) => {
+  const res = await api.get<{ token: string }>(`/api/user/login/callback?code=${code}`);
 
   const data = res.data;
 

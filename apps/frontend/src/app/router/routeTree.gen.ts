@@ -13,8 +13,7 @@ import { createFileRoute } from '@tanstack/react-router';
 // Import Routes
 
 import { Route as rootRoute } from './../../page/__root';
-import { Route as LoginSuccessIndexImport } from './../../page/login/success/index';
-import { Route as LoginErrorIndexImport } from './../../page/login/error/index';
+import { Route as LoginIndexImport } from './../../page/login/index';
 import { Route as mainUserIndexImport } from './../../page/(main)/user/index';
 import { Route as mainLotusIndexImport } from './../../page/(main)/lotus/index';
 import { Route as mainLotusCreateIndexImport } from './../../page/(main)/lotus/create/index';
@@ -41,15 +40,9 @@ const IndexLazyRoute = IndexLazyImport.update({
   getParentRoute: () => rootRoute
 } as any).lazy(() => import('./../../page/index.lazy').then((d) => d.Route));
 
-const LoginSuccessIndexRoute = LoginSuccessIndexImport.update({
-  id: '/login/success/',
-  path: '/login/success/',
-  getParentRoute: () => rootRoute
-} as any);
-
-const LoginErrorIndexRoute = LoginErrorIndexImport.update({
-  id: '/login/error/',
-  path: '/login/error/',
+const LoginIndexRoute = LoginIndexImport.update({
+  id: '/login/',
+  path: '/login/',
   getParentRoute: () => rootRoute
 } as any);
 
@@ -103,6 +96,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof mainRouteLazyImport;
       parentRoute: typeof rootRoute;
     };
+    '/login/': {
+      id: '/login/';
+      path: '/login';
+      fullPath: '/login';
+      preLoaderRoute: typeof LoginIndexImport;
+      parentRoute: typeof rootRoute;
+    };
     '/(main)/lotus/': {
       id: '/(main)/lotus/';
       path: '/lotus';
@@ -116,20 +116,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/user';
       preLoaderRoute: typeof mainUserIndexImport;
       parentRoute: typeof mainRouteLazyImport;
-    };
-    '/login/error/': {
-      id: '/login/error/';
-      path: '/login/error';
-      fullPath: '/login/error';
-      preLoaderRoute: typeof LoginErrorIndexImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/login/success/': {
-      id: '/login/success/';
-      path: '/login/success';
-      fullPath: '/login/success';
-      preLoaderRoute: typeof LoginSuccessIndexImport;
-      parentRoute: typeof rootRoute;
     };
     '/(main)/lotus/$lotusId/': {
       id: '/(main)/lotus/$lotusId/';
@@ -168,20 +154,18 @@ const mainRouteLazyRouteWithChildren = mainRouteLazyRoute._addFileChildren(mainR
 
 export interface FileRoutesByFullPath {
   '/': typeof mainRouteLazyRouteWithChildren;
+  '/login': typeof LoginIndexRoute;
   '/lotus': typeof mainLotusIndexRoute;
   '/user': typeof mainUserIndexRoute;
-  '/login/error': typeof LoginErrorIndexRoute;
-  '/login/success': typeof LoginSuccessIndexRoute;
   '/lotus/$lotusId': typeof mainLotusLotusIdIndexRoute;
   '/lotus/create': typeof mainLotusCreateIndexRoute;
 }
 
 export interface FileRoutesByTo {
   '/': typeof mainRouteLazyRouteWithChildren;
+  '/login': typeof LoginIndexRoute;
   '/lotus': typeof mainLotusIndexRoute;
   '/user': typeof mainUserIndexRoute;
-  '/login/error': typeof LoginErrorIndexRoute;
-  '/login/success': typeof LoginSuccessIndexRoute;
   '/lotus/$lotusId': typeof mainLotusLotusIdIndexRoute;
   '/lotus/create': typeof mainLotusCreateIndexRoute;
 }
@@ -190,27 +174,25 @@ export interface FileRoutesById {
   __root__: typeof rootRoute;
   '/': typeof IndexLazyRoute;
   '/(main)': typeof mainRouteLazyRouteWithChildren;
+  '/login/': typeof LoginIndexRoute;
   '/(main)/lotus/': typeof mainLotusIndexRoute;
   '/(main)/user/': typeof mainUserIndexRoute;
-  '/login/error/': typeof LoginErrorIndexRoute;
-  '/login/success/': typeof LoginSuccessIndexRoute;
   '/(main)/lotus/$lotusId/': typeof mainLotusLotusIdIndexRoute;
   '/(main)/lotus/create/': typeof mainLotusCreateIndexRoute;
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/lotus' | '/user' | '/login/error' | '/login/success' | '/lotus/$lotusId' | '/lotus/create';
+  fullPaths: '/' | '/login' | '/lotus' | '/user' | '/lotus/$lotusId' | '/lotus/create';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/lotus' | '/user' | '/login/error' | '/login/success' | '/lotus/$lotusId' | '/lotus/create';
+  to: '/' | '/login' | '/lotus' | '/user' | '/lotus/$lotusId' | '/lotus/create';
   id:
     | '__root__'
     | '/'
     | '/(main)'
+    | '/login/'
     | '/(main)/lotus/'
     | '/(main)/user/'
-    | '/login/error/'
-    | '/login/success/'
     | '/(main)/lotus/$lotusId/'
     | '/(main)/lotus/create/';
   fileRoutesById: FileRoutesById;
@@ -219,15 +201,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute;
   mainRouteLazyRoute: typeof mainRouteLazyRouteWithChildren;
-  LoginErrorIndexRoute: typeof LoginErrorIndexRoute;
-  LoginSuccessIndexRoute: typeof LoginSuccessIndexRoute;
+  LoginIndexRoute: typeof LoginIndexRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   mainRouteLazyRoute: mainRouteLazyRouteWithChildren,
-  LoginErrorIndexRoute: LoginErrorIndexRoute,
-  LoginSuccessIndexRoute: LoginSuccessIndexRoute
+  LoginIndexRoute: LoginIndexRoute
 };
 
 export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
@@ -240,8 +220,7 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
       "children": [
         "/",
         "/(main)",
-        "/login/error/",
-        "/login/success/"
+        "/login/"
       ]
     },
     "/": {
@@ -256,6 +235,9 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
         "/(main)/lotus/create/"
       ]
     },
+    "/login/": {
+      "filePath": "login/index.tsx"
+    },
     "/(main)/lotus/": {
       "filePath": "(main)/lotus/index.tsx",
       "parent": "/(main)"
@@ -263,12 +245,6 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     "/(main)/user/": {
       "filePath": "(main)/user/index.tsx",
       "parent": "/(main)"
-    },
-    "/login/error/": {
-      "filePath": "login/error/index.tsx"
-    },
-    "/login/success/": {
-      "filePath": "login/success/index.tsx"
     },
     "/(main)/lotus/$lotusId/": {
       "filePath": "(main)/lotus/$lotusId/index.tsx",

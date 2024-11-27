@@ -4,20 +4,16 @@ import {
   DefaultValuePipe,
   Get,
   HttpCode,
-  HttpException,
-  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
-  Post,
   Query,
   Redirect,
-  Req,
-  Res
+  Req
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 import { FileDto } from './dto/file.dto';
 import { FileResponseDto } from './dto/file.response.dto';
 import { TokenDTO } from './dto/token.dto';
@@ -79,27 +75,22 @@ export class UserController {
   }
 
   @Get('login/callback')
-  async githubCallback(@Query('code') code: string, @Res() res: Response): Promise<void> {
-    const clientUrl = this.configService.get<string>('CLIENT_REDIRECT_URL');
-    try {
-      const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          client_id: this.OAUTH_CLIENT_ID,
-          client_secret: this.OAUTH_CLIENT_SECRETS,
-          code
-        })
-      });
-      const tokenData = await tokenResponse.json();
-      const token = await this.userService.loginUser(tokenData);
-      res.redirect(`${clientUrl}/login/success?token=${token}`);
-    } catch (error) {
-      res.redirect(`${clientUrl}/login/error`);
-    }
+  async githubCallback(@Query('code') code: string) {
+    const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        client_id: this.OAUTH_CLIENT_ID,
+        client_secret: this.OAUTH_CLIENT_SECRETS,
+        code
+      })
+    });
+    const tokenData = await tokenResponse.json();
+    const token = await this.userService.loginUser(tokenData);
+    return { token };
   }
 
   @Get('/lotus')
@@ -131,7 +122,7 @@ export class UserController {
   @ApiOperation({ summary: '사용자 정보 수정하기' })
   @ApiBody({ type: UserPatchDTO })
   @ApiResponse({ status: 200, description: '실행 성공', type: UserPatchDTO })
-  PatchUserInfo(@Req() request: Request, @Body() userData: UserPatchDTO): Promise<UserPatchDTO> {
+  patchUserInfo(@Req() request: Request, @Body() userData: UserPatchDTO): Promise<UserPatchDTO> {
     const userId = this.authService.getIdFromRequest(request);
     return this.userService.patchUserDataByUserId(userId, userData);
   }
