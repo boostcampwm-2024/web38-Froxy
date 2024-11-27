@@ -5,7 +5,8 @@ import {
   AccordionTrigger,
   Button,
   Heading,
-  Skeleton
+  Skeleton,
+  Text
 } from '@froxy/design/components';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useQueryErrorResetBoundary, useSuspenseQuery } from '@tanstack/react-query';
@@ -22,12 +23,14 @@ export function SuspenseLotusHistoryList({ id, page = 1 }: { id: string; page?: 
     data: { list }
   } = useSuspenseQuery(lotusHistoryQueryOptions.list({ id, page }));
 
+  if (list.length < 1) return <SuspenseLotusHistoryListEmpty />;
+
   const pendingHistoriesId = HistoryModel.getPendingHistoriesId(list);
 
   const firstPageFirstItem = page === 1 ? [list[0]?.id] : [];
 
   return (
-    <div className="flex flex-col gap-5 min-h-[700px]">
+    <div className="min-h-[700px]">
       {/* NOTE : key를 이용해 갱신해야 Pending 상태인 Content 고정 가능 */}
       <Accordion
         key={new Date().getTime()}
@@ -37,7 +40,7 @@ export function SuspenseLotusHistoryList({ id, page = 1 }: { id: string; page?: 
         {list.map((history) => (
           <AccordionItem
             key={history.id}
-            className="shadow-zinc-300 shadow-md rounded-md p-5 px-7 gap-7"
+            className="shadow-zinc-300 bg-white shadow-md rounded-md p-5 my-2 px-7 gap-7"
             value={history.id}
           >
             <AccordionTrigger value={history.id} disabled={history.status === 'PENDING'}>
@@ -54,6 +57,18 @@ export function SuspenseLotusHistoryList({ id, page = 1 }: { id: string; page?: 
           </AccordionItem>
         ))}
       </Accordion>
+    </div>
+  );
+}
+
+export function SuspenseLotusHistoryListEmpty() {
+  return (
+    <div className="w-full h-full flex flex-col justify-center items-center">
+      <DotLottieReact src="/json/emptyHistoryAnimation.json" loop autoplay className="w-102" />
+      <Heading className="py-4" size="lg">
+        History가 없습니다.
+      </Heading>
+      <Text variant="muted">Lotus를 실행해보세요!</Text>
     </div>
   );
 }
