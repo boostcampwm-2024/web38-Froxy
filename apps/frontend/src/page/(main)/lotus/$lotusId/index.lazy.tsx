@@ -4,12 +4,13 @@ import { createLazyFileRoute, getRouteApi } from '@tanstack/react-router';
 import { lotusHistoryQueryOptions } from '@/feature/history/query';
 import { getLotusErrorData } from '@/feature/lotus';
 import { GlobalError } from '@/shared';
-import { ErrorBoundary } from '@/shared/boundary';
+import { AsyncBoundary, ErrorBoundary } from '@/shared/boundary';
 import { SuspenseLotusHistoryList } from '@/widget/history';
 import { CodeRunButton } from '@/widget/lotusCodeRun';
-import { SuspenseLotusDetail } from '@/widget/lotusDetail';
+import { SuspenseLotusDetail, SuspenseLotusEdit } from '@/widget/lotusDetail';
 import { SuspenseLotusFiles } from '@/widget/lotusDetail/SuspenseLotusFiles';
 import { SuspensePagination } from '@/widget/SuspensePagination';
+
 import '@/app/style/github.css';
 
 export const Route = createLazyFileRoute('/(main)/lotus/$lotusId/')({
@@ -30,9 +31,15 @@ function RouteComponent() {
 
   return (
     <div className="flex flex-col gap-16">
-      <Suspense fallback={<SuspenseLotusDetail.Skeleton />}>
-        <SuspenseLotusDetail id={id} />
-      </Suspense>
+      <div className="flex justify-between items-start pb-4 border-b-2 border-slate-200">
+        <Suspense fallback={<SuspenseLotusDetail.Skeleton />}>
+          <SuspenseLotusDetail id={id} />
+        </Suspense>
+
+        <AsyncBoundary pending={<SuspenseLotusEdit.Skeleton />} rejected={() => <SuspenseLotusEdit.Error />}>
+          <SuspenseLotusEdit id={id} />
+        </AsyncBoundary>
+      </div>
 
       <Suspense fallback={<SuspenseLotusFiles.Skeleton />}>
         <SuspenseLotusFiles id={id} />
