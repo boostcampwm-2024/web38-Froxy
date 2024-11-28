@@ -1,4 +1,4 @@
-name: Froxy Continuous Integration
+name: Froxy-BE Continuous Integration
 
 on:
   push:

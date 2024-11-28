@@ -80,12 +80,10 @@ export class DockerConsumer {
       });
 
       stream.on('end', async () => {
-        await container.remove({ force: true });
         let result = this.filterAnsiCode(output);
         if (inputs.length !== 0) {
           result = result.split('\n').slice(1).join('\n');
         }
-
         this.initWorkDir(container);
         resolve(result);
       });
@@ -182,7 +180,6 @@ export class DockerConsumer {
         AttachStderr: true,
         Cmd: ['rm', '-rf', '/tmp/*']
       });
-
       const stream = await exec.start();
       return new Promise((resolve, reject) => {
         stream.on('data', (chunk) => {
@@ -192,6 +189,7 @@ export class DockerConsumer {
         stream.on('error', reject);
       });
     } catch (error) {
+      console.log(error.message);
       throw new Error('container tmp init failed');
     }
   }

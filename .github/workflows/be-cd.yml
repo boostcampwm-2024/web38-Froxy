@@ -1,4 +1,4 @@
-name: froxy Continuous Delivery
+name: froxy BE Continuous Delivery
 
 on:
   push:
