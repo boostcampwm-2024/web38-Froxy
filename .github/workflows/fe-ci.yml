@@ -1,4 +1,4 @@
-name: Froxy Continuous Integration
+name: Froxy-CI Continuous Integration
 
 on:
   push:
