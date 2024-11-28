@@ -18,6 +18,7 @@ export class UserService {
   async findOne(gitId: number): Promise<User | null> {
     return this.userRepository.findOneBy({ gitId });
   }
+
   async findOneByUserId(userId: string): Promise<User | null> {
     return this.userRepository.findOneBy({ userId });
   }

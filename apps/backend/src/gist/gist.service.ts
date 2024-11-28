@@ -95,7 +95,6 @@ export class GistService {
     const data = await this.getFileContent(commit_url, gittoken);
     const dataJson = JSON.parse(data);
     const fileArr: GistApiFileDto[] = await this.parseGistApiFiles(dataJson, gittoken);
-
     return GistApiFileListDto.of(dataJson, fileArr);
   }
 

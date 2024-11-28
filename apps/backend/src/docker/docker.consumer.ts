@@ -1,10 +1,10 @@
 import { Process, Processor } from '@nestjs/bull';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Job } from 'bull';
-import * as Docker from 'dockerode';
 import { Container } from 'dockerode';
 import * as tar from 'tar-stream';
-import { DockerProducer } from './docker.producer';
+import { DockerContainerPool } from './docker.pool';
+import { MAX_CONTAINER_CNT } from '@/constants/constants';
 import { GistApiFileDto } from '@/gist/dto/gistApiFile.dto';
 import { GistApiFileListDto } from '@/gist/dto/gistApiFileList.dto';
 import { GistService } from '@/gist/gist.service';
@@ -27,23 +27,26 @@ interface GistFile {
 @Processor('docker-queue')
 @Injectable()
 export class DockerConsumer {
-  docker = new Docker();
-  constructor(private readonly dockerProducer: DockerProducer, private gistService: GistService) {}
+  constructor(private gistService: GistService, private dockerContainerPool: DockerContainerPool) {}
 
-  @Process({ name: 'docker-run', concurrency: 2 })
+  @Process({ name: 'docker-run', concurrency: MAX_CONTAINER_CNT })
   async handleDockerRun(job: Job) {
     const { gitToken, gistId, commitId, mainFileName, inputs } = job.data;
-
+    let container;
     try {
-      const result = await this.runGistFiles(gitToken, gistId, commitId, mainFileName, inputs);
-
+      container = await this.dockerContainerPool.getContainer();
+      await container.start();
+      const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
       return result;
     } catch (error) {
       throw new Error(`Execution failed: ${error.message}`);
+    } finally {
+      await this.dockerContainerPool.returnContainer(container);
     }
   }
 
   async runGistFiles(
+    container: Container,
     gitToken: string,
     gistId: string,
     commitId: string,
@@ -52,44 +55,23 @@ export class DockerConsumer {
   ): Promise<string> {
     const gistData: GistApiFileListDto = await this.gistService.getCommit(gistId, commitId, gitToken);
     const files: GistApiFileDto[] = gistData.files;
-
     if (!files || !files.some((file) => file.fileName === mainFileName)) {
       throw new HttpException('execFile is not found', HttpStatus.NOT_FOUND);
     }
-
-    // 컨테이너 생성
-    const container = await this.docker.createContainer({
-      //todo: image version맞춰야함
-      Image: 'node:latest',
-      Tty: inputs.length !== 0, //통합스트림
-      OpenStdin: true,
-      AttachStdout: true,
-      AttachStderr: true,
-      Env: [
-        'NODE_DISABLE_COLORS=true', // 색상 비활성화
-        'TERM=dumb' // dumb 터미널로 설정하여 색상 비활성화
-      ]
-    });
-
     //desciption: 컨테이너 시작
-    await container.start();
-
     const tarBuffer = await this.parseTarBuffer(files);
 
     //desciption: tarBuffer를 Docker 컨테이너에 업로드
-    await container.putArchive(tarBuffer, { path: '/' });
-
+    await container.putArchive(tarBuffer, { path: '/tmp' });
     if (files.some((file) => file.fileName === 'package.json')) {
       await this.packageInstall(container);
     }
-
     const stream = await this.dockerExcution(inputs, mainFileName, container);
     let output = '';
 
     setTimeout(async () => {
       stream.end();
     }, 5000);
-
     //desciption: 스트림 종료 후 결과 반환
     return new Promise((resolve, reject) => {
       //desciption: 스트림에서 데이터 수집
@@ -103,6 +85,7 @@ export class DockerConsumer {
         if (inputs.length !== 0) {
           result = result.split('\n').slice(1).join('\n');
         }
+
         this.initWorkDir(container);
         resolve(result);
       });
@@ -127,7 +110,6 @@ export class DockerConsumer {
       }
       return fileData;
     } catch (error) {
-      console.error('Error fetching Gist files:', error);
       throw new Error('Failed to fetch Gist files');
     }
   }
@@ -160,9 +142,9 @@ export class DockerConsumer {
       AttachStdout: true,
       AttachStderr: true,
       Tty: inputs.length !== 0, //true
-      Cmd: ['node', mainFileName]
+      Cmd: ['node', mainFileName],
+      workingDir: '/tmp'
     });
-
     //todo: 입력값이 없으면 스킵
     const stream = await exec.start({ hijack: true, stdin: true });
     for (const input of inputs) {
@@ -178,7 +160,8 @@ export class DockerConsumer {
       AttachStdin: false,
       AttachStdout: true,
       AttachStderr: true,
-      Cmd: ['npm', 'install']
+      Cmd: ['npm', 'install'],
+      workingDir: '/tmp'
     });
 
     const stream = await exec.start();
@@ -209,7 +192,7 @@ export class DockerConsumer {
         stream.on('error', reject);
       });
     } catch (error) {
-      throw new Error('Cleanup failed');
+      throw new Error('container tmp init failed');
     }
   }
 
