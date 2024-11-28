@@ -22,7 +22,6 @@ export class AuthService {
     const sortV = this.generateRandomKey(64);
     const accessToken = this.createAccess(userId, sortV);
     const refreshToken = this.createRefresh(userId, sortV);
-    console.log(accessToken);
     this.setRedisData(accessToken, refreshToken);
     return accessToken;
   }
@@ -80,7 +79,7 @@ export class AuthService {
     } catch (e) {
       if (e.name === 'TokenExpiredError') {
         const newAccess = this.createAccess(decodedRefresh.userId, decodedRefresh.sortValue);
-        this.setRedisData(refreshToken, newAccess);
+        this.setRedisData(newAccess, refreshToken);
         return decodedRefresh.userId;
       } else {
         throw new HttpException('invalid token', HttpStatus.UNAUTHORIZED);
