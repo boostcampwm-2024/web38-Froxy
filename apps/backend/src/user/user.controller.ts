@@ -99,12 +99,12 @@ export class UserController {
   @ApiResponse({ status: 200, description: '실행 성공', type: LotusPublicDto })
   @ApiQuery({ name: 'page', type: String, example: '1', required: false })
   @ApiQuery({ name: 'size', type: String, example: '10', required: false })
-  getUserLotus(
+  async getUserLotus(
     @Req() request: Request,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('size', new DefaultValuePipe(10), ParseIntPipe) size: number
   ): Promise<LotusPublicDto> {
-    const userId = this.authService.getIdFromRequest(request);
+    const userId = await this.authService.getIdFromRequest(request);
     return this.lotusService.getUserLotus(userId, page, size);
   }
 
@@ -112,8 +112,8 @@ export class UserController {
   @HttpCode(200)
   @ApiOperation({ summary: '사용자 정보 가져오기' })
   @ApiResponse({ status: 200, description: '실행 성공', type: SimpleUserResponseDto })
-  getUserInfo(@Req() request: Request): Promise<SimpleUserResponseDto> {
-    const userId = this.authService.getIdFromRequest(request);
+  async getUserInfo(@Req() request: Request): Promise<SimpleUserResponseDto> {
+    const userId = await this.authService.getIdFromRequest(request);
     return this.userService.getSimpleUserInfoByUserId(userId);
   }
 
@@ -122,8 +122,8 @@ export class UserController {
   @ApiOperation({ summary: '사용자 정보 수정하기' })
   @ApiBody({ type: UserPatchDTO })
   @ApiResponse({ status: 200, description: '실행 성공', type: UserPatchDTO })
-  patchUserInfo(@Req() request: Request, @Body() userData: UserPatchDTO): Promise<UserPatchDTO> {
-    const userId = this.authService.getIdFromRequest(request);
+  async patchUserInfo(@Req() request: Request, @Body() userData: UserPatchDTO): Promise<UserPatchDTO> {
+    const userId = await this.authService.getIdFromRequest(request);
     return this.userService.patchUserDataByUserId(userId, userData);
   }
 
@@ -136,7 +136,7 @@ export class UserController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('size', new DefaultValuePipe(10), ParseIntPipe) size: number
   ): Promise<ResponseAllGistsDto> {
-    const gitToken = await this.authService.getUserGitToken(this.authService.getIdFromRequest(request));
+    const gitToken = await this.authService.getUserGitToken(await this.authService.getIdFromRequest(request));
     return await this.gistService.getGistList(gitToken, page, size);
   }
 
@@ -145,7 +145,7 @@ export class UserController {
   @ApiOperation({ summary: '사용자의 특정 gist의 내부 파일 데이터 가져오기' })
   @ApiResponse({ status: 200, description: '실행 성공', type: FileResponseDto })
   async getCommitFile(@Req() request: Request, @Param('gistId') gistId: string) {
-    const gitToken = await this.authService.getUserGitToken(this.authService.getIdFromRequest(request));
+    const gitToken = await this.authService.getUserGitToken(await this.authService.getIdFromRequest(request));
     const Files = await this.gistService.getGistById(gistId, gitToken);
     const result = Files.files.map((file) => FileDto.ofGistApiFile(file));
     return FileResponseDto.ofFiles(result);

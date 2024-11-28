@@ -47,7 +47,7 @@ export class HistoryController {
   ): Promise<any> {
     const { input, execFileName } = historyExecRequestDto;
     try {
-      const gitToken = await this.authServer.getUserGitToken(this.authServer.getIdFromRequest(request));
+      const gitToken = await this.authServer.getUserGitToken(await this.authServer.getIdFromRequest(request));
       // const execFileName = 'FunctionDivide.js';
       // const input = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
       return await this.historyService.saveHistory(gitToken, lotusId, execFileName, input);

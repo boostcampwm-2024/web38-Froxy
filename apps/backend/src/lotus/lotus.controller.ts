@@ -36,7 +36,7 @@ export class LotusController {
     @Req() request: Request,
     @Body() lotusCreateRequestDto: LotusCreateRequestDto
   ): Promise<LotusResponseDto> {
-    const userId = this.authService.getIdFromRequest(request);
+    const userId = await this.authService.getIdFromRequest(request);
     const gitToken = await this.authService.getUserGitToken(userId);
     return await this.lotusService.createLotus(userId, gitToken, lotusCreateRequestDto);
   }
@@ -47,12 +47,12 @@ export class LotusController {
   @ApiBody({ type: LotusCreateRequestDto })
   @ApiResponse({ status: 200, description: '실행 성공', type: LotusResponseDto })
   @ApiQuery({ name: 'lotusId', type: String, example: '25' })
-  updateLotus(
+  async updateLotus(
     @Req() request: Request,
     @Param('lotusId') lotusId: string,
     @Body() lotusUpdateRequestDto: LotusUpdateRequestDto
   ): Promise<LotusResponseDto> {
-    const userId = this.authService.getIdFromRequest(request);
+    const userId = await this.authService.getIdFromRequest(request);
     return this.lotusService.updateLotus(lotusId, lotusUpdateRequestDto, userId);
   }
 
@@ -61,8 +61,8 @@ export class LotusController {
   @ApiOperation({ summary: 'lotus 삭제' })
   @ApiResponse({ status: 204, description: '실행 성공', type: MessageDto })
   @ApiQuery({ name: 'lotusId', type: String, example: '25' })
-  deleteLotus(@Req() request: Request, @Param('lotusId') lotusId: string): Promise<MessageDto> {
-    const userId = this.authService.getIdFromRequest(request);
+  async deleteLotus(@Req() request: Request, @Param('lotusId') lotusId: string): Promise<MessageDto> {
+    const userId = await this.authService.getIdFromRequest(request);
     return this.lotusService.deleteLotus(lotusId, userId);
   }
 
@@ -88,7 +88,7 @@ export class LotusController {
   @ApiQuery({ name: 'lotusId', type: String, example: '25' })
   async getLotusDetail(@Req() request: Request, @Param('lotusId') lotusId: string): Promise<LotusDetailDto> {
     try {
-      const userId = this.authService.getIdFromRequest(request);
+      const userId = await this.authService.getIdFromRequest(request);
       const gitToken = await this.authService.getUserGitToken(userId);
       return this.lotusService.getLotusFile(userId, gitToken, lotusId);
     } catch (e) {

@@ -58,26 +58,25 @@ export class UserService {
   }
 
   async loginUser(tokenData) {
-    const accessToken = tokenData.access_token;
+    const gitToken = tokenData.access_token;
     const userResponse = await fetch('https://api.github.com/user', {
       headers: {
-        Authorization: `Bearer ${accessToken}`
+        Authorization: `Bearer ${gitToken}`
       }
     });
     const inputUser = await userResponse.json();
     let user = await this.findOne(inputUser.id);
     if (!user) {
-      await this.saveUser(new UserCreateDto(inputUser, accessToken));
+      await this.saveUser(new UserCreateDto(inputUser, gitToken));
       user = await this.findOne(inputUser.id);
     } else {
-      await this.userRepository.update({ gitId: inputUser.id }, { gitToken: accessToken });
+      await this.userRepository.update({ gitId: inputUser.id }, { gitToken: gitToken });
     }
-    const token = this.authService.createJwt(user.userId);
-    return token;
+    return this.authService.initLoginTokens(user.userId);
   }
 
   async makeTestUser(user: User) {
-    return this.authService.createJwt(user.userId);
+    return this.authService.initLoginTokens(user.userId);
   }
 
   async saveUser(user: User): Promise<void> {
