@@ -3,7 +3,7 @@ name: Froxy Continuous Integration
 on:
   push:
     branches:
-      - release
+      - deploy
 
 jobs:
   fe-cd:
