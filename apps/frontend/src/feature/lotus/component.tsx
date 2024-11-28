@@ -1,8 +1,7 @@
-import { ComponentProps, HTMLProps, createContext, useContext } from 'react';
+import { ComponentProps, HTMLProps, ReactNode, createContext, useContext } from 'react';
 import { Badge, Text } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
 import { Link } from '@tanstack/react-router';
-import { FaGithub } from 'react-icons/fa';
 import { LotusModel } from '.';
 import { BadgeVariantType } from '@/feature/lotus/type';
 import { Time } from '@/shared';
@@ -72,15 +71,15 @@ export function LotusLink({ children, className }: LotusLinkProps) {
 
 type LotusGistLinkProps = {
   className?: string;
-  size?: number;
+  children?: ReactNode;
 };
 
-export function LotusGistLink({ className, size }: LotusGistLinkProps) {
+export function LotusGistLink({ className, children }: LotusGistLinkProps) {
   const { gistUrl } = useLotusContext();
 
   return (
     <a href={gistUrl} target="_blank" rel="noreferrer" className={className}>
-      <FaGithub size={size} />
+      {children}
     </a>
   );
 }

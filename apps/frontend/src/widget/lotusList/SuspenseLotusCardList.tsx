@@ -2,6 +2,7 @@ import { Button, Heading, Skeleton } from '@froxy/design/components';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useQueryErrorResetBoundary, useSuspenseQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { FaGithub } from 'react-icons/fa';
 import { LotusLostQueryOptions } from './type';
 import { Lotus } from '@/feature/lotus';
 import { User } from '@/feature/user';
@@ -17,20 +18,29 @@ export function SuspenseLotusList({ queryOptions }: { queryOptions: LotusLostQue
       {lotuses?.map(({ lotus, author }) => (
         <Lotus lotus={lotus} key={lotus.id}>
           <User user={author}>
-            <Lotus.Link className="w-full h-full lg:w-82 p-5 shadow-md bg-white rounded-xl hover:shadow-lg hover:shadow-neutral-400 transition-shadow duration-200">
-              <Lotus.Title className="text-[#1C1D22]" />
-              <User.Name className="text-[rgba(28,29,34,0.5)]" />
-              <div className="w-full flex justify-between items-end">
-                <Lotus.CreateDate className="text-xs font-bold text-[#888DA7] bg-[rgba(136,141,167,0.1)] px-4 py-2 rounded-3xl" />
-                <User.Avatar />
+            <div className="w-full h-full lg:w-82 p-5 shadow-md bg-white rounded-xl hover:shadow-lg hover:shadow-neutral-400 transition-shadow duration-200">
+              <div className="flex justify-between items-center">
+                <Lotus.Link>
+                  <Lotus.Title className="text-[#1C1D22]" />
+                </Lotus.Link>
+                <Lotus.GistLink className="z-10 rounded-full hover:shadow-md hover:shadow-zinc-400 p-2 transition-shadow duration-300">
+                  <FaGithub size={20} />
+                </Lotus.GistLink>
               </div>
-              {!lotus.isTagsEmpty && (
-                <>
-                  <div className="mt-4 w-full border-b-2 border-slate-200" />
-                  <Lotus.TagList className="pt-4 min-h-8" variant={'default'} />
-                </>
-              )}
-            </Lotus.Link>
+              <Lotus.Link>
+                <User.Name className="text-[rgba(28,29,34,0.5)]" />
+                <div className="w-full flex justify-between items-end">
+                  <Lotus.CreateDate className="text-xs font-bold text-[#888DA7] bg-[rgba(136,141,167,0.1)] px-4 py-2 rounded-3xl" />
+                  <User.Avatar />
+                </div>
+                {!lotus.isTagsEmpty && (
+                  <>
+                    <div className="mt-4 w-full border-b-2 border-slate-200" />
+                    <Lotus.TagList className="pt-4 min-h-8" variant={'default'} />
+                  </>
+                )}
+              </Lotus.Link>
+            </div>
           </User>
         </Lotus>
       ))}

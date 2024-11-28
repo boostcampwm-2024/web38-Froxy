@@ -1,5 +1,6 @@
 import { Skeleton } from '@froxy/design/components';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { FaGithub } from 'react-icons/fa';
 import { Lotus } from '@/feature/lotus';
 import { lotusQueryOptions } from '@/feature/lotus';
 import { User } from '@/feature/user';
@@ -14,7 +15,12 @@ export function SuspenseLotusDetail({ id }: { id: string }) {
       <Lotus lotus={lotus}>
         <User user={author}>
           <div className="mb-4">
-            <Lotus.Title className="text-3xl font-bold mr-4" />
+            <div className="flex items-center gap-5 mr-10">
+              <Lotus.Title className="text-3xl font-bold" />
+              <Lotus.GistLink className="rounded-full p-2 shadow-md hover:shadow-zinc-500 transition-shadow duration-300">
+                <FaGithub size={20} />
+              </Lotus.GistLink>
+            </div>
             <div>{!lotus.isTagsEmpty && <Lotus.TagList className="pt-4 min-h-8" variant={'default'} />}</div>
           </div>
           <User.Name className="text-[rgba(28,29,34,0.5)]" />
