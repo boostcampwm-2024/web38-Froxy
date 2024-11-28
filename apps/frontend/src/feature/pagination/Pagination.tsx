@@ -8,20 +8,22 @@ import {
   PaginationPrevious
 } from '@froxy/design/components';
 import { Skeleton } from '@froxy/design/components';
+import { usePagination } from '@/feature/pagination/usePagination';
 import { range } from '@/shared/common';
-import { usePagination } from '@/shared/pagination/usePagination';
 
 interface PaginationProps {
   totalPages?: number;
   initialPage?: number;
   onChangePage?: (page: number) => void;
+  activeScrollTop?: true;
 }
 
-export function Pagination({ totalPages = 1, initialPage = 1, onChangePage }: PaginationProps) {
+export function Pagination({ totalPages = 1, initialPage = 1, onChangePage, activeScrollTop }: PaginationProps) {
   const { currentPage, onClickPage, onClickPrevious, onClickNext, getPaginationItems } = usePagination({
     totalPages,
     initialPage,
-    onChangePage
+    onChangePage,
+    activeScrollTop
   });
 
   return (

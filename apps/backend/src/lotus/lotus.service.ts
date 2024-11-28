@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { title } from 'process';
-import { In } from 'typeorm';
+import { In, Like } from 'typeorm';
 import { LotusCreateRequestDto } from './dto/lotus.createRequest.dto';
 import { LotusDetailDto } from './dto/lotus.detail.dto';
 import { LotusDto } from './dto/lotus.dto';
@@ -132,9 +132,8 @@ export class LotusService {
   }
 
   async getPublicLotus(page: number, size: number, search: string): Promise<LotusPublicDto> {
-    const lotusData = await this.getLotusByTags(search);
-
-    const totalNum = lotusData.length;
+    //const [lotusData, totalNum] = await this.getLotusByTags(page, size, search);
+    const [lotusData, totalNum] = await this.getLotusByTitle(page, size, search);
     const maxPage = Math.ceil(totalNum / size);
     if (page > maxPage && maxPage !== 0) {
       throw new HttpException('page must be lower than max page', HttpStatus.NOT_FOUND);
@@ -142,44 +141,55 @@ export class LotusService {
     if (page <= 0) {
       throw new HttpException('page must be higher than 0', HttpStatus.NOT_FOUND);
     }
-    const firstIdx = size * (page - 1);
-    const returnLotusData = lotusData.splice(firstIdx, size);
-
-    return LotusPublicDto.ofLotusList(returnLotusData, page, maxPage);
+    return LotusPublicDto.ofLotusList(lotusData, page, maxPage);
   }
 
-  async getLotusByTags(search: string) {
-    if (!search) {
-      return await this.lotusRepository.find({
-        where: {
-          isPublic: true
-        },
-        relations: ['tags', 'user']
-      });
+  async getLotusByTitle(page: number, size: number, search: string) {
+    const whereData = {
+      isPublic: true
+    };
+    if (search) {
+      whereData['title'] = Like(`%${search}%`);
     }
-    const tags = await this.tagService.searchTag(search);
-    return await this.lotusRepository.find({
-      where: {
-        isPublic: true,
-        tags: {
-          tagId: In(tags)
-        }
-      },
-      relations: ['tags', 'user']
+    return await this.lotusRepository.findAndCount({
+      where: whereData,
+      skip: (page - 1) * size,
+      take: size,
+      relations: ['tags', 'user'],
+      order: { createdAt: 'DESC' }
+    });
+  }
+
+  async getLotusByTags(page: number, size: number, search: string) {
+    const whereData = {
+      isPublic: true
+    };
+    if (search) {
+      const tags = await this.tagService.searchTag(search);
+      whereData['tags'] = { tagId: In(tags) };
+    }
+    return await this.lotusRepository.findAndCount({
+      where: whereData,
+      skip: (page - 1) * size,
+      take: size,
+      relations: ['tags', 'user'],
+      order: { createdAt: 'DESC' }
     });
   }
 
   async getUserLotus(userId: string, page: number, size: number) {
     const user = this.userService.findOneByUserId(userId);
     if (!user) {
-      throw new HttpException('user data is not found', HttpStatus.NOT_FOUND);
+      throw new HttpException('user data is not found', HttpStatus.UNAUTHORIZED);
     }
 
-    const lotusData = await this.lotusRepository.find({
+    const [lotusData, totalNum] = await this.lotusRepository.findAndCount({
       where: { user: { userId } },
-      relations: ['tags', 'user']
+      skip: (page - 1) * size,
+      take: size,
+      relations: ['tags', 'user'],
+      order: { createdAt: 'DESC' }
     });
-    const totalNum = lotusData.length;
     const maxPage = Math.ceil(totalNum / size);
     if (page > maxPage && maxPage !== 0) {
       throw new HttpException('page must be lower than max page', HttpStatus.NOT_FOUND);
@@ -187,10 +197,7 @@ export class LotusService {
     if (page <= 0) {
       throw new HttpException('page must be higher than 0', HttpStatus.NOT_FOUND);
     }
-    const firstIdx = size * (page - 1);
-    const returnLotusData = lotusData.splice(firstIdx, size);
-
-    return LotusPublicDto.ofLotusList(returnLotusData, page, maxPage);
+    return LotusPublicDto.ofLotusList(lotusData, page, maxPage);
   }
 
   async checkAlreadyExist(gistUuid: string, commitId: string) {

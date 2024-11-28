@@ -2,10 +2,12 @@ import { ComponentProps, HTMLProps, createContext, useContext } from 'react';
 import { Badge, Text } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
 import { Link } from '@tanstack/react-router';
-import { BadgeVariantType, LotusType } from '@/feature/lotus/type';
+import { FaGithub } from 'react-icons/fa';
+import { LotusModel } from '.';
+import { BadgeVariantType } from '@/feature/lotus/type';
 import { Time } from '@/shared';
 
-const lotusContext = createContext<LotusType | null>(null);
+const lotusContext = createContext<LotusModel | null>(null);
 
 export const useLotusContext = () => {
   const lotus = useContext(lotusContext);
@@ -23,19 +25,6 @@ export function LotusTitle(props: LotusTitleProps) {
   return (
     <Text size="md" variant="bold" {...props}>
       {title}
-    </Text>
-  );
-}
-
-type LotusAuthorProps = ComponentProps<typeof Text>;
-
-export function LotusAuthor(props: LotusAuthorProps) {
-  const { author } = useLotusContext();
-
-  // TODO: 해당 사용자의 마이페이지로 이동하기
-  return (
-    <Text size="md" {...props}>
-      {author.nickname}
     </Text>
   );
 }
@@ -81,25 +70,29 @@ export function LotusLink({ children, className }: LotusLinkProps) {
   );
 }
 
-type LotusLogoProps = HTMLProps<HTMLImageElement>;
+type LotusGistLinkProps = {
+  className?: string;
+  size?: number;
+};
 
-export function LotusLogo({ className, ...props }: LotusLogoProps) {
-  const { title, author } = useLotusContext();
+export function LotusGistLink({ className, size }: LotusGistLinkProps) {
+  const { gistUrl } = useLotusContext();
 
-  const image = author?.profile || '/image/logoIcon.svg';
-
-  return <img src={image} alt={title} className={cn('w-16 h-16 rounded-full', className)} {...props} />;
+  return (
+    <a href={gistUrl} target="_blank" rel="noreferrer" className={className}>
+      <FaGithub size={size} />
+    </a>
+  );
 }
 
-export function LotusProvider({ children, lotus }: { children: React.ReactNode; lotus: LotusType }) {
+export function LotusProvider({ children, lotus }: { children: React.ReactNode; lotus: LotusModel }) {
   return <lotusContext.Provider value={lotus}>{children}</lotusContext.Provider>;
 }
 
 export const Lotus = Object.assign(LotusProvider, {
   Title: LotusTitle,
-  Author: LotusAuthor,
-  Logo: LotusLogo,
   CreateDate: LotusCreateDate,
   TagList: LotusTagList,
-  Link: LotusLink
+  Link: LotusLink,
+  GistLink: LotusGistLink
 });

@@ -2,7 +2,7 @@ import { Button, Text } from '@froxy/design/components';
 import { useQueryClient } from '@tanstack/react-query';
 import { IoSettingsSharp } from 'react-icons/io5';
 import { LotusUpdateForm } from './LotusUpdateForm';
-import { lotusQueryOptions, useLotusUpdateMutation } from '@/feature/lotus';
+import { getLotusMutationErrorToastData, lotusQueryOptions, useLotusUpdateMutation } from '@/feature/lotus';
 import { ModalBox } from '@/shared';
 import { useOverlay } from '@/shared/overlay';
 import { useToast } from '@/shared/toast';
@@ -26,10 +26,9 @@ export function LotusUpdateButton({ lotusId }: { lotusId: string }) {
 
           toast({ description: 'Lotus가 수정되었습니다.', variant: 'success', duration: 2000 });
         },
-        onError: () => {
+        onError: (error) => {
           toast({
-            description: 'Lotus 수정 중 오류가 발생했습니다. 다시 시도해 주세요.',
-            variant: 'error',
+            ...getLotusMutationErrorToastData(error),
             duration: 2000
           });
         }

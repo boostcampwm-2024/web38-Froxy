@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { Text } from '@froxy/design/components';
+import { Button, Heading } from '@froxy/design/components';
 import { Markdown } from '@froxy/react-markdown';
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { HistoryType } from '@/feature/history';
+import { useQueryClient, useQueryErrorResetBoundary, useSuspenseQuery } from '@tanstack/react-query';
+import { AiOutlineLoading } from 'react-icons/ai';
 import { lotusHistoryQueryOptions } from '@/feature/history/query';
 
 export function SuspenseLotusHistoryDetail({ lotusId, historyId }: { lotusId: string; historyId: string }) {
@@ -17,9 +17,7 @@ export function SuspenseLotusHistoryDetail({ lotusId, historyId }: { lotusId: st
     if (data.status !== 'PENDING') return;
 
     const interval = setInterval(async () => {
-      await queryClient.refetchQueries(lotusDetailQueryOptions);
-
-      const updatedData = queryClient.getQueryData<HistoryType>(lotusDetailQueryOptions.queryKey);
+      const updatedData = await queryClient.fetchQuery(lotusDetailQueryOptions);
 
       if (!updatedData || updatedData.status === 'PENDING') return;
 
@@ -32,15 +30,49 @@ export function SuspenseLotusHistoryDetail({ lotusId, historyId }: { lotusId: st
   const terminal = '```bash\n' + data.output + '\n```';
 
   if (data.status === 'PENDING') {
-    return (
-      <div>
-        <Text>PENDING...</Text>
-      </div>
-    );
+    return <LotusHistoryDetailFallback title="PENDING" />;
   }
+
   return (
-    <div>
+    <div className="terminal">
       <Markdown markdown={terminal} />
     </div>
   );
 }
+
+function LotusHistoryDetailFallback({ title }: { title: string }) {
+  return (
+    <div className="flex flex-col justify-center items-center w-full min-h-20 animate-pulse m-2 p-2 bg-[#f6f8fa]">
+      <AiOutlineLoading className="animate-spin font-bold text-gray-500" size={40} />
+      <Heading variant="muted">{title}</Heading>
+    </div>
+  );
+}
+
+SuspenseLotusHistoryDetail.Fallback = LotusHistoryDetailFallback;
+
+function LotusHistoryDetailError({ retry }: { retry?: () => void }) {
+  const { reset } = useQueryErrorResetBoundary();
+
+  const handleClick = () => {
+    reset();
+    retry?.();
+  };
+
+  return (
+    <div className="flex flex-col justify-center items-center gap-5 w-full min-h-20 m-2 p-2 bg-[#f6f8fa]">
+      <div className="flex gap-2 items-center">
+        <img src="/image/logoIcon.svg" className="w-8 h-8 rounded-lg" />
+        <Heading>OOPS</Heading>
+      </div>
+
+      {retry && (
+        <Button size={'sm'} onClick={handleClick}>
+          재시도
+        </Button>
+      )}
+    </div>
+  );
+}
+
+SuspenseLotusHistoryDetail.Error = LotusHistoryDetailError;

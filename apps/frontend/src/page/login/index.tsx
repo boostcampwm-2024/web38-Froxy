@@ -2,37 +2,42 @@ import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Navigate, createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
-import { userQueryOptions } from '@/feature/user/query';
+import { useLoginQuery, userQueryOptions } from '@/feature/user/query';
 import { LoadingPage } from '@/page/-LoadingPage';
 import { useLocalStorage } from '@/shared';
 import { useToast } from '@/shared/toast';
 
 const loginTokenValidation = z.object({
-  token: z.string().min(1, '토큰이 없습니다.')
+  code: z.string().min(1, '깃허브 인증에 실패했습니다.')
 });
 
-export const Route = createFileRoute('/login/success/')({
+export const Route = createFileRoute('/login/')({
   validateSearch: (search) => loginTokenValidation.parse(search),
   component: RouteComponent,
   errorComponent: ErrorComponent
 });
 
 function RouteComponent() {
+  const { code } = Route.useSearch();
+
   const [, set] = useLocalStorage({ key: 'token', initialValue: '' });
 
-  const { token } = Route.useSearch();
+  const { data, error: loginError } = useLoginQuery({ code });
 
-  const { data: user, error, isLoading } = useQuery(userQueryOptions.info());
+  const { data: user, error: userInfoError } = useQuery({
+    ...userQueryOptions.info(),
+    enabled: !!data?.token
+  });
 
   useEffect(() => {
-    set(token);
-  }, [token, set, user]);
+    if (data?.token) set(data.token);
+  }, [set, data]);
 
-  if (error) throw new Error('유저 정보 조회에 실패했습니다.');
+  if (loginError || userInfoError) throw new Error('유저 정보 조회에 실패했습니다.');
 
-  if (isLoading) return <LoadingPage />;
+  if (!user) return <LoadingPage />;
 
-  return <SuccessComponent nickname={user?.nickname ?? ''} />;
+  return <SuccessComponent nickname={user.nickname} />;
 }
 
 function SuccessComponent({ nickname }: { nickname: string }) {
@@ -49,7 +54,11 @@ function ErrorComponent() {
   const { toast } = useToast({ isCloseOnUnmount: false });
 
   useEffect(() => {
-    toast({ variant: 'error', description: '로그인에 실패했습니다.', duration: 2000 });
+    toast({
+      variant: 'error',
+      description: '로그인에 실패했습니다.',
+      duration: 2000
+    });
   }, [toast]);
 
   return <Navigate to="/" />;

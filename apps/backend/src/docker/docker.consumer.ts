@@ -80,7 +80,7 @@ export class DockerConsumer {
       });
 
       stream.on('end', async () => {
-        // await container.remove({ force: true });
+        await container.remove({ force: true });
         let result = this.filterAnsiCode(output);
         if (inputs.length !== 0) {
           result = result.split('\n').slice(1).join('\n');

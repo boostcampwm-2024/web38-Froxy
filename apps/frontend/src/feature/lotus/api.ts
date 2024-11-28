@@ -1,37 +1,56 @@
-import { LotusType } from './type';
-import { CodeViewValue } from '@/feature/codeView';
+import { LotusDto, LotusModel } from './model';
+import { CodeFileDto, CodeFileModel } from '@/feature/codeView';
+import { PageDto } from '@/feature/pagination';
+import { UserDto, UserModel } from '@/feature/user/model';
 import { api } from '@/shared/common/api';
-import { PageType } from '@/shared/pagination';
 
-export const getLotusList = async ({ page = 1 }: { page?: number }) => {
-  const response = await api.get(`/api/lotus?page=${page}`);
+interface LotusListDto {
+  lotuses: (LotusDto & { author: UserDto })[];
+  page: PageDto;
+}
 
-  const lotuses: LotusType[] = response.data.lotuses.map((lotus: LotusType) => ({
-    ...lotus,
-    date: new Date(lotus.date)
+export interface LotusDetailModel {
+  lotus: LotusModel;
+  author: UserModel;
+  language: string;
+  files: CodeFileModel[];
+}
+
+export const getLotusList = async ({ page = 1, keyword }: { page?: number; keyword?: string }) => {
+  const response = await api.get<LotusListDto>(
+    `/api/lotus?page=${page}&size=${9}${keyword ? `&search=${keyword}` : ''}`
+  );
+
+  const lotuses = response.data.lotuses.map((lotus) => ({
+    lotus: new LotusModel(lotus),
+    author: new UserModel(lotus.author)
   }));
 
-  return { lotuses, page: response.data.page as PageType };
+  return { lotuses, page: response.data.page };
 };
 
-export const getLotusDetail = async ({
-  id
-}: {
-  id: string;
-}): Promise<LotusType & { language: string; files: CodeViewValue[] }> => {
-  const response = await api.get(`/api/lotus/${id}`);
+type LotusDetailDto = LotusDto & { files: CodeFileDto[] } & { language: string } & { author: UserDto };
 
-  const data = await response.data;
+export const getLotusDetail = async ({ id }: { id: string }) => {
+  const response = await api.get<LotusDetailDto>(`/api/lotus/${id}`);
 
-  return { ...data, date: new Date(data.date) };
+  const data = response.data;
+
+  const lotus = new LotusModel(data);
+  const language = data.language;
+  const files = data.files.map((file) => new CodeFileModel(file));
+  const author = new UserModel(data.author);
+
+  return {
+    lotus,
+    author,
+    language,
+    files
+  };
 };
 
-export const deleteLotus = async ({
-  id
-}: {
-  id: string;
-}): Promise<LotusType & { language: string; files: CodeViewValue[] }> => {
-  const response = await api.delete(`/api/lotus/${id}`);
+export const deleteLotus = async ({ id }: { id: string }) => {
+  const response = await api.delete<LotusDetailDto>(`/api/lotus/${id}`);
 
   const data = response.data;
 
@@ -44,16 +63,10 @@ interface UpdateLotusDto {
   isPublic?: boolean;
 }
 
-export const updateLotus = async ({
-  id,
-  body
-}: {
-  id: string;
-  body: UpdateLotusDto;
-}): Promise<LotusType & { language: string; files: CodeViewValue[] }> => {
-  const response = await api.patch(`/api/lotus/${id}`, body);
+export const updateLotus = async ({ id, body }: { id: string; body: UpdateLotusDto }) => {
+  const response = await api.patch<LotusDetailDto>(`/api/lotus/${id}`, body);
 
-  const data = await response.data;
+  const data = response.data;
 
   return data;
 };
@@ -65,14 +78,13 @@ interface CreateLotusDto {
   gistUuid: string;
 }
 
-export const createLotus = async ({
-  body
-}: {
-  body: CreateLotusDto;
-}): Promise<LotusType & { language: string; files: CodeViewValue[] }> => {
-  const response = await api.post(`/api/lotus`, body);
+export const createLotus = async ({ body }: { body: CreateLotusDto }) => {
+  const response = await api.post<LotusDetailDto>(`/api/lotus`, body);
 
-  const data = await response.data;
+  const data = response.data;
 
-  return data;
+  return {
+    lotus: new LotusModel(data),
+    author: new UserModel(data.author)
+  };
 };

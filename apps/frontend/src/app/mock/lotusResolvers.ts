@@ -1,8 +1,9 @@
 import { DefaultBodyType, HttpResponse, PathParams, StrictRequest } from 'msw';
 import { MockRepository } from './MockRepository';
-import { LotusType } from '@/feature/lotus/type';
+import { LotusDto } from '@/feature/lotus';
+import { UserDto } from '@/feature/user';
 
-const lotusList = new MockRepository<Omit<LotusType, 'id'>>();
+const lotusList = new MockRepository<Omit<LotusDto & { author: UserDto }, 'id'>>();
 
 insertLotus();
 
@@ -89,11 +90,12 @@ export const postCreateLotus = async ({ request }: { request: StrictRequest<Defa
 
   const lotus = await lotusList.create({
     ...body,
-    date: new Date(),
-    author: { id: '1', nickname: 'js_master', profile: 'https://devblog.com/authors/js_master' },
+    date: new Date().toISOString(),
+    author: { id: '1', nickname: 'js_master', profile: 'https://devblog.com/authors/js_master', gistUrl: '' },
     logo: "data:image/png;base64,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';",
     link: 'https://devblog.com/articles/1000000001',
-    isPublic: false
+    isPublic: false,
+    gistUrl: ''
   });
 
   return HttpResponse.json(lotus);
@@ -109,7 +111,7 @@ export const patchLotus = async ({
 }) => {
   const { id } = params;
 
-  const body = (await request.json()) as Partial<LotusType>;
+  const body = (await request.json()) as Partial<LotusDto>;
 
   if (!id || typeof id !== 'string') return HttpResponse.json({ message: 'id is required' });
 
@@ -140,160 +142,182 @@ function insertLotus() {
   const jsImage =
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAkFBMVEX33x4AAAD/5h+KfRF1ag774x//6B9pXw364R703B61oxaRgxLlzxzgyhs/OQi+rBdcUwtDPAhJQgnTvxoXFQPr1B0yLQallRTItRibjBPbxhsqJgWrmhWxoBWNfxGBdBBRSQpiWAw2MQYREAIdGgN8cA9tYg1dVAvDsBgkIQQuKgZVTQoJCAGfjxMgHQQQDgELf9RLAAAG3ElEQVR4nO2cf1/qLBiHBwkxN1s6rWmaWR6zTtb7f3ePsx+PzpsN5iZ0Pt/rr3NSJ5cMGDc3BAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA0KME51zs4Lt/uS4Qwa5kRYwKqoSUkyTqLPp3y+HL6+CyE3VTIc0+fD7EZnF5xGJaXUohe7fP7JhBlHKuzlByU3iHKCW74FUfC2d96oM7llEs/XGsZcjD6E3rt2PVq/qNzkYNQ6Fuy/V2zENP2qO9IZ9cGQgyNszk+TRKsDaUUyO/3VW8ULQ1lH+MBRm7Vh50OJaGfGEhuB06QveKdob80kpwqxg4V7Qy5BeWgow9O+9RbQx511pwO2q47m4sDFVcQ5CxruOx38KQ/61lyEZum6K5oUjqCbKB2/vUwvCmpiGbOb1PjQ1rV+GWkQOxH4wN5UNtwXnoQOwHU8OyjvRudX9/cfmiefUm/R3tUGx0fptY5oEPKUezR+LlsXD8VGNqqBsqOsFPyEIJefRIMOi5HvDN65AWjA4FRHg4d5x6ELExNBQpKbgovk8Fg71XRz6EMkwN6UfS+KiKVPj69dpT14MKDIwNeUS9bUU0MjH5fK3zy+I09Nu6lATP41TLzJt4oqkhOfVNyWrifXahPKnA4ETDHllPInU8xh9ykuGEvhM9qsDgRMPMl7ZWhqnhinrb2IfxrgpTwzn1tv4/ZKh58M68anE0pob0/HfpQcS3CkNDNSEN2UPgfS0az55oQ3YV+94WjQ21QYyZHw/YWowNxzpDNkh9S044wDhOo2mIO65T6a+jeaztrkSRPay9dTSPl1Ys3r/MQj8bpHnMOyw3zD/V82ZSuIe5IT3NP2SR+Zf3ZbH2FD5VK7KrWeDZAGlhqIlGFRmOQ68crdaAF0aKjEU+OdoYqnBoqMg8qkerTAVRNuwXmPrS59hlm4jMXPHGk4CibcbQ2lyRrbwICttmfXGLWmRs7UFY0Tpzj/eWFopz16uHdbIvVWCT+tV3fqfWyRGWMwvFp4ljxXpZ0KNrC0d6deNs1MtkVzzRJSYQuK3Fmrn6gQhuK5LZ/+fDad5XXcM8YV8fuilw9TsNt58NNob16DIF8xTD7ad51yxx32H4/zTDfNtUajI83vxew9wxjqpnVTNniqcb5mNHSCZ87fPubL7YhGGQV2RWkUGcuKrEhgy3FSnLG+Szq+60McPdjkRyLfwLV0mmDRrm9Viy68vVbdqoYd4etQ86fxz1NQ0bbqdWuiDA1b9Rh/kV6URNxportF15GjfUbh6ic8RapwXDQNJD49rNbdqGoSaqSuZqto+1oQiqBzY6Kdxgk/8p6NoAnbAW6QwVz147lU8nfEBddNymoVK6WIlc2BjyOH975WSPvjG0P1sDyLSv66vpPJlb0kEEn8vAy6r79NyGPMz3X99r7i1yakd1CkJ2v99b9RRNbz9p6y4V3/HbHvUFakSVhUiNVfl98IPu5/qCThFraRIsJ98FG1isXB+lN/PR4Y03LVPUjBatPHqLcC/zdUMoSnpOV7xMcJReOitR1Iz4LcS+Be8Oy79Cs+fu7aD4iq+J7aNj7fon1yxrND9B5L1CP/kRFxUlPWW95AeXoRcpdOufuhXGu6arUKj7oy8ZFk6NkZpMrv1eT2hPGRgmRC6b0i5MdZodLJRMPqivme0VSkhdltP+7SxKoi+D7PBUKCWkpsJZ04+laqKLfPWTcLflk8tRV7s5e7+FacaTL16iNJCfp33ll0xKVt2abYalB1gM5lEUrUoCnIdb0qry2d768/HtdLoZd0q3s/9tONZW+sNXUZjIidfqj1TT9GhYkrRcyXthGFC6sIQNw8YfSlVpSm8pR3t95Ak/1zfNP7LZZC8VOO4SLE8WImhj7UmSO5UMoLZrKbNVQj2tZCuIeqV6oa6lRu8nCbZz6peod2AOPYFXI5MEYR2DluKImj305eh+bRHX77reW8vF4PYHrpCTyB0qJMNLJhw98DeHtFV8LTl8TAky+lLJW4uCJWsINI/l2wmPD/Yw4KrlLYoi1h8zesR11fFxdvlsO9pPv1T6+V2RqLowinetOpy77ByLhgdBMj2PqVFhRLAxTthn4zPtMFUiqZwdDKfGx1TycGo02XiLznh4ixBJ6TlWj3ZbeQTPKrvVwezMOy6EjDeam/Xu3n5/pJIqm+tb5PVt7GA7ohIyXN9fHhRr+TxPRjUP4FZ8e71oVXz4fehMU8Gd5a+r/KTtUbpOut1kncb5/08qi8jPNg8n2fZ6W5KsF27/5MFeGaHywJFq7HdWSnzhfOcBAAAAAAAAAIBfyX+5SlRZYBgRpgAAAABJRU5ErkJggg==';
 
-  const mockLotusData: LotusType[] = [
+  const mockLotusData: (LotusDto & { author: UserDto })[] = [
     {
       id: '1000000001',
       link: 'https://devblog.com/articles/1000000001',
       title: 'Understanding JavaScript Closures',
       logo: jsImage,
-      date: new Date('2024-11-01'),
+      date: new Date('2024-11-01').toISOString(),
       tags: ['JavaScript', 'Closures', 'Web Development'],
       author: {
         id: '1',
         nickname: 'js_master',
-        profile: 'https://devblog.com/authors/js_master'
+        profile: 'https://devblog.com/authors/js_master',
+        gistUrl: ''
       },
-      isPublic: true
+      isPublic: true,
+      gistUrl: ''
     },
     {
       id: '1000000002',
       link: 'https://devblog.com/articles/1000000002',
       title: 'A Guide to Responsive Design with CSS',
       logo: jsImage,
-      date: new Date('2024-10-28'),
+      date: new Date('2024-10-28').toISOString(),
       tags: ['CSS', 'Responsive Design', 'Frontend'],
       author: {
         id: '2',
         nickname: 'css_wizard',
-        profile: 'https://devblog.com/authors/css_wizard'
+        profile: 'https://devblog.com/authors/css_wizard',
+        gistUrl: ''
       },
-      isPublic: true
+      isPublic: true,
+      gistUrl: ''
     },
     {
       id: '1000000003',
       link: 'https://devblog.com/articles/1000000003',
       title: 'TypeScript vs JavaScript: Key Differences',
       logo: jsImage,
-      date: new Date('2024-10-25'),
+      date: new Date('2024-10-25').toISOString(),
       tags: ['TypeScript', 'JavaScript', 'Programming'],
       author: {
         id: '3',
         nickname: 'ts_guru',
-        profile: 'https://devblog.com/authors/ts_guru'
+        profile: 'https://devblog.com/authors/ts_guru',
+        gistUrl: ''
       },
-      isPublic: true
+      isPublic: true,
+      gistUrl: ''
     },
     {
       id: '1000000004',
       link: 'https://devblog.com/articles/1000000004',
       title: 'How to Build RESTful APIs with Node.js',
       logo: jsImage,
-      date: new Date('2024-10-20'),
+      date: new Date('2024-10-20').toISOString(),
       tags: ['Node.js', 'API', 'Backend'],
       author: {
         id: '4',
         nickname: 'node_dev',
-        profile: 'https://devblog.com/authors/node_dev'
+        profile: 'https://devblog.com/authors/node_dev',
+        gistUrl: ''
       },
-      isPublic: false
+      isPublic: false,
+      gistUrl: ''
     },
     {
       id: '1000000005',
       link: 'https://devblog.com/articles/1000000005',
       title: 'Top 10 Python Libraries for Data Science',
       logo: jsImage,
-      date: new Date('2024-10-15'),
+      date: new Date('2024-10-15').toISOString(),
       tags: ['Python', 'Data Science', 'Libraries'],
       author: {
         id: '5',
         nickname: 'data_scientist',
-        profile: 'https://devblog.com/authors/data_scientist'
+        profile: 'https://devblog.com/authors/data_scientist',
+        gistUrl: ''
       },
-      isPublic: true
+      isPublic: true,
+      gistUrl: ''
     },
     {
       id: '1000000006',
       link: 'https://devblog.com/articles/1000000006',
       title: 'React State Management: Context vs Redux',
       logo: jsImage,
-      date: new Date('2024-10-10'),
+      date: new Date('2024-10-10').toISOString(),
       tags: ['React', 'Redux', 'Frontend'],
       author: {
         id: '6',
         nickname: 'react_expert',
-        profile: 'https://devblog.com/authors/react_expert'
+        profile: 'https://devblog.com/authors/react_expert',
+        gistUrl: ''
       },
-      isPublic: false
+      isPublic: false,
+      gistUrl: ''
     },
     {
       id: '1000000007',
       link: 'https://devblog.com/articles/1000000007',
       title: 'Mastering Git: Branching and Merging',
       logo: jsImage,
-      date: new Date('2024-10-05'),
+      date: new Date('2024-10-05').toISOString(),
       tags: ['Git', 'Version Control', 'DevOps'],
       author: {
         id: '7',
         nickname: 'git_master',
-        profile: 'https://devblog.com/authors/git_master'
+        profile: 'https://devblog.com/authors/git_master',
+        gistUrl: ''
       },
-      isPublic: true
+      isPublic: true,
+      gistUrl: ''
     },
     {
       id: '1000000008',
       link: 'https://devblog.com/articles/1000000008',
       title: 'Introduction to Kubernetes for Beginners',
       logo: jsImage,
-      date: new Date('2024-10-01'),
+      date: new Date('2024-10-01').toISOString(),
       tags: ['Kubernetes', 'DevOps', 'Containers'],
       author: {
         id: '8',
         nickname: 'k8s_pro',
-        profile: 'https://devblog.com/authors/k8s_pro'
+        profile: 'https://devblog.com/authors/k8s_pro',
+        gistUrl: ''
       },
-      isPublic: true
+      isPublic: true,
+      gistUrl: ''
     },
     {
       id: '1000000009',
       link: 'https://devblog.com/articles/1000000009',
       title: 'Building Scalable Microservices with Spring Boot',
       logo: jsImage,
-      date: new Date('2024-09-25'),
+      date: new Date('2024-09-25').toISOString(),
       tags: ['Spring Boot', 'Microservices', 'Backend'],
       author: {
         id: '9',
         nickname: 'spring_dev',
-        profile: 'https://devblog.com/authors/spring_dev'
+        profile: 'https://devblog.com/authors/spring_dev',
+        gistUrl: ''
       },
-      isPublic: false
+      isPublic: false,
+      gistUrl: ''
     },
     {
       id: '1000000010',
       link: 'https://devblog.com/articles/1000000010',
       title: 'GraphQL Basics: Query Language for APIs',
       logo: jsImage,
-      date: new Date('2024-09-20'),
+      date: new Date('2024-09-20').toISOString(),
       tags: ['GraphQL', 'API', 'Web Development'],
       author: {
         id: '10',
         nickname: 'graphql_guru',
-        profile: 'https://devblog.com/authors/graphql_guru'
+        profile: 'https://devblog.com/authors/graphql_guru',
+        gistUrl: ''
       },
-      isPublic: true
+      isPublic: true,
+      gistUrl: ''
     },
     {
       id: '1000000011',
       link: 'https://devblog.com/articles/1000000011',
       title: 'Understanding Docker: A Comprehensive Guide',
       logo: jsImage,
-      date: new Date('2024-09-15'),
+      date: new Date('2024-09-15').toISOString(),
       tags: ['Docker', 'DevOps', 'Containers'],
       author: {
         id: '11',
         nickname: 'docker_wizard',
-        profile: 'https://devblog.com/authors/docker_wizard'
+        profile: 'https://devblog.com/authors/docker_wizard',
+        gistUrl: ''
       },
-      isPublic: true
+      isPublic: true,
+      gistUrl: ''
     }
   ];
   mockLotusData.forEach((lotus) => {

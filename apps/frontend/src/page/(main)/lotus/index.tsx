@@ -2,7 +2,8 @@ import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
 
 const lotusSearchValidation = z.object({
-  page: z.number().default(1).optional()
+  page: z.number().default(1).optional(),
+  keyword: z.string().optional()
 });
 
 export const Route = createFileRoute('/(main)/lotus/')({
