@@ -48,6 +48,7 @@ export class HistoryService {
       const result = await this.dockerProducer.getDocker(gitToken, lotusId, commitId, execFilename, inputs);
       await this.historyRepository.update(historyId, { status: HISTORY_STATUS.SUCCESS, result });
     } catch (error) {
+      console.log(error.message);
       await this.historyRepository.update(historyId, {
         status: HISTORY_STATUS.ERROR,
         result: error.message
