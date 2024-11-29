@@ -22,9 +22,9 @@ export class User {
   @Column({ name: 'git_id', unique: true })
   gitId: number;
 
-  @OneToMany(() => Lotus, (lotus) => lotus.user)
+  @OneToMany(() => Lotus, (lotus) => lotus.user, { cascade: true })
   lotuses: Lotus[];
 
-  @OneToMany(() => Comment, (comment) => comment.user)
+  @OneToMany(() => Comment, (comment) => comment.user, { cascade: true })
   comments: Comment[];
 }

@@ -40,7 +40,7 @@ export class Lotus {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.lotuses)
+  @ManyToOne(() => User, (user) => user.lotuses, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' }) // 외래키 이름 설정
   user: User;
 

@@ -22,7 +22,7 @@ export class History {
   @Column()
   status: string;
 
-  @ManyToOne(() => Lotus, (lotus) => lotus.historys)
+  @ManyToOne(() => Lotus, (lotus) => lotus.historys, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'lotus_id' }) // 외래키 이름 설정
   lotus: Lotus;
 }
