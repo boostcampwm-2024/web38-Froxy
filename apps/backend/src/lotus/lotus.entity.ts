@@ -16,8 +16,7 @@ import { User } from '@/user/user.entity';
 
 @Entity()
 export class Lotus {
-  //@PrimaryGeneratedColumn('uuid', { type: 'bigint' })
-  @PrimaryGeneratedColumn('increment', { type: 'bigint', name: 'lotus_id' })
+  @PrimaryGeneratedColumn('uuid', { name: 'lotus_id' })
   lotusId: string;
 
   @Column()
