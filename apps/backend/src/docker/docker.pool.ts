@@ -31,6 +31,7 @@ export class DockerContainerPool implements OnApplicationBootstrap {
 
   async getContainer(): Container | null {
     while (this.lock || this.pool.length === 0) {
+      console.log('딜레이');
       await this.delay(10); // 풀 비어 있음 처리
     }
     this.lock = true;
@@ -40,8 +41,10 @@ export class DockerContainerPool implements OnApplicationBootstrap {
   }
 
   async returnContainer(container: Container) {
+    console.log('반납시작');
     await container.stop();
     this.pool.push(container);
+    console.log('반납');
   }
 
   delay(ms: number): Promise<void> {

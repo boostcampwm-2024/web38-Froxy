@@ -17,22 +17,28 @@ export class DockerProducer {
     mainFileName: string,
     inputs: any[]
   ): Promise<string> {
+    const startTime = Date.now();
+    inputs = [1, 2];
     const job = await this.dockerQueue.add(
       'docker-run',
       {
         gitToken,
-        gistId,
-        commitId,
+        gistId: gistId,
+        commitId: commitId,
         mainFileName,
         inputs
       },
-      { removeOnComplete: true, removeOnFail: true }
+      { jobid: `${startTime}`, removeOnComplete: true, removeOnFail: true }
     );
+
     // Job 완료 대기 및 결과 반환
     return new Promise((resolve, reject) => {
       job
         .finished()
         .then((result) => {
+          const endTime = Date.now();
+          console.log(`처리시간 ${(endTime - startTime) / 1000}sec`);
+          console.log(`Job${job.id} finished:`, result);
           resolve(result);
         })
         .catch((error) => reject(error));

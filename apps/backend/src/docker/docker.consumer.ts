@@ -1,4 +1,4 @@
-import { Process, Processor } from '@nestjs/bull';
+import { OnQueueError, OnQueueFailed, Process, Processor } from '@nestjs/bull';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Job } from 'bull';
 import { Container } from 'dockerode';
@@ -28,20 +28,34 @@ interface GistFile {
 @Injectable()
 export class DockerConsumer {
   constructor(private gistService: GistService, private dockerContainerPool: DockerContainerPool) {}
+  @OnQueueFailed()
+  failHandler(job: Job, err: Error) {
+    console.log('OnQueueFailed');
+    throw err;
+  }
 
-  @Process({ name: 'docker-run', concurrency: MAX_CONTAINER_CNT })
+  @OnQueueError()
+  errorHandler(err: Error) {
+    console.log('OnQueueError');
+    throw err;
+  }
+  @Process({ name: 'docker-run', concurrency: 2 })
   async handleDockerRun(job: Job) {
     const { gitToken, gistId, commitId, mainFileName, inputs } = job.data;
+
     let container;
+    console.log(`Job${job.id} start`);
+    console.log('시작---');
     try {
       container = await this.dockerContainerPool.getContainer();
+      console.log(container.id);
       await container.start();
       const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
+      await this.initWorkDir(container);
+      this.dockerContainerPool.returnContainer(container);
       return result;
     } catch (error) {
       throw new Error(`Execution failed: ${error.message}`);
-    } finally {
-      await this.dockerContainerPool.returnContainer(container);
     }
   }
   async runGistFiles(
@@ -68,9 +82,8 @@ export class DockerConsumer {
     const stream = await this.dockerExcution(inputs, mainFileName, container);
     let output = '';
     const timeout = setTimeout(async () => {
-      console.log('timeout');
       stream.destroy(new Error('Timeout'));
-    }, 5000);
+    }, 10000);
     //desciption: 스트림 종료 후 결과 반환
     return new Promise((resolve, reject) => {
       //desciption: 스트림에서 데이터 수집
@@ -83,7 +96,6 @@ export class DockerConsumer {
         if (inputs.length !== 0) {
           result = result.split('\n').slice(1).join('\n');
         }
-        this.initWorkDir(container);
         resolve(result);
       });
       stream.on('error', reject);
