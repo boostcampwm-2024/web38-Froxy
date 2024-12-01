@@ -63,8 +63,14 @@ export class HistoryService {
       order: { createdAt: 'DESC' }
     });
     const [historys, total] = result;
-
-    return HistoryResponseListDto.of(historys, page, size, total);
+    const maxPage = Math.ceil(total / size);
+    if (page > maxPage && maxPage !== 0) {
+      throw new HttpException('page must be lower than max page', HttpStatus.NOT_FOUND);
+    }
+    if (page <= 0) {
+      throw new HttpException('page must be higher than 0', HttpStatus.NOT_FOUND);
+    }
+    return HistoryResponseListDto.of(historys, page, size, maxPage);
   }
   async getHistoryFromId(historyId: string): Promise<HistoryGetResponseDto> {
     const history = await this.historyRepository.findOneBy({ historyId: historyId });
