@@ -6,6 +6,7 @@ import { LotusRepository } from './lotus.repository';
 import { LotusService } from './lotus.service';
 import { AuthModule } from '@/auth/auth.module';
 import { GistModule } from '@/gist/gist.module';
+import { LotusTagModule } from '@/relation/lotus.tag.module';
 import { TagModule } from '@/tag/tag.module';
 import { UserModule } from '@/user/user.module';
 
@@ -15,7 +16,7 @@ import { UserModule } from '@/user/user.module';
     GistModule,
     forwardRef(() => UserModule),
     forwardRef(() => AuthModule),
-    TagModule
+    LotusTagModule
   ],
   controllers: [LotusController],
   providers: [LotusService, LotusRepository],

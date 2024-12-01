@@ -35,4 +35,10 @@ export class TagService {
     const tagIds = tags.map((tag) => tag.tagId);
     return tagIds;
   }
+
+  async searchTagNames(tagName: string): Promise<string[]> {
+    const tags = await this.tagRepository.searchTagName(tagName);
+    const tagNames = tags.map((tag) => tag.tagName);
+    return tagNames;
+  }
 }

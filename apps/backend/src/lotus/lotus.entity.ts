@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { Comment } from '@/comment/comment.entity';
 import { History } from '@/history/history.entity';
-import { Tag } from '@/tag/tag.entity';
+import { LotusTag } from '@/relation/lotus.tag.entity';
 import { User } from '@/user/user.entity';
 
 @Entity()
@@ -50,17 +50,6 @@ export class Lotus {
   @OneToMany(() => History, (history) => history.lotus, { cascade: ['remove'] })
   historys: History[];
 
-  @ManyToMany(() => Tag, { cascade: ['insert', 'update', 'remove'] })
-  @JoinTable({
-    name: 'lotus_tags', // 교차 테이블 이름 지정
-    joinColumn: {
-      name: 'lotus_id', // 이 컬럼은 Lotus 엔티티를 참조
-      referencedColumnName: 'lotusId'
-    },
-    inverseJoinColumn: {
-      name: 'tag_id', // 이 컬럼은 Tag 엔티티를 참조
-      referencedColumnName: 'tagId'
-    }
-  })
-  tags: Tag[];
+  @OneToMany(() => LotusTag, (lotusTag) => lotusTag.lotus, { cascade: ['remove'] })
+  tags: LotusTag[];
 }
