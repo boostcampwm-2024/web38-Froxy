@@ -19,7 +19,10 @@ export class LotusTagService {
 
   async getLotusTagRelation(lotus: Lotus, tagName: string) {
     const tag = await this.tagService.getTag(tagName);
-    let relation = await this.lotusTagRepository.findOne({ where: { lotus, tag: tag }, relations: ['lotus', 'tag'] });
+    let relation = await this.lotusTagRepository.findOne({
+      where: { lotus: { lotusId: lotus.lotusId }, tag: { tagId: tag.tagId } },
+      relations: ['lotus', 'tag']
+    });
     if (!relation) {
       relation = await this.createLotusTagRelation(lotus, tag);
     }
@@ -42,9 +45,16 @@ export class LotusTagService {
       })
     );
     const tagIds = data.map((tag) => tag.tag.tagId);
-    const result = await this.lotusTagRepository.delete({
+    await this.lotusTagRepository.delete({
       lotus: { lotusId: lotus.lotusId },
       tag: { tagId: Not(In(tagIds)) }
     });
+
+    await this.tagService.deleteNoRelationTags(await this.findUsingTags());
+  }
+
+  async findUsingTags() {
+    const allData = await this.lotusTagRepository.find({ relations: ['tag'] });
+    return allData.map((data) => data.tag.tagId);
   }
 }

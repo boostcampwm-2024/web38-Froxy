@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { In, Not } from 'typeorm';
 import { Tag } from './tag.entity';
 import { TagRepository } from './tag.repository';
 
@@ -40,5 +41,9 @@ export class TagService {
     const tags = await this.tagRepository.searchTagName(tagName);
     const tagNames = tags.map((tag) => tag.tagName);
     return tagNames;
+  }
+
+  async deleteNoRelationTags(tagId: string[]) {
+    return await this.tagRepository.delete({ tagId: Not(In(tagId)) });
   }
 }
