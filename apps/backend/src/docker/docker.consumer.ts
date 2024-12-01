@@ -44,7 +44,6 @@ export class DockerConsumer {
       await this.dockerContainerPool.returnContainer(container);
     }
   }
-
   async runGistFiles(
     container: Container,
     gitToken: string,
@@ -68,9 +67,9 @@ export class DockerConsumer {
     }
     const stream = await this.dockerExcution(inputs, mainFileName, container);
     let output = '';
-
-    setTimeout(async () => {
-      stream.end();
+    const timeout = setTimeout(async () => {
+      console.log('timeout');
+      stream.destroy(new Error('Timeout'));
     }, 5000);
     //desciption: 스트림 종료 후 결과 반환
     return new Promise((resolve, reject) => {
@@ -78,9 +77,9 @@ export class DockerConsumer {
       stream.on('data', (chunk) => {
         output += chunk.toString();
       });
-
-      stream.on('end', async () => {
-        let result = this.filterAnsiCode(output);
+      stream.on('close', async () => {
+        let result = await this.filterAnsiCode(output);
+        clearTimeout(timeout);
         if (inputs.length !== 0) {
           result = result.split('\n').slice(1).join('\n');
         }

@@ -45,7 +45,7 @@ export function LotusRunCodeForm({ lotusId, onCancel, onSubmit }: LotusRunCodeFo
             취소하기
           </Button>
           <Button className="w-full" type="submit" disabled={execFileName === ''} onClick={() => handleSubmit()}>
-            완료하기
+            실행하기
           </Button>
         </div>
       </section>
