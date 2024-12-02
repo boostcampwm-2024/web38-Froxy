@@ -27,17 +27,29 @@ export class DockerController {
 
   @Get('get2')
   async getDockersTest2(): Promise<string> {
-    const mainFileName = 'FunctionDivide.js';
-    // const gitToken = this.configService.get<string>('STATIC_GIST_ID');
-    const gistId = this.configService.get<string>('DYNAMIC_GIST_ID');
     const gitToken = this.configService.get<string>('GIT_TOKEN');
     const inputs = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
-    const commit = '654dd3f1d7f17d172132aebae283e73356197d18';
     console.log('docker Test2');
     const value = await this.dockerProducer.getDocker(
       gitToken,
       '7f93da28e2522409a2274eff51b5dc20',
       '57944932d1ec6f05415b5e067f23c8a358e79d84',
+      'main.js',
+      inputs
+    );
+    return value;
+  }
+
+  @Get('get3')
+  async getDockersTest3(): Promise<string> {
+    //무한루프
+    const gitToken = this.configService.get<string>('GIT_TOKEN');
+    const inputs = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
+    console.log('docker Test2');
+    const value = await this.dockerProducer.getDocker(
+      gitToken,
+      '2574b42a40e9ea6d35a9434a88694720',
+      '2b98cc9dd44bf0c8ddf43a715d2443d7261e25fc',
       'main.js',
       inputs
     );

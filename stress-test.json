@@ -3,8 +3,8 @@
         "target": "http://localhost:3000",
         "phases": [
             {
-                "duration": 10,
-                "arrivalRate": 5
+                "duration": 5,
+                "arrivalRate": 10
             }
         ],
         "http": {
@@ -16,7 +16,7 @@
             "flow": [
                 {
                     "get": {
-                        "url": "/api/docker/get"
+                        "url": "/api/docker/get3"
                     }
                 }
             ]

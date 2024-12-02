@@ -24,7 +24,6 @@ export class DockerProducer implements OnApplicationBootstrap {
   ): Promise<string> {
     this.cnt++;
     const c = this.cnt;
-    console.log(`${c}번째 job시작`);
     const job = await this.dockerQueue.add(
       'always-docker-run',
       {

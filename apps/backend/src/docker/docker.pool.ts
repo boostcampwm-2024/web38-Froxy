@@ -20,10 +20,7 @@ export class DockerContainerPool implements OnApplicationBootstrap {
         .filter((container) => container.Names.some((name) => name.startsWith('/froxy-run')))
         .map(async (container) => {
           const removeContainer = await this.docker.getContainer(container.Id);
-          console.log(`컨테이너 pause ${container.Names[0]}`);
-          await removeContainer.stop(); // 먼저 멈추고
-          await removeContainer.remove({ force: true }); // 강제로 삭제
-          console.log(`컨테이너 삭제 ${container.Names[0]}`);
+          await removeContainer.remove({ force: true });
         })
     );
   }
