@@ -38,11 +38,12 @@ export class DockerConsumer {
       container = await this.dockerContainerPool.getContainer();
       await container.start();
       const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
-      await this.cleanWorkDir(container);
-      this.dockerContainerPool.returnContainer(container);
       return result;
     } catch (error) {
       throw new Error(`Execution failed: ${error.message}`);
+    } finally {
+      await this.cleanWorkDir(container);
+      this.dockerContainerPool.returnContainer(container);
     }
   }
 
@@ -58,6 +59,9 @@ export class DockerConsumer {
       this.dockerContainerPool.pool.push(container);
       return result;
     } catch (error) {
+      await this.cleanWorkDir(container);
+      this.dockerContainerPool.pool.push(container);
+      console.log(`consumer: ${error.message}`);
       throw new Error(`Execution failed: ${error.message}`);
     }
   }
@@ -74,6 +78,8 @@ export class DockerConsumer {
       return result;
     } catch (error) {
       throw new Error(`Execution failed: ${error.message}`);
+    } finally {
+      await this.cleanWorkDir(container);
     }
   }
   async runGistFiles(

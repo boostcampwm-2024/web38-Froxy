@@ -1,6 +1,7 @@
 import { InjectQueue } from '@nestjs/bull';
 import { HttpException, HttpStatus, Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { Queue } from 'bull';
+import { error } from 'console';
 import { DockerContainerPool } from './docker.pool';
 
 @Injectable()
@@ -24,25 +25,26 @@ export class DockerProducer implements OnApplicationBootstrap {
   ): Promise<string> {
     this.cnt++;
     const c = this.cnt;
-    const job = await this.dockerQueue.add(
-      'always-docker-run',
-      {
-        gitToken,
-        gistId: gistId,
-        commitId: commitId,
-        mainFileName,
-        inputs,
-        c
-      },
-      {
-        jobId: `${Date.now()}`,
-        attempts: 3,
-        backoff: 5000,
-        removeOnComplete: true,
-        removeOnFail: true
-      }
-    );
-
-    return job.finished();
+    try {
+      const job = await this.dockerQueue.add(
+        'always-docker-run',
+        {
+          gitToken,
+          gistId: gistId,
+          commitId: commitId,
+          mainFileName,
+          inputs,
+          c
+        },
+        {
+          jobId: `${Date.now()}`,
+          removeOnComplete: true,
+          removeOnFail: true
+        }
+      );
+      return await job.finished();
+    } catch (error) {
+      throw error;
+    }
   }
 }

@@ -43,13 +43,17 @@ export class DockerController {
     //무한루프
     const gitToken = this.configService.get<string>('GIT_TOKEN');
     const inputs = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
-    const value = await this.dockerProducer.getDocker(
-      gitToken,
-      '2574b42a40e9ea6d35a9434a88694720',
-      '2b98cc9dd44bf0c8ddf43a715d2443d7261e25fc',
-      'main.js',
-      inputs
-    );
-    return value;
+    try {
+      const value = await this.dockerProducer.getDocker(
+        gitToken,
+        '2574b42a40e9ea6d35a9434a88694720',
+        '2b98cc9dd44bf0c8ddf43a715d2443d7261e25fc',
+        'main.js',
+        inputs
+      );
+      return value;
+    } catch (e) {
+      return e.message;
+    }
   }
 }
