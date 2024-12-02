@@ -18,16 +18,16 @@ export function SuspenseLotusList({ queryOptions }: { queryOptions: LotusLostQue
       {lotuses?.map(({ lotus, author }) => (
         <Lotus lotus={lotus} key={lotus.id}>
           <User user={author}>
-            <div className="w-full h-full lg:w-82 p-5 shadow-md bg-white rounded-xl hover:shadow-lg hover:shadow-neutral-400 transition-shadow duration-200">
-              <div className="flex justify-between items-center">
-                <Lotus.Link>
+            <Lotus.Link>
+              <div className="w-full h-full lg:w-82 p-5 shadow-md bg-white rounded-xl hover:shadow-lg hover:shadow-neutral-400 transition-shadow duration-200">
+                <div className="flex justify-between items-center">
                   <Lotus.Title className="text-[#1C1D22]" />
-                </Lotus.Link>
-                <Lotus.GistLink className="z-10 rounded-full hover:shadow-md hover:shadow-zinc-400 p-2 transition-shadow duration-300">
-                  <FaGithub size={20} />
-                </Lotus.GistLink>
-              </div>
-              <Lotus.Link>
+
+                  <Lotus.GistLink className="z-10 rounded-full hover:shadow-md hover:shadow-zinc-400 p-2 transition-shadow duration-300">
+                    <FaGithub size={20} />
+                  </Lotus.GistLink>
+                </div>
+
                 <User.Name className="text-[rgba(28,29,34,0.5)]" />
                 <div className="w-full flex justify-between items-end">
                   <Lotus.CreateDate className="text-xs font-bold text-[#888DA7] bg-[rgba(136,141,167,0.1)] px-4 py-2 rounded-3xl" />
@@ -39,8 +39,8 @@ export function SuspenseLotusList({ queryOptions }: { queryOptions: LotusLostQue
                     <Lotus.TagList className="pt-4 min-h-8" variant={'default'} />
                   </>
                 )}
-              </Lotus.Link>
-            </div>
+              </div>
+            </Lotus.Link>
           </User>
         </Lotus>
       ))}
