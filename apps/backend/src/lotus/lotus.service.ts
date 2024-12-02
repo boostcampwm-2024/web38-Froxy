@@ -13,7 +13,6 @@ import { Lotus } from './lotus.entity';
 import { LotusRepository } from './lotus.repository';
 import { GistService } from '@/gist/gist.service';
 import { LotusTagService } from '@/relation/lotus.tag.service';
-import { TagService } from '@/tag/tag.service';
 import { UserService } from '@/user/user.service';
 
 @Injectable()
@@ -170,7 +169,6 @@ export class LotusService {
     };
     if (search) {
       const lotuses = await this.lotusTagService.searchTag(search);
-      console.log(lotuses);
       whereData['lotusId'] = In(lotuses);
     }
     return await this.lotusRepository.findAndCount({
