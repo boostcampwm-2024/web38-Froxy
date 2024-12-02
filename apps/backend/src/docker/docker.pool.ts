@@ -32,14 +32,11 @@ export class DockerContainerPool implements OnApplicationBootstrap {
         OpenStdin: true,
         AttachStdout: true,
         AttachStderr: true,
-        Env: [
-          'NODE_DISABLE_COLORS=true', // 색상 비활성화
-          'TERM=dumb' // dumb 터미널로 설정하여 색상 비활성화
-        ],
+        Env: ['NODE_DISABLE_COLORS=true', 'TERM=dumb'],
         name: `froxy-run${i + 1}`,
         HostConfig: {
-          Memory: (1024 * 1024 * 1024) / 2, // 1GB 메모리 제한
-          MemorySwap: (1024 * 1024 * 1024) / 2 // swap 메모리도 1GB로 설정
+          Memory: 1024 * 1024 * 1024,
+          MemorySwap: 1024 * 1024 * 1024
         }
       });
       this.pool.push(container);

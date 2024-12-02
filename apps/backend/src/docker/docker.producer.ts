@@ -13,7 +13,7 @@ export class DockerProducer implements OnApplicationBootstrap {
     private dockerContainerPool: DockerContainerPool
   ) {}
   onApplicationBootstrap() {
-    this.dockerQueue.setMaxListeners(100);
+    this.dockerQueue.setMaxListeners(1000);
   }
 
   async getDocker(
