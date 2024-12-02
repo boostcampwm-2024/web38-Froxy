@@ -1,0 +1,25 @@
+{
+    "config": {
+        "target": "http://localhost:3000",
+        "phases": [
+            {
+                "duration": 10,
+                "arrivalRate": 5
+            }
+        ],
+        "http": {
+            "timeout": 50000
+        }
+    },
+    "scenarios": [
+        {
+            "flow": [
+                {
+                    "get": {
+                        "url": "/api/docker/get"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,15 +1,19 @@
 import { InjectQueue } from '@nestjs/bull';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { Queue } from 'bull';
 import { DockerContainerPool } from './docker.pool';
 
 @Injectable()
-export class DockerProducer {
+export class DockerProducer implements OnApplicationBootstrap {
   cnt = 0;
   constructor(
     @InjectQueue('docker-queue')
-    private readonly dockerQueue,
+    private readonly dockerQueue: Queue,
     private dockerContainerPool: DockerContainerPool
   ) {}
+  onApplicationBootstrap() {
+    this.dockerQueue.setMaxListeners(100);
+  }
 
   async getDocker(
     gitToken: string,
@@ -20,6 +24,7 @@ export class DockerProducer {
   ): Promise<string> {
     this.cnt++;
     const c = this.cnt;
+    console.log(`${c}번째 job시작`);
     const job = await this.dockerQueue.add(
       'always-docker-run',
       {
@@ -31,7 +36,7 @@ export class DockerProducer {
         c
       },
       {
-        jobid: `${Date.now()}`,
+        jobId: `${Date.now()}`,
         attempts: 3,
         backoff: 5000,
         removeOnComplete: true,

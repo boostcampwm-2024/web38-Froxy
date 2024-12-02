@@ -59,20 +59,22 @@ export class DockerConsumer {
 
   @Process({ name: 'always-docker-run' })
   async alwaysDockerRun(job: Job) {
-    const { gitToken, gistId, commitId, mainFileName, inputs } = job.data;
+    const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
     let container;
     try {
+      console.log(`${c}번째 프로세스시작`);
       container = await this.dockerContainerPool.getContainer();
       const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
       await this.cleanWorkDir(container);
       this.dockerContainerPool.pool.push(container);
+      console.log(`${c}번째 프로세스 끝`);
       return result;
     } catch (error) {
       throw new Error(`Execution failed: ${error.message}`);
     }
   }
 
-  @Process({ name: 'multipleIO-docker-run', concurrency: 7 })
+  @Process({ name: 'multipleIO-docker-run' })
   async multipleIODockerRun(job: Job) {
     const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
 
