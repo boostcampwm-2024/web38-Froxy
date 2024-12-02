@@ -4,52 +4,61 @@
       "vusers.created_by_name.0": 50,
       "vusers.created": 50,
       "http.requests": 50,
-      "plugins.metrics-by-endpoint./api/docker/get3.errors.ECONNRESET": 50,
-      "errors.ECONNRESET": 50,
+      "plugins.metrics-by-endpoint./api/docker/get2.errors.ECONNREFUSED": 50,
+      "errors.ECONNREFUSED": 50,
       "vusers.failed": 50
     },
     "rates": {
-      "http.request_rate": 7
+      "http.request_rate": 10
     },
-    "firstCounterAt": 1733135923106,
-    "lastCounterAt": 1733135939877,
-    "firstMetricAt": 1733135923106,
-    "lastMetricAt": 1733135939877,
-    "period": 1733135930000,
+    "firstCounterAt": 1733137427720,
+    "lastCounterAt": 1733137436925,
+    "firstMetricAt": 1733137427720,
+    "lastMetricAt": 1733137436925,
+    "period": 1733137430000,
     "summaries": {},
     "histograms": {}
   },
   "intermediate": [
     {
       "counters": {
-        "vusers.created_by_name.0": 50,
-        "vusers.created": 50,
-        "http.requests": 50
+        "vusers.created_by_name.0": 15,
+        "vusers.created": 15,
+        "http.requests": 15,
+        "plugins.metrics-by-endpoint./api/docker/get2.errors.ECONNREFUSED": 15,
+        "errors.ECONNREFUSED": 15,
+        "vusers.failed": 15
       },
       "rates": {
         "http.request_rate": 10
       },
       "http.request_rate": null,
-      "firstCounterAt": 1733135923106,
-      "lastCounterAt": 1733135927913,
-      "firstMetricAt": 1733135923106,
-      "lastMetricAt": 1733135927913,
-      "period": "1733135920000",
+      "firstCounterAt": 1733137427720,
+      "lastCounterAt": 1733137429924,
+      "firstMetricAt": 1733137427720,
+      "lastMetricAt": 1733137429924,
+      "period": "1733137420000",
       "summaries": {},
       "histograms": {}
     },
     {
       "counters": {
-        "plugins.metrics-by-endpoint./api/docker/get3.errors.ECONNRESET": 50,
-        "errors.ECONNRESET": 50,
-        "vusers.failed": 50
+        "vusers.created_by_name.0": 35,
+        "vusers.created": 35,
+        "http.requests": 35,
+        "plugins.metrics-by-endpoint./api/docker/get2.errors.ECONNREFUSED": 35,
+        "errors.ECONNREFUSED": 35,
+        "vusers.failed": 35
       },
-      "rates": {},
-      "firstCounterAt": 1733135939864,
-      "lastCounterAt": 1733135939877,
-      "firstMetricAt": 1733135939864,
-      "lastMetricAt": 1733135939877,
-      "period": "1733135930000",
+      "rates": {
+        "http.request_rate": 5
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1733137430718,
+      "lastCounterAt": 1733137436925,
+      "firstMetricAt": 1733137430718,
+      "lastMetricAt": 1733137436925,
+      "period": "1733137430000",
       "summaries": {},
       "histograms": {}
     }

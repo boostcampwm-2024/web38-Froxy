@@ -14,7 +14,6 @@ export class DockerController {
     const gitToken = this.configService.get<string>('GIT_TOKEN');
     const inputs = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
     const commit = '654dd3f1d7f17d172132aebae283e73356197d18';
-    console.log('docker Test');
     const value = await this.dockerProducer.getDocker(
       gitToken,
       '25cf4713b2386b4ad4ce7c8dbbecebe8',
@@ -29,7 +28,6 @@ export class DockerController {
   async getDockersTest2(): Promise<string> {
     const gitToken = this.configService.get<string>('GIT_TOKEN');
     const inputs = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
-    console.log('docker Test2');
     const value = await this.dockerProducer.getDocker(
       gitToken,
       '7f93da28e2522409a2274eff51b5dc20',
@@ -45,7 +43,6 @@ export class DockerController {
     //무한루프
     const gitToken = this.configService.get<string>('GIT_TOKEN');
     const inputs = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
-    console.log('docker Test2');
     const value = await this.dockerProducer.getDocker(
       gitToken,
       '2574b42a40e9ea6d35a9434a88694720',
