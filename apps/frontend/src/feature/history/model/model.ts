@@ -1,5 +1,5 @@
-import { HISTORY_STATUS } from './constant';
-import { HistoryStatus } from './type';
+import { HISTORY_STATUS } from '@/feature/history/constant';
+import { HistoryStatus } from '@/feature/history/type';
 
 export interface HistoryDto {
   id: string;
