@@ -52,6 +52,7 @@ export class HistoryService {
         status: HISTORY_STATUS.ERROR,
         result: error.message
       });
+      throw error;
     }
   }
 
