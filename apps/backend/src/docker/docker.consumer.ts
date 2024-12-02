@@ -48,8 +48,8 @@ export class DockerConsumer {
     try {
       container = await this.dockerContainerPool.getContainer();
       await container.start();
-      const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
-      await this.initWorkDir(container);
+      const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs, 1);
+      await this.cleanWorkDir(container, 1);
       this.dockerContainerPool.returnContainer(container);
       return result;
     } catch (error) {
@@ -67,9 +67,9 @@ export class DockerConsumer {
       console.log(`${q_id}-${c}번째 프로세스시작`);
       container = await this.dockerContainerPool.getContainer();
       console.log(`${q_id}-${c}번째 컨테이너: ${container.id}`);
-      const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
+      const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs, 1);
       console.log(`${q_id}-${c}번째 exec 시작`);
-      await this.initWorkDir(container);
+      await this.cleanWorkDir(container, 1);
       console.log(`${q_id}-${c}번째 exec 끝`);
       this.dockerContainerPool.pool.push(container);
       console.log(`${q_id}-${c}번째 프로세스끝`);
@@ -79,15 +79,17 @@ export class DockerConsumer {
     }
   }
 
-  @Process({ name: 'multipleIO-docker-run' })
+  @Process({ name: 'multipleIO-docker-run', concurrency: 7 })
   async multipleIODockerRun(job: Job) {
-    const { gitToken, gistId, commitId, mainFileName, inputs } = job.data;
+    const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
 
     let container;
     try {
+      console.log(`${c}번째 프로세스시작`);
       container = await this.dockerContainerPool.pool[0];
-      const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
-      await this.initWorkDir(container);
+      const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs, c);
+      await this.cleanWorkDir(container, c);
+      console.log(`${c}번째 프로세스끝`);
       return result;
     } catch (error) {
       throw new Error(`Execution failed: ${error.message}`);
@@ -99,22 +101,24 @@ export class DockerConsumer {
     gistId: string,
     commitId: string,
     mainFileName: string,
-    inputs: any[]
+    inputs: any[],
+    dirId: any
   ): Promise<string> {
     const gistData: GistApiFileListDto = await this.gistService.getCommit(gistId, commitId, gitToken);
     const files: GistApiFileDto[] = gistData.files;
     if (!files || !files.some((file) => file.fileName === mainFileName)) {
       throw new HttpException('execFile is not found', HttpStatus.NOT_FOUND);
     }
+    await this.initWorkDir(container, dirId);
     //desciption: 컨테이너 시작
     const tarBuffer = await this.parseTarBuffer(files);
 
     //desciption: tarBuffer를 Docker 컨테이너에 업로드
-    await container.putArchive(tarBuffer, { path: '/tmp' });
+    await container.putArchive(tarBuffer, { path: `/tmp/${dirId}` });
     if (files.some((file) => file.fileName === 'package.json')) {
-      await this.packageInstall(container);
+      await this.packageInstall(container, dirId);
     }
-    const stream = await this.dockerExcution(inputs, mainFileName, container);
+    const stream = await this.dockerExcution(inputs, mainFileName, container, dirId);
     let output = '';
     const timeout = setTimeout(async () => {
       stream.destroy(new Error('Timeout'));
@@ -180,14 +184,14 @@ export class DockerConsumer {
       pack.on('error', reject);
     });
   }
-  async dockerExcution(inputs: any[], mainFileName: string, container: Container) {
+  async dockerExcution(inputs: any[], mainFileName: string, container: Container, dirId: any) {
     const exec = await container.exec({
       AttachStdin: true,
       AttachStdout: true,
       AttachStderr: true,
       Tty: inputs.length !== 0, //true
       Cmd: ['node', mainFileName],
-      workingDir: '/tmp'
+      workingDir: `/tmp/${dirId}`
     });
     //todo: 입력값이 없으면 스킵
     const stream = await exec.start({ hijack: true, stdin: true });
@@ -199,13 +203,13 @@ export class DockerConsumer {
     return stream;
   }
 
-  async packageInstall(container: Container): Promise<void> {
+  async packageInstall(container: Container, dirId: any): Promise<void> {
     const exec = await container.exec({
       AttachStdin: false,
       AttachStdout: true,
       AttachStderr: true,
       Cmd: ['npm', 'install'],
-      workingDir: '/tmp'
+      workingDir: `/tmp/${dirId}`
     });
 
     const stream = await exec.start();
@@ -218,13 +222,35 @@ export class DockerConsumer {
     });
   }
 
-  async initWorkDir(container: Container): Promise<void> {
+  async cleanWorkDir(container: Container, dirId: any): Promise<void> {
     try {
       const exec = await container.exec({
         AttachStdin: false,
         AttachStdout: true,
         AttachStderr: true,
-        Cmd: ['rm', '-rf', '/tmp/*']
+        Cmd: ['rm', '-rf', `/tmp/${dirId}`]
+      });
+      const stream = await exec.start();
+      return new Promise((resolve, reject) => {
+        stream.on('data', (chunk) => {
+          const c = chunk;
+        });
+        stream.on('end', resolve);
+        stream.on('error', reject);
+      });
+    } catch (error) {
+      console.log(error.message);
+      throw new Error('container tmp init failed');
+    }
+  }
+
+  async initWorkDir(container: Container, dirId: any): Promise<void> {
+    try {
+      const exec = await container.exec({
+        AttachStdin: false,
+        AttachStdout: true,
+        AttachStderr: true,
+        Cmd: ['mkdir', `/tmp/${dirId}`]
       });
       const stream = await exec.start();
       return new Promise((resolve, reject) => {

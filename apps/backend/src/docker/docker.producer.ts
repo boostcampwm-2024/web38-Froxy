@@ -22,7 +22,7 @@ export class DockerProducer {
     const c = this.cnt;
     console.log(`${this.cnt}번째 job시작`);
     const job = await this.dockerQueue.add(
-      'always-docker-run',
+      'multipleIO-docker-run',
       {
         gitToken,
         gistId: gistId,
