@@ -56,11 +56,11 @@ export class DockerConsumer {
       container = await this.dockerContainerPool.getContainer();
       const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
       await this.cleanWorkDir(container);
-      this.dockerContainerPool.pool.push(container);
+      await this.dockerContainerPool.pool.push(container);
       return result;
     } catch (error) {
       await this.cleanWorkDir(container);
-      this.dockerContainerPool.pool.push(container);
+      await this.dockerContainerPool.pool.push(container);
       console.log(`consumer: ${error.message}`);
       throw new Error(`Execution failed: ${error.message}`);
     }
