@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - deploy
+      - feature-#151-dockerscheduling
 
 jobs:
   be-cd:
@@ -24,7 +25,7 @@ jobs:
 
       #이미지 이름 저장
       - name: Set Docker image tag as a variable
-        run: echo "DOCKER_TAG=${{ secrets.DOCKER_USERNAME }}/froxy-server:latest" >> $GITHUB_ENV
+        run: echo "DOCKER_TAG=${{ secrets.DOCKER_USERNAME }}/froxy-server:single" >> $GITHUB_ENV
       
       - name: Create .env file
         run: |
@@ -46,12 +47,12 @@ jobs:
       - name: Deploy
         run: |
           ssh -o StrictHostKeyChecking=no mun@211.188.48.24 "
-            if [ \$(docker ps -a -q -f name=froxy-container) ]; then
-              docker stop froxy-container
-              docker rm froxy-container
+            if [ \$(docker ps -a -q -f name=froxy-single) ]; then
+              docker stop froxy-single
+              docker rm froxy-single
             fi
-            docker pull ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest && \
-            docker run --network froxy-network -d --name froxy-container -p 3000:3000 -v /var/run/docker.sock:/var/run/docker.sock ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest
+            docker pull ${{ secrets.DOCKER_USERNAME }}/froxy-server:single && \
+            docker run --network froxy-network -d --name froxy-single -p 3000:3000 -v /var/run/docker.sock:/var/run/docker.sock ${{ secrets.DOCKER_USERNAME }}/froxy-server:single
             docker image prune -f
             "
           
