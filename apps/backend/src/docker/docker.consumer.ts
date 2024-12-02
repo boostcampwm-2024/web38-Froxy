@@ -78,11 +78,9 @@ export class DockerConsumer {
 
     let container;
     try {
-      console.log(`${c}번째 프로세스시작`);
       container = await this.dockerContainerPool.pool[0];
       const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
       await this.cleanWorkDir(container);
-      console.log(`${c}번째 프로세스끝`);
       return result;
     } catch (error) {
       throw new Error(`Execution failed: ${error.message}`);

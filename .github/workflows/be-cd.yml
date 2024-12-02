@@ -52,7 +52,7 @@ jobs:
               docker rm froxy-always
             fi
             docker pull ${{ secrets.DOCKER_USERNAME }}/froxy-server:always && \
-            docker run --network froxy-network -d --name froxy-always -p 3001:3000 -v /var/run/docker.sock:/var/run/docker.sock ${{ secrets.DOCKER_USERNAME }}/froxy-server:always
+            docker run --network froxy-network -d --name froxy-always -p 3002:3000 -v /var/run/docker.sock:/var/run/docker.sock ${{ secrets.DOCKER_USERNAME }}/froxy-server:always
             docker image prune -f
             "
           
