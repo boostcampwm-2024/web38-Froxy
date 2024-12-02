@@ -4,8 +4,7 @@ import { User } from '@/user/user.entity';
 
 @Entity()
 export class History {
-  //@PrimaryGeneratedColumn('uuid', { type: 'bigint' })
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn('uuid', { name: 'history_id' })
   historyId: string;
 
   @CreateDateColumn({ name: 'created_at' })
@@ -23,7 +22,7 @@ export class History {
   @Column()
   status: string;
 
-  @ManyToOne(() => Lotus, (lotus) => lotus.historys)
+  @ManyToOne(() => Lotus, (lotus) => lotus.historys, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'lotus_id' }) // 외래키 이름 설정
   lotus: Lotus;
 }

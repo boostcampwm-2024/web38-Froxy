@@ -3,7 +3,7 @@ import { IsBoolean, IsString, ValidateNested } from 'class-validator';
 import { LotusCreateRequestDto } from './lotus.createRequest.dto';
 import { Comment } from '@/comment/comment.entity';
 import { History } from '@/history/history.entity';
-import { Tag } from '@/tag/tag.entity';
+import { LotusTag } from '@/relation/lotus.tag.entity';
 import { User } from '@/user/user.entity';
 
 export class LotusDto {
@@ -44,10 +44,10 @@ export class LotusDto {
   historys: History[];
 
   @ValidateNested({ each: true })
-  @Type(() => Tag)
-  tags: Tag[];
+  @Type(() => LotusTag)
+  tags: LotusTag[];
 
-  constructor(commitId: string, user: User, lotusInputData: LotusCreateRequestDto, tags: Tag[]) {
+  constructor(commitId: string, user: User, lotusInputData: LotusCreateRequestDto) {
     this.title = lotusInputData.title;
     this.isPublic = lotusInputData.isPublic;
     this.gistRepositoryId = lotusInputData.gistUuid;
@@ -56,7 +56,6 @@ export class LotusDto {
     this.version = lotusInputData.version;
     this.comments = [];
     this.historys = [];
-    this.tags = tags;
     this.user = user;
   }
 }
