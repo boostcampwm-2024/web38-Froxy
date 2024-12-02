@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - deploy
-
+      - feature-#151-dockerscheduling
 jobs:
   fe-cd:
     runs-on: ubuntu-20.04
