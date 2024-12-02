@@ -60,6 +60,7 @@ function RouteComponent() {
           <SuspensePagination
             queryOptions={lotusHistoryQueryOptions.list({ id, page })}
             onChangePage={handleChangePage}
+            key={page}
           />
         </Suspense>
       </ErrorBoundary>

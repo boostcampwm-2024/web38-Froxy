@@ -13,6 +13,6 @@ export class TagController {
 
   @Get()
   searchTag(@Query('keyword') keyword: string) {
-    return this.tagService.searchTag(keyword);
+    return this.tagService.searchTagNames(keyword);
   }
 }

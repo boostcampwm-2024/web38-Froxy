@@ -1,4 +1,4 @@
-import { CANT_VIEW_EXT, LANGUAGES_EXT } from './constant';
+import { CANT_VIEW_EXT, LANGUAGES_EXT } from '@/feature/codeView/constant';
 
 export interface CodeFileDto {
   filename: string;

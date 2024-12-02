@@ -1,6 +1,15 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn
+} from 'typeorm';
 import { Lotus } from '@/lotus/lotus.entity';
-import { User } from '@/user/user.entity';
+import { LotusTag } from '@/relation/lotus.tag.entity';
 
 @Entity()
 export class Tag {
@@ -14,6 +23,6 @@ export class Tag {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @ManyToMany(() => Lotus, (lotus) => lotus.tags)
-  lotuses: Lotus[];
+  @OneToMany(() => LotusTag, (lotusTag) => lotusTag.tag, { cascade: ['remove'] })
+  lotuses: LotusTag[];
 }
