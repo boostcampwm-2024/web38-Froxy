@@ -25,7 +25,7 @@ export class DockerController {
       return value;
     } catch (e) {
       console.error(e.message);
-      throw e;
+      return e.message;
     }
   }
 
@@ -41,11 +41,11 @@ export class DockerController {
         'main.js',
         inputs
       );
-      console.log(value);
+      // console.log(value);
       return value;
     } catch (e) {
       console.error(e.message);
-      throw e;
+      return e.message;
     }
   }
 

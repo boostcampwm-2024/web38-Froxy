@@ -37,11 +37,12 @@ export class DockerProducer implements OnApplicationBootstrap {
           c
         },
         {
-          jobId: `${Date.now()}`,
+          jobId: `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`,
           removeOnComplete: true,
           removeOnFail: true
         }
       );
+      console.log('jobId추가 :', job.id);
       return await job.finished();
     } catch (error) {
       throw error;

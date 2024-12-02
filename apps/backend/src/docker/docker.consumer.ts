@@ -53,15 +53,15 @@ export class DockerConsumer {
     const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
     let container;
     try {
+      console.log(`${c}번째 프로세스 시작`);
       container = await this.dockerContainerPool.getContainer();
       const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
       await this.cleanWorkDir(container);
-      await this.dockerContainerPool.pool.push(container);
+      this.dockerContainerPool.pool.push(container);
       return result;
     } catch (error) {
       await this.cleanWorkDir(container);
-      await this.dockerContainerPool.pool.push(container);
-      console.log(`consumer: ${error.message}`);
+      this.dockerContainerPool.pool.push(container);
       throw new Error(`Execution failed: ${error.message}`);
     }
   }
@@ -213,7 +213,7 @@ export class DockerConsumer {
         AttachStdin: false,
         AttachStdout: true,
         AttachStderr: true,
-        Cmd: ['rm', '-rf', `/tmp/*`]
+        Cmd: ['sh', '-c', 'rm -rf /tmp/*']
       });
       const stream = await exec.start();
       return new Promise((resolve, reject) => {
