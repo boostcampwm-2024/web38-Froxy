@@ -24,9 +24,10 @@ interface GistFile {
   attr: GistFileAttributes;
 }
 
-@Processor('docker-queue')
+@Processor('always-queue')
 @Injectable()
 export class DockerConsumer {
+  queue_num = false;
   constructor(private gistService: GistService, private dockerContainerPool: DockerContainerPool) {}
   @OnQueueFailed()
   failHandler(job: Job, err: Error) {
@@ -39,20 +40,54 @@ export class DockerConsumer {
     console.log('OnQueueError');
     throw err;
   }
-  @Process({ name: 'docker-run', concurrency: 2 })
-  async handleDockerRun(job: Job) {
-    const { gitToken, gistId, commitId, mainFileName, inputs } = job.data;
 
+  @Process({ name: 'dynamic-docker-run' })
+  async dynamicDockerRun(job: Job) {
+    const { gitToken, gistId, commitId, mainFileName, inputs } = job.data;
     let container;
-    console.log(`Job${job.id} start`);
-    console.log('시작---');
     try {
       container = await this.dockerContainerPool.getContainer();
-      console.log(container.id);
       await container.start();
       const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
       await this.initWorkDir(container);
       this.dockerContainerPool.returnContainer(container);
+      return result;
+    } catch (error) {
+      throw new Error(`Execution failed: ${error.message}`);
+    }
+  }
+
+  @Process({ name: 'always-docker-run' })
+  async alwaysDockerRun(job: Job) {
+    const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
+    const q_id = this.queue_num;
+    this.queue_num = !this.queue_num;
+    let container;
+    try {
+      console.log(`${q_id}-${c}번째 프로세스시작`);
+      container = await this.dockerContainerPool.getContainer();
+      console.log(`${q_id}-${c}번째 컨테이너: ${container.id}`);
+      const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
+      console.log(`${q_id}-${c}번째 exec 시작`);
+      await this.initWorkDir(container);
+      console.log(`${q_id}-${c}번째 exec 끝`);
+      this.dockerContainerPool.pool.push(container);
+      console.log(`${q_id}-${c}번째 프로세스끝`);
+      return result;
+    } catch (error) {
+      throw new Error(`Execution failed: ${error.message}`);
+    }
+  }
+
+  @Process({ name: 'multipleIO-docker-run' })
+  async multipleIODockerRun(job: Job) {
+    const { gitToken, gistId, commitId, mainFileName, inputs } = job.data;
+
+    let container;
+    try {
+      container = await this.dockerContainerPool.pool[0];
+      const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
+      await this.initWorkDir(container);
       return result;
     } catch (error) {
       throw new Error(`Execution failed: ${error.message}`);

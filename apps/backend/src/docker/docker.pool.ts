@@ -9,10 +9,10 @@ export class DockerContainerPool implements OnApplicationBootstrap {
   pool: Container[] = [];
   lock = false;
   async onApplicationBootstrap() {
-    await this.createContainer();
+    await this.createAlwaysContainer();
   }
 
-  async createContainer() {
+  async createDynamicContainer() {
     for (let i = 0; i < MAX_CONTAINER_CNT; i++) {
       const container = await this.docker.createContainer({
         Image: 'node:latest',
@@ -29,9 +29,42 @@ export class DockerContainerPool implements OnApplicationBootstrap {
     }
   }
 
+  async createAlwaysContainer() {
+    for (let i = 0; i < MAX_CONTAINER_CNT; i++) {
+      const container = await this.docker.createContainer({
+        Image: 'node:latest',
+        Tty: false,
+        OpenStdin: true,
+        AttachStdout: true,
+        AttachStderr: true,
+        Env: [
+          'NODE_DISABLE_COLORS=true', // 색상 비활성화
+          'TERM=dumb' // dumb 터미널로 설정하여 색상 비활성화
+        ]
+      });
+      container.start();
+      this.pool.push(container);
+    }
+  }
+
+  async createSingleContainer() {
+    const container = await this.docker.createContainer({
+      Image: 'node:latest',
+      Tty: false,
+      OpenStdin: true,
+      AttachStdout: true,
+      AttachStderr: true,
+      Env: [
+        'NODE_DISABLE_COLORS=true', // 색상 비활성화
+        'TERM=dumb' // dumb 터미널로 설정하여 색상 비활성화
+      ]
+    });
+    container.start();
+    this.pool.push(container);
+  }
+
   async getContainer(): Container | null {
     while (this.lock || this.pool.length === 0) {
-      console.log('딜레이');
       await this.delay(10); // 풀 비어 있음 처리
     }
     this.lock = true;
@@ -41,10 +74,8 @@ export class DockerContainerPool implements OnApplicationBootstrap {
   }
 
   async returnContainer(container: Container) {
-    console.log('반납시작');
     await container.stop();
     this.pool.push(container);
-    console.log('반납');
   }
 
   delay(ms: number): Promise<void> {

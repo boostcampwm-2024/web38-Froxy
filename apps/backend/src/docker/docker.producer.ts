@@ -4,8 +4,9 @@ import { DockerContainerPool } from './docker.pool';
 
 @Injectable()
 export class DockerProducer {
+  cnt = 0;
   constructor(
-    @InjectQueue('docker-queue')
+    @InjectQueue('always-queue')
     private readonly dockerQueue,
     private dockerContainerPool: DockerContainerPool
   ) {}
@@ -17,31 +18,28 @@ export class DockerProducer {
     mainFileName: string,
     inputs: any[]
   ): Promise<string> {
-    const startTime = Date.now();
-    inputs = [1, 2];
+    this.cnt++;
+    const c = this.cnt;
+    console.log(`${this.cnt}번째 job시작`);
     const job = await this.dockerQueue.add(
-      'docker-run',
+      'always-docker-run',
       {
         gitToken,
         gistId: gistId,
         commitId: commitId,
         mainFileName,
-        inputs
+        inputs,
+        c
       },
-      { jobid: `${startTime}`, removeOnComplete: true, removeOnFail: true }
+      {
+        jobid: `${Date.now()}`,
+        attempts: 3,
+        backoff: 5000,
+        removeOnComplete: true,
+        removeOnFail: true
+      }
     );
 
-    // Job 완료 대기 및 결과 반환
-    return new Promise((resolve, reject) => {
-      job
-        .finished()
-        .then((result) => {
-          const endTime = Date.now();
-          console.log(`처리시간 ${(endTime - startTime) / 1000}sec`);
-          console.log(`Job${job.id} finished:`, result);
-          resolve(result);
-        })
-        .catch((error) => reject(error));
-    });
+    return job.finished();
   }
 }
