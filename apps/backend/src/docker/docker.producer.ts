@@ -6,7 +6,7 @@ import { DockerContainerPool } from './docker.pool';
 export class DockerProducer {
   cnt = 0;
   constructor(
-    @InjectQueue('always-queue')
+    @InjectQueue('docker-queue')
     private readonly dockerQueue,
     private dockerContainerPool: DockerContainerPool
   ) {}
@@ -20,9 +20,8 @@ export class DockerProducer {
   ): Promise<string> {
     this.cnt++;
     const c = this.cnt;
-    console.log(`${this.cnt}번째 job시작`);
     const job = await this.dockerQueue.add(
-      'multipleIO-docker-run',
+      'always-docker-run',
       {
         gitToken,
         gistId: gistId,
