@@ -50,7 +50,7 @@ export function SuspenseUserInfoBox() {
   return (
     <div className="flex flex-col justify-center items-center gap-10 w-full p-4">
       <div className="relative bg-white p-4 rounded-full shadow-lg">
-        <img className="w-44 h-44 rounded-full" src={user.profile} alt="프로필 사진" />
+        <img className="w-44 h-44 rounded-full" src={user.profile} alt="프로필 사진" data-testid="user-profile" />
         <a
           href={user.gistUrl}
           className="absolute bottom-0 right-0 bg-white p-3 rounded-full shadow-lg hover:shadow-neutral-400"
@@ -69,7 +69,7 @@ export function SuspenseUserInfoBox() {
         ) : (
           <>
             <div className="w-6 h-6"></div>
-            <Text size="3xl" className="font-semibold">
+            <Text size="3xl" className="font-semibold" data-testid="user-nickname">
               {user.nickname}
             </Text>
             <GoPencil className="w-6 h-6 cursor-pointer" onClick={() => setIsEdit(true)} />
