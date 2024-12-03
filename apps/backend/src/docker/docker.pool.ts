@@ -63,6 +63,7 @@ export class DockerContainerPool implements OnApplicationBootstrap {
         }
       });
       container.start();
+
       this.pool.push(container);
     }
   }

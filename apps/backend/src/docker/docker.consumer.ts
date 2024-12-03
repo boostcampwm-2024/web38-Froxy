@@ -47,18 +47,19 @@ export class DockerConsumer {
     }
   }
 
-  @Process({ name: 'always-docker-run', concurrency: 5 })
+  @Process({ name: 'always-docker-run', concurrency: 3 })
   async alwaysDockerRun(job: Job) {
     const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
     let container;
     try {
       console.log(`${c}번째 프로세스 시작`);
       container = await this.dockerContainerPool.getContainer();
-      console.log(`컨테이너 할당: ${container.id}`);
+      const containerInfo = await container.inspect();
+      console.log(`${c}번째 작업 컨테이너 할당: ${containerInfo.Name}`);
       const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
       await this.cleanWorkDir(container);
       this.dockerContainerPool.pool.push(container);
-      console.log(`컨테이너 반납: ${container.id}`);
+      console.log(`${c}번째 작업 컨테이너 반납: ${containerInfo.Name}`);
       console.log(`${c}번째 프로세스 종료`);
       return result;
     } catch (error) {
