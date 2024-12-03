@@ -33,7 +33,6 @@ export class UserService {
 
   async patchUserDataByUserId(userId: string, updateData: UserPatchDTO): Promise<UserPatchDTO> {
     const modifyingData = this.getObjUser(updateData);
-
     const result = await this.userRepository.update({ userId }, modifyingData);
     if (!result.affected) {
       throw new HttpException('user info not found', HttpStatus.NOT_FOUND);
@@ -66,6 +65,10 @@ export class UserService {
       }
     });
     const inputUser = await userResponse.json();
+    return await this.makeUser(inputUser, accessToken);
+  }
+
+  async makeUser(inputUser: any, accessToken: string) {
     let user = await this.findOne(inputUser.id);
     if (!user) {
       await this.saveUser(new UserCreateDto(inputUser, accessToken));
