@@ -17,7 +17,7 @@ export class DockerContainerPool implements OnApplicationBootstrap {
     const containersToDelete = await this.docker.listContainers({ all: true });
     await Promise.all(
       containersToDelete
-        .filter((container) => container.Names.some((name) => name.startsWith('/single')))
+        .filter((container) => container.Names.some((name) => name.startsWith('/single-run')))
         .map(async (container) => {
           const removeContainer = await this.docker.getContainer(container.Id);
           await removeContainer.remove({ force: true });
@@ -78,7 +78,8 @@ export class DockerContainerPool implements OnApplicationBootstrap {
       Env: [
         'NODE_DISABLE_COLORS=true', // 색상 비활성화
         'TERM=dumb' // dumb 터미널로 설정하여 색상 비활성화
-      ]
+      ],
+      name: `single-run`
     });
     container.start();
     this.pool.push(container);

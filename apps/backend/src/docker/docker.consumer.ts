@@ -205,7 +205,6 @@ export class DockerConsumer {
     });
   }
   async dockerExcution(inputs: any[], mainFileName: string, container: Container, dirId: any) {
-    console.log('함수들어옴');
     const exec = await container.exec({
       AttachStdin: true,
       AttachStdout: true,
