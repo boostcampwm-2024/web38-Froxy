@@ -2,14 +2,15 @@ FROM docker:20.10.7-dind
 
 RUN apk add --no-cache nodejs npm
 
+RUN npm install -g pnpm
+
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm install -g pnpm
-
-COPY . .
 
 RUN pnpm install
+
+COPY . .
 
 RUN pnpm lint --filter=backend && pnpm turbo run build --filter=backend
 
