@@ -47,7 +47,7 @@ export class DockerConsumer {
     }
   }
 
-  @Process({ name: 'always-docker-run', concurrency: 5 })
+  @Process({ name: 'always-docker-run', concurrency: 2 })
   async alwaysDockerRun(job: Job) {
     console.log('always-docker-run');
     const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
@@ -183,6 +183,10 @@ export class DockerConsumer {
     for (const input of inputs) {
       await stream.write(input + '\n');
       await this.delay(100); //각 입력 term
+    }
+
+    if (inputs.length !== 0) {
+      await stream.end();
     }
     // stream.end();
     return stream;
