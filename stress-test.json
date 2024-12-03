@@ -16,7 +16,7 @@
             "flow": [
                 {
                     "get": {
-                        "url": "/api/docker/get3"
+                        "url": "/api/docker/get2"
                     }
                 }
             ]
