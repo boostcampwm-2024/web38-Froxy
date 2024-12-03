@@ -106,8 +106,18 @@ export class DockerConsumer {
     if (files.some((file) => file.fileName === 'package.json')) {
       await this.packageInstall(container);
     }
-    const stream = await this.dockerExcution(inputs, mainFileName, container);
+    const exec = await this.dockerExcution(inputs, mainFileName, container);
     let output = '';
+    console.log('exec시작전');
+    const stream = await exec.start({ hijack: true, stdin: true });
+    console.log('exec시작후');
+    for (const input of inputs) {
+      console.log('input:', input);
+      await stream.write(input + '\n');
+      console.log('delay');
+      await this.delay(100); //각 입력 term
+    }
+    console.log('입력 끝');
     return new Promise((resolve, reject) => {
       let time = null;
 
@@ -138,6 +148,21 @@ export class DockerConsumer {
       stream.on('close', onStreamClose);
       stream.on('end', onStreamClose);
       stream.on('error', reject);
+
+      (async () => {
+        try {
+          for (const input of inputs) {
+            console.log('input:', input);
+            await stream.write(input + '\n');
+            console.log('delay');
+            await this.delay(100); //각 입력 term
+          }
+          console.log('입력 끝');
+        } catch (err) {
+          console.error('입력 처리 중 오류:', err.message);
+          reject(err);
+        }
+      })();
     });
   }
 
@@ -194,19 +219,8 @@ export class DockerConsumer {
       Cmd: ['node', mainFileName, '--exit'],
       workingDir: `/tmp`
     });
-    //todo: 입력값이 없으면 스킵
-    console.log('exec시작전');
-    const stream = await exec.start({ hijack: true, stdin: true });
-    console.log('exec시작후');
-    for (const input of inputs) {
-      console.log('input:', input);
-      await stream.write(input + '\n');
-      await this.delay(100); //각 입력 term
-    }
-    console.log('입력 끝');
 
-    // stream.end();
-    return stream;
+    return exec;
   }
 
   async packageInstall(container: Container): Promise<void> {
