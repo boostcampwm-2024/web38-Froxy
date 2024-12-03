@@ -41,7 +41,7 @@ export class DockerController {
         'main.js',
         inputs
       );
-      // console.log(value);
+      console.log(value);
       return value;
     } catch (e) {
       console.error(e.message);
