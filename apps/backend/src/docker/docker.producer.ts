@@ -8,7 +8,7 @@ import { DockerContainerPool } from './docker.pool';
 export class DockerProducer implements OnApplicationBootstrap {
   cnt = 0;
   constructor(
-    @InjectQueue('docker-queue')
+    @InjectQueue('always-queue')
     private readonly dockerQueue: Queue,
     private dockerContainerPool: DockerContainerPool
   ) {}
@@ -42,6 +42,7 @@ export class DockerProducer implements OnApplicationBootstrap {
           removeOnFail: true
         }
       );
+      console.log('jobId추가 :', job.id);
       return await job.finished();
     } catch (error) {
       throw error;
