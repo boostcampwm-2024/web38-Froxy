@@ -47,7 +47,7 @@ export class DockerConsumer {
     }
   }
 
-  @Process({ name: 'always-docker-run', concurrency: 10 })
+  @Process({ name: 'always-docker-run', concurrency: 5 })
   async alwaysDockerRun(job: Job) {
     console.log('always-docker-run');
     const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
