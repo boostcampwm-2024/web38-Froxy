@@ -17,7 +17,7 @@ export class DockerContainerPool implements OnApplicationBootstrap {
     const containersToDelete = await this.docker.listContainers({ all: true });
     await Promise.all(
       containersToDelete
-        .filter((container) => container.Names.some((name) => name.startsWith('/froxy-run')))
+        .filter((container) => container.Names.some((name) => name.startsWith('/froxy-always')))
         .map(async (container) => {
           const removeContainer = await this.docker.getContainer(container.Id);
           await removeContainer.remove({ force: true });
@@ -55,7 +55,7 @@ export class DockerContainerPool implements OnApplicationBootstrap {
           'NODE_DISABLE_COLORS=true', // 색상 비활성화
           'TERM=dumb' // dumb 터미널로 설정하여 색상 비활성화
         ],
-        name: `froxy-run${i + 1}`,
+        name: `froxy-always${i + 1}`,
         HostConfig: {
           Memory: (1024 * 1024 * 1024) / 2, // 1GB 메모리 제한
           MemorySwap: (1024 * 1024 * 1024) / 2 // swap 메모리도 1GB로 설정
