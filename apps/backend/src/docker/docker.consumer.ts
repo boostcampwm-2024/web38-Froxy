@@ -78,6 +78,7 @@ export class DockerConsumer {
       console.log(`${c}번째 프로세스 시작`);
       container = await this.dockerContainerPool.pool[0];
       const containerInfo = await container.inspect();
+      await this.initWorkDir(container, c);
       const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs, c);
       await this.cleanWorkDir(container, c);
       console.log(`${c}번째 프로세스 종료`);
@@ -101,7 +102,6 @@ export class DockerConsumer {
     if (!files || !files.some((file) => file.fileName === mainFileName)) {
       throw new HttpException('execFile is not found', HttpStatus.NOT_FOUND);
     }
-    await this.initWorkDir(container, dirId);
     //desciption: 컨테이너 시작
     const tarBuffer = await this.parseTarBuffer(files);
 
