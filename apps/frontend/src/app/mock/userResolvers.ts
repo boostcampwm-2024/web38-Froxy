@@ -1,14 +1,13 @@
 import { DefaultBodyType, HttpResponse, StrictRequest } from 'msw';
 
+const MOCK_CODE = 'mock-code';
 const MOCK_UUID = 'mock-uuid';
 
 // github 사용자 기본 정보 조회 api
-export const mockGetUserInfo = ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
+export const getUserInfo = ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
   const authorization = request.headers.get('Authorization');
 
   const [type, token] = authorization?.split(' ') || [];
-
-  console.log('type', type, 'token', token, 'MOCK_UUID', MOCK_UUID, token === MOCK_UUID);
 
   if (token !== MOCK_UUID || type !== 'Bearer') {
     return new HttpResponse('Unauthorized: Invalid or missing token', {
@@ -22,7 +21,8 @@ export const mockGetUserInfo = ({ request }: { request: StrictRequest<DefaultBod
   return HttpResponse.json({
     id: '1',
     nickname: 'mockUser',
-    profile: '/image/exampleImage.jpeg'
+    profile: '/image/exampleImage.jpeg',
+    gistUrl: 'https://github.com'
   });
 };
 
@@ -32,7 +32,7 @@ interface UserPatchRequestBody {
   profile?: File;
 }
 
-export const mockPatchUserInfo = async ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
+export const patchUserInfo = async ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
   const authorization = request.headers.get('Authorization');
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
@@ -65,24 +65,25 @@ export const mockPatchUserInfo = async ({ request }: { request: StrictRequest<De
 };
 
 // 로그인 api
-export const mockLogin = () => {
+export const getLogin = ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
+  const url = new URL(request.url);
+  const code = url.searchParams.get('code');
+
+  if (code !== MOCK_CODE)
+    return new HttpResponse('Unauthorized: Invalid or missing code', {
+      status: 401,
+      headers: {
+        'Content-Type': 'text/plain'
+      }
+    });
+
   return HttpResponse.json({
     token: MOCK_UUID
   });
 };
 
-// 로그인 api
-export const mockGetLogin = () => {
-  return new HttpResponse(null, {
-    status: 302,
-    headers: {
-      Location: `/login/success?token=${MOCK_UUID}`
-    }
-  });
-};
-
 // 로그아웃 api
-export const mockLogout = ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
+export const logout = ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
   const authorization = request.headers.get('Authorization');
 
   if (!authorization || !authorization.startsWith('Bearer ')) {

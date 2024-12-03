@@ -1,7 +1,7 @@
 import { HttpResponse, PathParams } from 'msw';
 
 // 사용자의 Gist 목록 조회
-export const mockGetUserGistList = () => {
+export const getUserGistList = () => {
   return HttpResponse.json({
     gists: [
       {
@@ -27,7 +27,7 @@ export const mockGetUserGistList = () => {
 };
 
 // 특정 Gist 파일 조회 api
-export const mockGetGistDetail = ({ params }: { params: PathParams }) => {
+export const getGistDetail = ({ params }: { params: PathParams }) => {
   const { gistId } = params;
 
   if (!gistId) {
