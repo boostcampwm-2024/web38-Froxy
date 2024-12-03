@@ -150,9 +150,12 @@ export class DockerConsumer {
       (async () => {
         try {
           for (const input of inputs) {
-            await stream.write(input + '\n');
+            if (!stream.destroyed && stream.writable) {
+              await stream.write(input + '\n');
+            }
             await this.delay(100); //각 입력 term
           }
+          await stream.end();
         } catch (err) {
           reject(err);
         }
