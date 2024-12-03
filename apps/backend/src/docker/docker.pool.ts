@@ -17,7 +17,7 @@ export class DockerContainerPool implements OnApplicationBootstrap {
     const containersToDelete = await this.docker.listContainers({ all: true });
     await Promise.all(
       containersToDelete
-        .filter((container) => container.Names.some((name) => name.startsWith('/always')))
+        .filter((container) => container.Names.some((name) => name.startsWith('/froxy-run')))
         .map(async (container) => {
           const removeContainer = await this.docker.getContainer(container.Id);
           await removeContainer.remove({ force: true });
