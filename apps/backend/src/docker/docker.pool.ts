@@ -44,7 +44,6 @@ export class DockerContainerPool implements OnApplicationBootstrap {
   }
 
   async createAlwaysContainer() {
-    const network = await this.docker.getNetwork('froxy-network');
     for (let i = 0; i < MAX_CONTAINER_CNT; i++) {
       const container = await this.docker.createContainer({
         Image: 'node:latest',
