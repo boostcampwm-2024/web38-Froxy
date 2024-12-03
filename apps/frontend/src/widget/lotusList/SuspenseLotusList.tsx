@@ -1,4 +1,4 @@
-import { Button, Heading, Skeleton } from '@froxy/design/components';
+import { Button, Heading, Skeleton, Text } from '@froxy/design/components';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useQueryErrorResetBoundary, useSuspenseQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -12,6 +12,8 @@ export function SuspenseLotusList({ queryOptions }: { queryOptions: LotusLostQue
   const {
     data: { lotuses }
   } = useSuspenseQuery(queryOptions);
+
+  if (lotuses.length < 1) return <SuspenseLotusListEmpty />;
 
   return (
     <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 place-items-center">
@@ -48,7 +50,19 @@ export function SuspenseLotusList({ queryOptions }: { queryOptions: LotusLostQue
   );
 }
 
-function SkeletonLotusCardList() {
+function SuspenseLotusListEmpty() {
+  return (
+    <div className="w-full h-full flex flex-col justify-center items-center">
+      <DotLottieReact src="/json/emptyHistoryAnimation.json" loop autoplay className="w-102" />
+      <Heading className="py-4" size="lg">
+        작성된 Lotus가 없습니다.
+      </Heading>
+      <Text variant="muted">Lotus를 작성해보세요!</Text>
+    </div>
+  );
+}
+
+function SkeletonLotusList() {
   return (
     <div className="w-full grid grid-cols-3 gap-8">
       {range(5).map((value) => (
@@ -69,7 +83,7 @@ function SkeletonLotusCardList() {
   );
 }
 
-SuspenseLotusList.Skeleton = SkeletonLotusCardList;
+SuspenseLotusList.Skeleton = SkeletonLotusList;
 
 interface ErrorProps {
   error: unknown;
@@ -77,7 +91,7 @@ interface ErrorProps {
   onChangePage: (page?: number) => Promise<void>;
 }
 
-function ErrorLotusCardList({ error, retry, onChangePage }: ErrorProps) {
+function ErrorLotusList({ error, retry, onChangePage }: ErrorProps) {
   const { reset } = useQueryErrorResetBoundary();
 
   if (axios.isAxiosError(error) && error?.status === 401) throw error;
@@ -100,4 +114,4 @@ function ErrorLotusCardList({ error, retry, onChangePage }: ErrorProps) {
   );
 }
 
-SuspenseLotusList.Error = ErrorLotusCardList;
+SuspenseLotusList.Error = ErrorLotusList;
