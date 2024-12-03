@@ -57,8 +57,8 @@ export class DockerContainerPool implements OnApplicationBootstrap {
         ],
         name: `always${i + 1}`,
         HostConfig: {
-          Memory: (1024 * 1024 * 1024) / 2, // 1GB 메모리 제한
-          MemorySwap: (1024 * 1024 * 1024) / 2, // swap 메모리도 1GB로 설정
+          Memory: 1024 * 1024 * 1024,
+          MemorySwap: 1024 * 1024 * 1024,
           networkMode: 'host'
         }
       });

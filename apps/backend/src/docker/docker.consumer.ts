@@ -47,7 +47,7 @@ export class DockerConsumer {
     }
   }
 
-  @Process({ name: 'always-docker-run' })
+  @Process({ name: 'always-docker-run', concurrency: 5 })
   async alwaysDockerRun(job: Job) {
     const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
     let container;
@@ -187,7 +187,7 @@ export class DockerConsumer {
       AttachStdout: true,
       AttachStderr: true,
       Tty: inputs.length !== 0, //true
-      Cmd: ['node', mainFileName],
+      Cmd: ['node', mainFileName, '--exit'],
       workingDir: `/tmp`
     });
     //todo: 입력값이 없으면 스킵
