@@ -1,14 +1,13 @@
 import { InjectQueue } from '@nestjs/bull';
 import { HttpException, HttpStatus, Injectable, OnApplicationBootstrap } from '@nestjs/common';
 import { Queue } from 'bull';
-import { error } from 'console';
 import { DockerContainerPool } from './docker.pool';
 
 @Injectable()
 export class DockerProducer implements OnApplicationBootstrap {
   cnt = 0;
   constructor(
-    @InjectQueue('always-queue')
+    @InjectQueue('docker-queue')
     private readonly dockerQueue: Queue,
     private dockerContainerPool: DockerContainerPool
   ) {}
@@ -42,7 +41,7 @@ export class DockerProducer implements OnApplicationBootstrap {
           removeOnFail: true
         }
       );
-      console.log('jobId추가 :', job.id);
+      // console.log('jobId추가 :', job.id);
       return await job.finished();
     } catch (error) {
       throw error;
