@@ -34,7 +34,7 @@ export class DockerController {
   async getDockersTest2(): Promise<string> {
     try {
       const gitToken = this.configService.get<string>('GIT_TOKEN');
-      const inputs = [];
+      const inputs = ['1 1 1 1', '1 1 1 1', '1 1 1 1', '1 1 1 1'];
       const value = await this.dockerProducer.getDocker(
         gitToken,
         '7f93da28e2522409a2274eff51b5dc20',

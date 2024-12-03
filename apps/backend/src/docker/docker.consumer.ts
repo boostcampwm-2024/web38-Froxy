@@ -110,13 +110,6 @@ export class DockerConsumer {
     const exec = await this.dockerExcution(inputs, mainFileName, container);
     let output = '';
     const stream = await exec.start({ hijack: true, stdin: true });
-    for (const input of inputs) {
-      console.log('input:', input);
-      await stream.write(input + '\n');
-      console.log('delay');
-      await this.delay(100); //각 입력 term
-    }
-    console.log('입력 끝');
     return new Promise((resolve, reject) => {
       let time = null;
 
