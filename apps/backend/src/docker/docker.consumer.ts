@@ -24,7 +24,7 @@ interface GistFile {
   attr: GistFileAttributes;
 }
 
-@Processor('always-queue')
+@Processor('docker-queue')
 @Injectable()
 export class DockerConsumer {
   queue_num = false;
@@ -47,13 +47,13 @@ export class DockerConsumer {
     }
   }
 
-  @Process({ name: 'always-docker-run' })
+  @Process({ name: 'always-docker-run', concurrency: 10 })
   async alwaysDockerRun(job: Job) {
     console.log('always-docker-run');
     const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
     let container;
     try {
-      console.log(`${c}번째 프로세스 시작`);
+      // console.log(`${c}번째 프로세스 시작`);
       container = await this.dockerContainerPool.getContainer();
       const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
       await this.cleanWorkDir(container);
