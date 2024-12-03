@@ -1,6 +1,6 @@
-FROM docker:20.10.7-dind
+FROM docker:dind
 
-RUN apk add --no-cache nodejs npm
+RUN apk add --no-cache nodejs npm python3 make g++ bash
 
 RUN npm install -g pnpm
 
