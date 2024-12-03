@@ -5,7 +5,7 @@ import { MAX_CONTAINER_CNT } from '@/constants/constants';
 
 @Injectable()
 export class DockerContainerPool implements OnApplicationBootstrap {
-  docker = new Docker();
+  docker = new Docker({ socketPath: '/var/run/docker.sock' });
   pool: Container[] = [];
   lock = false;
   async onApplicationBootstrap() {
@@ -17,7 +17,7 @@ export class DockerContainerPool implements OnApplicationBootstrap {
     const containersToDelete = await this.docker.listContainers({ all: true });
     await Promise.all(
       containersToDelete
-        .filter((container) => container.Names.some((name) => name.startsWith('/froxy-always')))
+        .filter((container) => container.Names.some((name) => name.startsWith('/froxy-run')))
         .map(async (container) => {
           const removeContainer = await this.docker.getContainer(container.Id);
           await removeContainer.remove({ force: true });
@@ -44,7 +44,6 @@ export class DockerContainerPool implements OnApplicationBootstrap {
   }
 
   async createAlwaysContainer() {
-    const network = await this.docker.getNetwork('froxy-network');
     for (let i = 0; i < MAX_CONTAINER_CNT; i++) {
       const container = await this.docker.createContainer({
         Image: 'node:latest',
@@ -56,13 +55,12 @@ export class DockerContainerPool implements OnApplicationBootstrap {
           'NODE_DISABLE_COLORS=true', // 색상 비활성화
           'TERM=dumb' // dumb 터미널로 설정하여 색상 비활성화
         ],
-        name: `froxy-always${i + 1}`,
+        name: `froxy-run${i + 1}`,
         HostConfig: {
           Memory: (1024 * 1024 * 1024) / 2, // 1GB 메모리 제한
           MemorySwap: (1024 * 1024 * 1024) / 2, // swap 메모리도 1GB로 설정
           networkMode: 'froxy-network'
         }
-        // network: 'froxy-network'
       });
       container.start();
       this.pool.push(container);

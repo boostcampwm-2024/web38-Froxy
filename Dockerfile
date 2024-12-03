@@ -1,16 +1,13 @@
-FROM docker:dind
-
-RUN apk add --no-cache nodejs npm python3 make g++ bash
-
-RUN npm install -g pnpm
+FROM node:20
 
 WORKDIR /app
 
 COPY package*.json ./
-
-RUN pnpm install
+RUN npm install -g pnpm
 
 COPY . .
+
+RUN pnpm install
 
 RUN pnpm lint --filter=backend && pnpm turbo run build --filter=backend
 
