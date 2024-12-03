@@ -1,6 +1,7 @@
 import { OnQueueError, OnQueueFailed, Process, Processor } from '@nestjs/bull';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Job } from 'bull';
+import { error } from 'console';
 import { Container } from 'dockerode';
 import * as tar from 'tar-stream';
 import { DockerContainerPool } from './docker.pool';
@@ -145,7 +146,10 @@ export class DockerConsumer {
       // 스트림 종료 대기
       stream.on('close', onStreamClose);
       stream.on('end', onStreamClose);
-      stream.on('error', reject);
+      stream.on('error', (err) => {
+        console.log('run File method error:', err);
+        reject(err);
+      });
 
       (async () => {
         try {
