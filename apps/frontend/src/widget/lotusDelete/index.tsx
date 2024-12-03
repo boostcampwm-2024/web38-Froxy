@@ -1,13 +1,16 @@
 import { Button, Heading, Text } from '@froxy/design/components';
+import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { RiDeleteBin5Fill } from 'react-icons/ri';
-import { getLotusMutationErrorToastData, useLotusDeleteMutation } from '@/feature/lotus';
+import { getLotusMutationErrorToastData, lotusQueryOptions, useLotusDeleteMutation } from '@/feature/lotus';
 import { ModalBox } from '@/shared';
 import { useOverlay } from '@/shared/overlay';
 import { useToast } from '@/shared/toast';
 
 export function LotusDeleteButton({ lotusId }: { lotusId: string }) {
   const { mutate, isPending } = useLotusDeleteMutation();
+
+  const queryClient = useQueryClient();
 
   const { open, exit } = useOverlay();
   const { toast } = useToast({ isCloseOnUnmount: false });
@@ -22,7 +25,7 @@ export function LotusDeleteButton({ lotusId }: { lotusId: string }) {
       {
         onSuccess: () => {
           toast({ description: 'Lotus가 삭제되었습니다.', variant: 'success', duration: 2000 });
-
+          queryClient.invalidateQueries(lotusQueryOptions.list({}));
           navigate({ to: '/lotus' });
         },
         onError: (error) => {
