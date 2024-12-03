@@ -24,7 +24,7 @@ interface GistFile {
   attr: GistFileAttributes;
 }
 
-@Processor('always-queue')
+@Processor('docker-queue')
 @Injectable()
 export class DockerConsumer {
   queue_num = false;
@@ -49,7 +49,6 @@ export class DockerConsumer {
 
   @Process({ name: 'always-docker-run' })
   async alwaysDockerRun(job: Job) {
-    console.log('always-docker-run');
     const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
     let container;
     try {
