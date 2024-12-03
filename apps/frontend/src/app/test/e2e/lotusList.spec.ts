@@ -2,13 +2,11 @@ import test, { expect } from '@playwright/test';
 
 test('온보딩 페이지에서 "공개 프로젝트 보러가기" 버튼을 누르면 public Lotus 목록을 볼 수 있다.', async ({ page }) => {
   // Give
-  await page.goto('http://localhost:5173/');
+  await page.goto('/');
 
   // When
   await page.getByRole('button', { name: '공개 프로젝트 보러가기' }).click();
-
   await page.waitForSelector('[data-testid="lotus-title"]');
-
   const lotusComponents = await page.getByTestId('lotus-title').count();
 
   // then
@@ -17,10 +15,10 @@ test('온보딩 페이지에서 "공개 프로젝트 보러가기" 버튼을 누
   await expect(page.getByText('1', { exact: true })).toBeVisible();
 });
 
-test('lotus 목록 페이지에서 제목 검색이 가능해야 한다.', async ({ page }) => {
+test('Lotus 목록 페이지에서 제목 검색이 가능해야 한다.', async ({ page }) => {
   // Give
   const searchText = 'test';
-  await page.goto('http://localhost:5173/lotus');
+  await page.goto('/lotus');
 
   // When
   await page.getByPlaceholder('제목을 검색해주세요').click();
@@ -35,9 +33,9 @@ test('lotus 목록 페이지에서 제목 검색이 가능해야 한다.', async
   expect(hasInvalidTitle).toBe(false);
 });
 
-test('lotus 목록 페이지에서 lotus 카드를 클릭하면 lotus 상세 페이지로 이동한다.', async ({ page }) => {
+test('Lotus 목록 페이지에서 Lotus 카드를 클릭하면 Lotus 상세 페이지로 이동한다.', async ({ page }) => {
   // Given
-  await page.goto('http://localhost:5173/lotus');
+  await page.goto('/lotus');
 
   // When
   const lotusLink = page.getByTestId('lotus-link').first();
