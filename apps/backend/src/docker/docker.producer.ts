@@ -7,7 +7,7 @@ import { DockerContainerPool } from './docker.pool';
 export class DockerProducer implements OnApplicationBootstrap {
   cnt = 0;
   constructor(
-    @InjectQueue('test-queue')
+    @InjectQueue('single-queue')
     private readonly dockerQueue: Queue,
     private dockerContainerPool: DockerContainerPool
   ) {}
@@ -26,7 +26,7 @@ export class DockerProducer implements OnApplicationBootstrap {
     const c = this.cnt;
     try {
       const job = await this.dockerQueue.add(
-        'always-docker-run',
+        'multipleIO-docker-run',
         {
           gitToken,
           gistId: gistId,

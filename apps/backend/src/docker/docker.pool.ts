@@ -10,14 +10,14 @@ export class DockerContainerPool implements OnApplicationBootstrap {
   lock = false;
   async onApplicationBootstrap() {
     await this.clearContainer();
-    await this.createAlwaysContainer();
+    await this.createSingleContainer();
   }
 
   async clearContainer() {
     const containersToDelete = await this.docker.listContainers({ all: true });
     await Promise.all(
       containersToDelete
-        .filter((container) => container.Names.some((name) => name.startsWith('/always')))
+        .filter((container) => container.Names.some((name) => name.startsWith('/single')))
         .map(async (container) => {
           const removeContainer = await this.docker.getContainer(container.Id);
           await removeContainer.remove({ force: true });
@@ -33,7 +33,7 @@ export class DockerContainerPool implements OnApplicationBootstrap {
         AttachStdout: true,
         AttachStderr: true,
         Env: ['NODE_DISABLE_COLORS=true', 'TERM=dumb'],
-        name: `always${i + 1}`,
+        name: `single${i + 1}`,
         HostConfig: {
           Memory: 1024 * 1024 * 1024,
           MemorySwap: 1024 * 1024 * 1024
