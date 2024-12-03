@@ -28,13 +28,13 @@ export const getUserLotusList = async ({ request }: { request: StrictRequest<Def
   const page = Number(url.searchParams.get('page')) || 1;
   const size = Number(url.searchParams.get('size')) || 5;
 
-  const lotuses = await lotusList.findMany({ page, size });
+  const { data: lotuses, maxPage: max } = await lotusList.findMany({ page, size });
 
   return HttpResponse.json({
     lotuses,
     page: {
       current: page,
-      max: 5
+      max
     }
   });
 };
@@ -46,13 +46,17 @@ export const getPublicLotusList = async ({ request }: { request: StrictRequest<D
   const size = Number(url.searchParams.get('size')) || 5;
   const search = url.searchParams.get('search') || '';
 
-  const lotuses = await lotusList.search({ query: { title: search }, page, size });
+  const { data: lotuses, maxPage: max } = await lotusList.search({
+    query: { title: search, isPublic: true },
+    page,
+    size
+  });
 
   return HttpResponse.json({
     lotuses,
     page: {
       current: page,
-      max: 5
+      max
     }
   });
 };
@@ -156,7 +160,6 @@ export const patchLotus = async ({
 };
 
 // lotus 삭제
-
 export const deleteLotus = async ({ params }: { params: PathParams }) => {
   const { id } = params;
 
@@ -184,7 +187,7 @@ function insertLotus() {
       date: new Date('2024-11-01').toISOString(),
       tags: ['JavaScript', 'Closures', 'Web Development'],
       author: {
-        id: '1',
+        id: '0',
         nickname: 'js_master',
         profile: 'https://devblog.com/authors/js_master',
         gistUrl: ''

@@ -60,16 +60,14 @@ export const getHistoryList = async ({
       }
     });
   }
-
-  const list = (await historyList.findMany({ page })).sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+  const { data, maxPage: max } = await historyList.findMany({ page });
+  const list = data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return HttpResponse.json({
     list,
     page: {
       current: page,
-      max: 3
+      max
     }
   });
 };
