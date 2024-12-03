@@ -44,6 +44,7 @@ export class DockerContainerPool implements OnApplicationBootstrap {
   }
 
   async createAlwaysContainer() {
+    const network = await this.docker.getNetwork('froxy-network');
     for (let i = 0; i < MAX_CONTAINER_CNT; i++) {
       const container = await this.docker.createContainer({
         Image: 'node:latest',
@@ -58,9 +59,10 @@ export class DockerContainerPool implements OnApplicationBootstrap {
         name: `froxy-always${i + 1}`,
         HostConfig: {
           Memory: (1024 * 1024 * 1024) / 2, // 1GB 메모리 제한
-          MemorySwap: (1024 * 1024 * 1024) / 2 // swap 메모리도 1GB로 설정
-        },
-        network: 'froxy-network'
+          MemorySwap: (1024 * 1024 * 1024) / 2, // swap 메모리도 1GB로 설정
+          networkMode: 'froxy-network'
+        }
+        // network: 'froxy-network'
       });
       container.start();
       this.pool.push(container);
