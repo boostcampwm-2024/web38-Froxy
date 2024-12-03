@@ -48,7 +48,7 @@ export class DockerConsumer {
     }
   }
 
-  @Process({ name: 'always-docker-run', concurrency: 3 })
+  @Process({ name: 'always-docker-run', concurrency: 10 })
   async alwaysDockerRun(job: Job) {
     const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
     let container;
@@ -140,7 +140,6 @@ export class DockerConsumer {
       stream.on('close', onStreamClose);
       stream.on('end', onStreamClose);
       stream.on('error', (err) => {
-        console.log('run File method error:', err);
         reject(err);
       });
 
@@ -152,7 +151,6 @@ export class DockerConsumer {
             }
             await this.delay(100); //각 입력 term
           }
-          // await stream.end();
         } catch (err) {
           reject(err);
         }
