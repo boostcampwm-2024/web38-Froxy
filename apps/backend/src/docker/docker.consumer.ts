@@ -53,7 +53,6 @@ export class DockerConsumer {
     const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
     let container;
     try {
-      console.log(`${c}번째 프로세스 시작`);
       container = await this.dockerContainerPool.getContainer();
       const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
       await this.cleanWorkDir(container);

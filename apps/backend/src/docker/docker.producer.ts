@@ -42,7 +42,6 @@ export class DockerProducer implements OnApplicationBootstrap {
           removeOnFail: true
         }
       );
-      console.log('jobId추가 :', job.id);
       return await job.finished();
     } catch (error) {
       throw error;

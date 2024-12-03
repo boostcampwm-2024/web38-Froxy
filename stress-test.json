@@ -1,9 +1,9 @@
 {
     "config": {
-        "target": "http://211.188.48.24:3001",
+        "target": "http://localhost:3000",
         "phases": [
             {
-                "duration": 60,
+                "duration": 10,
                 "arrivalRate": 10
             }
         ],
@@ -16,7 +16,7 @@
             "flow": [
                 {
                     "get": {
-                        "url": "/api/docker/get3"
+                        "url": "/api/docker/get2"
                     }
                 }
             ]
