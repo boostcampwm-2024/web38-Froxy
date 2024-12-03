@@ -33,7 +33,7 @@ export class DockerContainerPool implements OnApplicationBootstrap {
         AttachStdout: true,
         AttachStderr: true,
         Env: ['NODE_DISABLE_COLORS=true', 'TERM=dumb'],
-        name: `froxy-run${i + 1}`,
+        name: `always${i + 1}`,
         HostConfig: {
           Memory: 1024 * 1024 * 1024,
           MemorySwap: 1024 * 1024 * 1024
