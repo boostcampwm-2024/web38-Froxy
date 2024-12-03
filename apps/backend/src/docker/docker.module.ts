@@ -10,7 +10,7 @@ import { GistModule } from '@/gist/gist.module';
   imports: [
     GistModule,
     BullModule.registerQueue({
-      name: 'always-queue' // 큐 이름
+      name: 'always-queue'
     })
   ],
   controllers: [DockerController],
