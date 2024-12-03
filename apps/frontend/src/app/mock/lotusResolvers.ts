@@ -44,8 +44,9 @@ export const getPublicLotusList = async ({ request }: { request: StrictRequest<D
   const url = new URL(request.url);
   const page = Number(url.searchParams.get('page')) || 1;
   const size = Number(url.searchParams.get('size')) || 5;
+  const search = url.searchParams.get('search') || '';
 
-  const lotuses = await lotusList.findMany({ page, size });
+  const lotuses = await lotusList.search({ query: { title: search }, page, size });
 
   return HttpResponse.json({
     lotuses,
