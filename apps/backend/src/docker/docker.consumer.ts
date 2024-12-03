@@ -152,7 +152,7 @@ export class DockerConsumer {
             }
             await this.delay(100); //각 입력 term
           }
-          await stream.end();
+          // await stream.end();
         } catch (err) {
           reject(err);
         }
