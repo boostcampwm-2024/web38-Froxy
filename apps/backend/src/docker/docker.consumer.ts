@@ -185,6 +185,7 @@ export class DockerConsumer {
     });
   }
   async dockerExcution(inputs: any[], mainFileName: string, container: Container) {
+    console.log('함수들어옴');
     const exec = await container.exec({
       AttachStdin: true,
       AttachStdout: true,
@@ -194,11 +195,15 @@ export class DockerConsumer {
       workingDir: `/tmp`
     });
     //todo: 입력값이 없으면 스킵
+    console.log('exec시작전');
     const stream = await exec.start({ hijack: true, stdin: true });
+    console.log('exec시작후');
     for (const input of inputs) {
+      console.log('input:', input);
       await stream.write(input + '\n');
       await this.delay(100); //각 입력 term
     }
+    console.log('입력 끝');
 
     // stream.end();
     return stream;
