@@ -54,10 +54,12 @@ export class DockerConsumer {
     try {
       console.log(`${c}번째 프로세스 시작`);
       container = await this.dockerContainerPool.getContainer();
-      console.log(`${c}번째 프로세스: ${container.id}`);
+      console.log(`컨테이너 할당: ${container.id}`);
       const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
       await this.cleanWorkDir(container);
       this.dockerContainerPool.pool.push(container);
+      console.log(`컨테이너 반납: ${container.id}`);
+      console.log(`${c}번째 프로세스 종료`);
       return result;
     } catch (error) {
       await this.cleanWorkDir(container);
