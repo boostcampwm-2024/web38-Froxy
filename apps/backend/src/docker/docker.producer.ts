@@ -7,7 +7,7 @@ import { DockerContainerPool } from './docker.pool';
 export class DockerProducer implements OnApplicationBootstrap {
   cnt = 0;
   constructor(
-    @InjectQueue('single-queue')
+    @InjectQueue('s-queue')
     private readonly dockerQueue: Queue,
     private dockerContainerPool: DockerContainerPool
   ) {}

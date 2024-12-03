@@ -25,7 +25,7 @@ interface GistFile {
   attr: GistFileAttributes;
 }
 
-@Processor('single-queue')
+@Processor('s-queue')
 @Injectable()
 export class DockerConsumer {
   queue_num = false;
@@ -70,7 +70,7 @@ export class DockerConsumer {
     }
   }
 
-  @Process({ name: 'multipleIO-docker-run' })
+  @Process({ name: 'multipleIO-docker-run', concurrency: MAX_CONTAINER_CNT })
   async multipleIODockerRun(job: Job) {
     const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
     let container;
@@ -78,9 +78,9 @@ export class DockerConsumer {
       console.log(`${c}번째 프로세스 시작`);
       container = await this.dockerContainerPool.pool[0];
       const containerInfo = await container.inspect();
-      console.log(`${c}번째 작업 컨테이너 할당: ${containerInfo.Name}`);
       const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs, c);
       await this.cleanWorkDir(container, c);
+      console.log(`${c}번째 프로세스 종료`);
       return result;
     } catch (error) {
       await this.cleanWorkDir(container, c);
@@ -108,9 +108,9 @@ export class DockerConsumer {
     //desciption: tarBuffer를 Docker 컨테이너에 업로드
     await container.putArchive(tarBuffer, { path: `/tmp/${dirId}` });
     if (files.some((file) => file.fileName === 'package.json')) {
-      await this.packageInstall(container, 1);
+      await this.packageInstall(container, dirId);
     }
-    const exec = await this.dockerExcution(inputs, mainFileName, container, 1);
+    const exec = await this.dockerExcution(inputs, mainFileName, container, dirId);
     let output = '';
     const stream = await exec.start({ hijack: true, stdin: true });
     return new Promise((resolve, reject) => {
@@ -210,7 +210,7 @@ export class DockerConsumer {
       AttachStdout: true,
       AttachStderr: true,
       Tty: inputs.length !== 0, //true
-      Cmd: ['node', mainFileName, '--exit'],
+      Cmd: ['node', mainFileName],
       workingDir: `/tmp/${dirId}`
     });
 
@@ -271,7 +271,10 @@ export class DockerConsumer {
         stream.on('data', (chunk) => {
           const c = chunk;
         });
-        stream.on('end', resolve);
+        stream.on('end', () => {
+          console.log(`${dirId}번째 디렉토리 생성`);
+          resolve();
+        });
         stream.on('error', reject);
       });
     } catch (error) {
