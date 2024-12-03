@@ -16,12 +16,12 @@ export function SuspenseLotusList({ queryOptions }: { queryOptions: LotusLostQue
   if (lotuses.length < 1) return <SuspenseLotusListEmpty />;
 
   return (
-    <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 place-items-center">
+    <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
       {lotuses?.map(({ lotus, author }) => (
         <Lotus lotus={lotus} key={lotus.id}>
           <User user={author}>
             <Lotus.Link>
-              <div className="w-full h-full lg:w-82 p-5 shadow-md bg-white rounded-xl hover:shadow-lg hover:shadow-neutral-400 transition-shadow duration-200">
+              <div className="w-full h-full w-82 p-5 shadow-md bg-white rounded-xl hover:shadow-lg hover:shadow-neutral-400 transition-shadow duration-200">
                 <div className="flex justify-between items-center">
                   <Lotus.Title className="text-[#1C1D22]" />
 
