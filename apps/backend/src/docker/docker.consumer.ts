@@ -24,7 +24,7 @@ interface GistFile {
   attr: GistFileAttributes;
 }
 
-@Processor('always-queue')
+@Processor('test-queue')
 @Injectable()
 export class DockerConsumer {
   queue_num = false;
