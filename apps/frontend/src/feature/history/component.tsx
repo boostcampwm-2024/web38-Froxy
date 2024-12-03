@@ -61,7 +61,7 @@ export function HistoryStatusLabel({ className, ...props }: HistoryStatusLabelPr
   const { status } = useHistoryContext();
 
   return (
-    <Text size="sm" variant="muted" className={cn(className)} {...props}>
+    <Text size="sm" variant="muted" className={cn(className)} {...props} data-testid="history-status">
       {status.toLocaleLowerCase()}
     </Text>
   );

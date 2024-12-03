@@ -22,7 +22,7 @@ export function LotusTitle(props: LotusTitleProps) {
   const { title } = useLotusContext();
 
   return (
-    <Text size="md" variant="bold" {...props}>
+    <Text size="md" variant="bold" {...props} data-testid="lotus-title">
       {title}
     </Text>
   );
@@ -63,7 +63,7 @@ export function LotusLink({ children, className }: LotusLinkProps) {
   const { id: lotusId } = useLotusContext();
 
   return (
-    <Link to={'/lotus/$lotusId'} params={{ lotusId }} className={className}>
+    <Link to={'/lotus/$lotusId'} params={{ lotusId }} className={className} data-testid="lotus-link">
       {children}
     </Link>
   );
