@@ -105,23 +105,35 @@ export class DockerConsumer {
     }
     const stream = await this.dockerExcution(inputs, mainFileName, container);
     let output = '';
-    const timeout = setTimeout(async () => {
-      stream.destroy(new Error('Timeout'));
-    }, 10000);
-    //desciption: 스트림 종료 후 결과 반환
     return new Promise((resolve, reject) => {
-      //desciption: 스트림에서 데이터 수집
+      let time = null;
+
+      const onStreamClose = async () => {
+        try {
+          let result = await this.filterAnsiCode(output);
+          clearTimeout(time);
+          if (inputs.length !== 0) {
+            result = result.split('\n').slice(1).join('\n');
+          }
+          resolve(result);
+        } catch (err) {
+          reject(err);
+        }
+      };
+
+      // Timeout 설정
+      time = setTimeout(() => {
+        stream.destroy(new Error('Timeout'));
+      }, 10000);
+
+      // 스트림에서 데이터 수집
       stream.on('data', (chunk) => {
         output += chunk.toString();
       });
-      stream.on('close', async () => {
-        let result = await this.filterAnsiCode(output);
-        clearTimeout(timeout);
-        if (inputs.length !== 0) {
-          result = result.split('\n').slice(1).join('\n');
-        }
-        resolve(result);
-      });
+
+      // 스트림 종료 대기
+      stream.on('close', onStreamClose);
+      stream.on('end', onStreamClose);
       stream.on('error', reject);
     });
   }
