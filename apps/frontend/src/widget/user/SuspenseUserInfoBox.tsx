@@ -58,7 +58,7 @@ export function SuspenseUserInfoBox() {
           <FaGithub size={30} />
         </a>
       </div>
-      <div className="flex items-center gap-10">
+      <div className="flex items-center gap-5">
         {isEdit ? (
           <UserInfoInputForm
             disabled={isPending}
@@ -68,6 +68,7 @@ export function SuspenseUserInfoBox() {
           />
         ) : (
           <>
+            <div className="w-6 h-6"></div>
             <Text size="3xl" className="font-semibold">
               {user.nickname}
             </Text>
@@ -86,7 +87,8 @@ function SkeletonUserInfoBox() {
         <Skeleton className="w-44 h-44 rounded-full" />
         <Skeleton className="absolute bottom-0 right-0 bg-white w-14 h-14 rounded-full shadow-lg hover:shadow-neutral-400" />
       </div>
-      <div className="flex items-center gap-10">
+      <div className="flex items-center gap-5">
+        <div className="w-6 h-6"></div>
         <Skeleton className="w-48 h-6" />
         <Skeleton className="w-6 h-6" />
       </div>
