@@ -108,9 +108,7 @@ export class DockerConsumer {
     }
     const exec = await this.dockerExcution(inputs, mainFileName, container);
     let output = '';
-    console.log('exec시작전');
     const stream = await exec.start({ hijack: true, stdin: true });
-    console.log('exec시작후');
     for (const input of inputs) {
       console.log('input:', input);
       await stream.write(input + '\n');
@@ -152,14 +150,10 @@ export class DockerConsumer {
       (async () => {
         try {
           for (const input of inputs) {
-            console.log('input:', input);
             await stream.write(input + '\n');
-            console.log('delay');
             await this.delay(100); //각 입력 term
           }
-          console.log('입력 끝');
         } catch (err) {
-          console.error('입력 처리 중 오류:', err.message);
           reject(err);
         }
       })();
