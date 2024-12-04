@@ -1,38 +1,37 @@
 import { http } from 'msw';
-import { mockGetGistDetail, mockGetUserGistList } from './gistResolvers';
+import { getGistDetail, getUserGistList } from './gistResolvers';
+import { getHistory, getHistoryList, getTagList, postCodeRun, postTag } from './historyResolvers';
 import {
-  mockGetHistory,
-  mockGetHistoryList,
-  mockGetTagList,
-  mockGetUserLotusList,
-  mockPostCodeRun,
-  mockPostTag
-} from './historyResolvers';
-import { deleteLotus, getLotusDetail, getPublicLotusList, patchLotus, postCreateLotus } from './lotusResolvers';
-import { mockGetLogin, mockGetUserInfo, mockLogin, mockLogout, mockPatchUserInfo } from './userResolvers';
+  deleteLotus,
+  getLotusDetail,
+  getPublicLotusList,
+  getUserLotusList,
+  patchLotus,
+  postCreateLotus
+} from './lotusResolvers';
+import { getLogin, getUserInfo, patchUserInfo } from './userResolvers';
+
+const apiUrl = (path: string) => `${import.meta.env.VITE_API_URL}${path}`;
 
 export const handlers = [
   // user
-  http.get(`/api/user`, mockGetUserInfo),
-  http.patch(`/api/user`, mockPatchUserInfo),
-  http.post(`/api/user/login`, mockLogin),
-  http.get(`/api/user/login`, mockGetLogin),
-  http.post(`/api/user/logout`, mockLogout),
-  http.get(`/api/user/lotus`, mockGetUserLotusList),
-  http.get(`/api/user/gist`, mockGetUserGistList),
-  http.get(`/api/user/gist/:gistId`, mockGetGistDetail),
+  http.get(apiUrl(`/api/user`), getUserInfo),
+  http.patch(apiUrl(`/api/user`), patchUserInfo),
+  http.get(apiUrl(`/api/user/login/callback`), getLogin),
+  http.get(apiUrl(`/api/user/lotus`), getUserLotusList),
+  http.get(apiUrl(`/api/user/gist`), getUserGistList),
+  http.get(apiUrl(`/api/user/gist/:gistId`), getGistDetail),
   // lotus
-  http.get(`/api/lotus`, getPublicLotusList),
-  http.get(`/api/lotus/:lotusId`, getLotusDetail),
-  http.post(`/api/lotus`, postCreateLotus),
-  http.patch(`/api/lotus/:id`, patchLotus),
-  http.delete(`/api/lotus/:id`, deleteLotus),
+  http.get(apiUrl(`/api/lotus`), getPublicLotusList),
+  http.get(apiUrl(`/api/lotus/:lotusId`), getLotusDetail),
+  http.post(apiUrl(`/api/lotus`), postCreateLotus),
+  http.patch(apiUrl(`/api/lotus/:id`), patchLotus),
+  http.delete(apiUrl(`/api/lotus/:id`), deleteLotus),
   // history
-  http.get(`/api/lotus/:lotusId/history`, mockGetHistoryList),
-  http.post(`/api/lotus/:lotusId/history`, mockPostCodeRun),
-  http.get(`/api/lotus/:lotusId/history/:historyId`, mockGetHistory),
-
+  http.get(apiUrl(`/api/lotus/:lotusId/history`), getHistoryList),
+  http.post(apiUrl(`/api/lotus/:lotusId/history`), postCodeRun),
+  http.get(apiUrl(`/api/lotus/:lotusId/history/:historyId`), getHistory),
   // tag
-  http.get(`/api/tag`, mockGetTagList),
-  http.post(`/api/tag`, mockPostTag)
+  http.get(apiUrl(`/api/tag`), getTagList),
+  http.post(apiUrl(`/api/tag`), postTag)
 ];

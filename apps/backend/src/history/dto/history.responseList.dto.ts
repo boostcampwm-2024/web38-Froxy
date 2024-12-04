@@ -16,12 +16,12 @@ export class HistoryResponseListDto {
     max: number;
   };
 
-  static of(historys: History[], page: number, size: number, total: number) {
+  static of(historys: History[], page: number, size: number, maxPage: number) {
     return {
       list: historys.map((history) => HistoryPublicDto.of(history)),
       page: {
         current: page,
-        max: Math.ceil(total / size)
+        max: maxPage
       }
     };
   }

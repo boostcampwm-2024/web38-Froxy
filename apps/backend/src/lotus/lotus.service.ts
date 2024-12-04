@@ -12,8 +12,7 @@ import { SimpleUserResponseDto } from './dto/simple.user.response.dto';
 import { Lotus } from './lotus.entity';
 import { LotusRepository } from './lotus.repository';
 import { GistService } from '@/gist/gist.service';
-import { Tag } from '@/tag/tag.entity';
-import { TagService } from '@/tag/tag.service';
+import { LotusTagService } from '@/relation/lotus.tag.service';
 import { UserService } from '@/user/user.service';
 
 @Injectable()
@@ -22,7 +21,7 @@ export class LotusService {
     private readonly lotusRepository: LotusRepository,
     private readonly gistService: GistService,
     private readonly userService: UserService,
-    private readonly tagService: TagService
+    private readonly lotusTagService: LotusTagService
   ) {}
   async createLotus(
     userId: string,
@@ -48,18 +47,17 @@ export class LotusService {
       throw new HttpException('same commit Lotus already exist.', HttpStatus.CONFLICT);
     }
     const userData = await this.userService.findOneByUserId(userId);
-    const tags: Tag[] = await Promise.all(
+    await this.saveLotus(new LotusDto(currentCommitId, userData, lotusInputData));
+    const lotusData = await this.lotusRepository.findOne({
+      where: { gistRepositoryId: lotusInputData.gistUuid, commitId: currentCommitId }
+    });
+    await Promise.all(
       lotusInputData.tags.map((tag) => {
-        return this.tagService.getTag(tag);
+        return this.lotusTagService.getLotusTagRelation(lotusData, tag);
       })
     );
-    await this.saveLotus(new LotusDto(currentCommitId, userData, lotusInputData, tags));
-    const lotusData = await this.lotusRepository.findOne({
-      where: { gistRepositoryId: lotusInputData.gistUuid, commitId: currentCommitId },
-      relations: ['tags']
-    });
 
-    return LotusResponseDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(userData), lotusData);
+    return LotusResponseDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(userData), lotusData, lotusInputData.tags);
   }
 
   async updateLotus(
@@ -69,31 +67,36 @@ export class LotusService {
   ): Promise<LotusResponseDto> {
     const foundUser = await this.userService.findOneByUserId(userIdWhoWantToUpdate);
     if (!foundUser) throw new HttpException('user data not found', HttpStatus.NOT_FOUND);
-    const updateLotus = await this.lotusRepository.findOne({
+    const targetLotus = await this.lotusRepository.findOne({
       where: { lotusId },
-      relations: ['user', 'tags']
+      relations: ['user', 'tags', 'tags.tag']
     });
-    if (!updateLotus) throw new HttpException('lotusId is not exist', HttpStatus.NOT_FOUND);
-    if (updateLotus.user.userId !== userIdWhoWantToUpdate) {
+    if (!targetLotus) throw new HttpException('lotusId is not exist', HttpStatus.NOT_FOUND);
+    if (targetLotus.user.userId !== userIdWhoWantToUpdate) {
       throw new HttpException("can't modify this lotus", HttpStatus.FORBIDDEN);
     }
-
+    const updateContent = {};
     if (lotusUpdateRequestDto.isPublic !== undefined) {
-      updateLotus.isPublic = lotusUpdateRequestDto.isPublic;
+      updateContent['isPublic'] = lotusUpdateRequestDto.isPublic;
     } else {
       if (!lotusUpdateRequestDto.title) {
         throw new HttpException("title can't use empty", HttpStatus.BAD_REQUEST);
       } else {
-        updateLotus.title = lotusUpdateRequestDto.title;
+        updateContent['title'] = lotusUpdateRequestDto.title;
       }
-      if (lotusUpdateRequestDto.tags) {
-        const tags = await Promise.all(lotusUpdateRequestDto.tags.map((tag) => this.tagService.getTag(tag)));
-        updateLotus.tags = tags;
+      if (lotusUpdateRequestDto.tags !== undefined) {
+        await this.lotusTagService.updateRelation(targetLotus, lotusUpdateRequestDto.tags);
       }
     }
-    const result = await this.lotusRepository.save(updateLotus);
+    const result = await this.lotusRepository.update({ lotusId: targetLotus.lotusId }, updateContent);
     if (!result) throw new HttpException('update fail', HttpStatus.BAD_REQUEST);
-    return LotusResponseDto.ofSpreadData(SimpleUserResponseDto.ofUserDto(updateLotus.user), updateLotus);
+    return LotusResponseDto.ofSpreadData(
+      SimpleUserResponseDto.ofUserDto(targetLotus.user),
+      targetLotus,
+      lotusUpdateRequestDto.tags !== undefined
+        ? lotusUpdateRequestDto.tags
+        : targetLotus.tags.map((tag) => tag.tag.tagName)
+    );
   }
 
   async deleteLotus(lotusId: string, userIdWhoWantToDelete: string): Promise<MessageDto> {
@@ -117,7 +120,7 @@ export class LotusService {
   async getLotusFile(userId: string, gitToken: string, lotusId: string): Promise<LotusDetailDto> {
     const lotusData = await this.lotusRepository.findOne({
       where: { lotusId },
-      relations: ['tags', 'user']
+      relations: ['tags', 'tags.tag', 'user']
     });
     if (!lotusData) {
       throw new HttpException('lotusId is not exist', HttpStatus.NOT_FOUND);
@@ -155,7 +158,7 @@ export class LotusService {
       where: whereData,
       skip: (page - 1) * size,
       take: size,
-      relations: ['tags', 'user'],
+      relations: ['tags', 'tags.tag', 'user'],
       order: { createdAt: 'DESC' }
     });
   }
@@ -165,14 +168,14 @@ export class LotusService {
       isPublic: true
     };
     if (search) {
-      const tags = await this.tagService.searchTag(search);
-      whereData['tags'] = { tagId: In(tags) };
+      const lotuses = await this.lotusTagService.searchTag(search);
+      whereData['lotusId'] = In(lotuses);
     }
     return await this.lotusRepository.findAndCount({
       where: whereData,
       skip: (page - 1) * size,
       take: size,
-      relations: ['tags', 'user'],
+      relations: ['tags', 'tags.tag', 'user'],
       order: { createdAt: 'DESC' }
     });
   }
@@ -187,7 +190,7 @@ export class LotusService {
       where: { user: { userId } },
       skip: (page - 1) * size,
       take: size,
-      relations: ['tags', 'user'],
+      relations: ['tags', 'tags.tag', 'user'],
       order: { createdAt: 'DESC' }
     });
     const maxPage = Math.ceil(totalNum / size);

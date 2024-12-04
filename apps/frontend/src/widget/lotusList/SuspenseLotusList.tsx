@@ -1,4 +1,4 @@
-import { Button, Heading, Skeleton } from '@froxy/design/components';
+import { Button, Heading, Skeleton, Text } from '@froxy/design/components';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useQueryErrorResetBoundary, useSuspenseQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -13,21 +13,23 @@ export function SuspenseLotusList({ queryOptions }: { queryOptions: LotusLostQue
     data: { lotuses }
   } = useSuspenseQuery(queryOptions);
 
+  if (lotuses.length < 1) return <SuspenseLotusListEmpty />;
+
   return (
-    <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 place-items-center">
+    <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
       {lotuses?.map(({ lotus, author }) => (
         <Lotus lotus={lotus} key={lotus.id}>
           <User user={author}>
-            <div className="w-full h-full lg:w-82 p-5 shadow-md bg-white rounded-xl hover:shadow-lg hover:shadow-neutral-400 transition-shadow duration-200">
-              <div className="flex justify-between items-center">
-                <Lotus.Link>
+            <Lotus.Link>
+              <div className="w-full h-full w-82 p-5 shadow-md bg-white rounded-xl hover:shadow-lg hover:shadow-neutral-400 transition-shadow duration-200">
+                <div className="flex justify-between items-center">
                   <Lotus.Title className="text-[#1C1D22]" />
-                </Lotus.Link>
-                <Lotus.GistLink className="z-10 rounded-full hover:shadow-md hover:shadow-zinc-400 p-2 transition-shadow duration-300">
-                  <FaGithub size={20} />
-                </Lotus.GistLink>
-              </div>
-              <Lotus.Link>
+
+                  <Lotus.GistLink className="z-10 rounded-full hover:shadow-md hover:shadow-zinc-400 p-2 transition-shadow duration-300">
+                    <FaGithub size={20} />
+                  </Lotus.GistLink>
+                </div>
+
                 <User.Name className="text-[rgba(28,29,34,0.5)]" />
                 <div className="w-full flex justify-between items-end">
                   <Lotus.CreateDate className="text-xs font-bold text-[#888DA7] bg-[rgba(136,141,167,0.1)] px-4 py-2 rounded-3xl" />
@@ -39,8 +41,8 @@ export function SuspenseLotusList({ queryOptions }: { queryOptions: LotusLostQue
                     <Lotus.TagList className="pt-4 min-h-8" variant={'default'} />
                   </>
                 )}
-              </Lotus.Link>
-            </div>
+              </div>
+            </Lotus.Link>
           </User>
         </Lotus>
       ))}
@@ -48,7 +50,19 @@ export function SuspenseLotusList({ queryOptions }: { queryOptions: LotusLostQue
   );
 }
 
-function SkeletonLotusCardList() {
+function SuspenseLotusListEmpty() {
+  return (
+    <div className="w-full h-full flex flex-col justify-center items-center">
+      <DotLottieReact src="/json/emptyHistoryAnimation.json" loop autoplay className="w-102" />
+      <Heading className="py-4" size="lg">
+        작성된 Lotus가 없습니다.
+      </Heading>
+      <Text variant="muted">Lotus를 작성해보세요!</Text>
+    </div>
+  );
+}
+
+function SkeletonLotusList() {
   return (
     <div className="w-full grid grid-cols-3 gap-8">
       {range(5).map((value) => (
@@ -69,7 +83,7 @@ function SkeletonLotusCardList() {
   );
 }
 
-SuspenseLotusList.Skeleton = SkeletonLotusCardList;
+SuspenseLotusList.Skeleton = SkeletonLotusList;
 
 interface ErrorProps {
   error: unknown;
@@ -77,7 +91,7 @@ interface ErrorProps {
   onChangePage: (page?: number) => Promise<void>;
 }
 
-function ErrorLotusCardList({ error, retry, onChangePage }: ErrorProps) {
+function ErrorLotusList({ error, retry, onChangePage }: ErrorProps) {
   const { reset } = useQueryErrorResetBoundary();
 
   if (axios.isAxiosError(error) && error?.status === 401) throw error;
@@ -100,4 +114,4 @@ function ErrorLotusCardList({ error, retry, onChangePage }: ErrorProps) {
   );
 }
 
-SuspenseLotusList.Error = ErrorLotusCardList;
+SuspenseLotusList.Error = ErrorLotusList;

@@ -34,7 +34,7 @@ export function Header() {
                 <LogoutButton />
               </div>
 
-              <Link to={'/user'}>
+              <Link to={'/user'} data-testid="header-profile">
                 <img className="w-10 h-10 rounded-full" src={image} alt="프로필 사진" />
               </Link>
             </>

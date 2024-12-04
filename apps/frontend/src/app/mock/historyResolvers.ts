@@ -1,166 +1,33 @@
 import { DefaultBodyType, HttpResponse, PathParams, StrictRequest } from 'msw';
 import { MockRepository } from './MockRepository';
+import { HistoryDto } from '@/feature/history';
 
-// 사용자의 Lotus 목록 조회
-export const mockGetUserLotusList = () => {
-  return HttpResponse.json({
-    lotuses: [
-      {
-        id: '10000000001',
-        title: 'Exploring the Depths of TypeScript',
-        tags: ['TypeScript', 'Programming', 'Web Development'],
-        language: 'English',
-        date: '2024-11-16',
-        author: {
-          id: '20000000001',
-          nickname: 'dev_master',
-          profile: '/image/exampleImage.jpeg'
-        }
-      },
-      {
-        id: '10000000002',
-        title: 'Understanding React Hooks',
-        tags: ['React', 'JavaScript', 'Frontend'],
-        language: 'English',
-        date: '2024-11-15',
-        author: {
-          id: '20000000002',
-          nickname: 'react_enthusiast',
-          profile: '/image/exampleImage.jpegt'
-        }
-      }
-    ],
-    page: {
-      current: 1,
-      max: 5
-    }
-  });
-};
-
-// public lotus 목록 조회
-export const mockGetPublicLotusList = ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
-  const url = new URL(request.url);
-  const page = Number(url.searchParams.get('page')) || 0;
-  // const size = Number(url.searchParams.get('size')) || 10;
-  // const search = url.searchParams.get('search') || "";
-
-  return HttpResponse.json({
-    lotuses: [
-      {
-        id: '10000000001',
-        title: 'Exploring the Depths of TypeScript',
-        tags: ['TypeScript', 'Programming', 'Web Development'],
-        language: 'English',
-        date: '2024-11-16',
-        author: {
-          id: '20000000001',
-          nickname: 'dev_master',
-          profile: 'https://example.com/profiles/dev_master'
-        }
-      },
-      {
-        id: '10000000002',
-        title: 'Understanding React Hooks',
-        tags: ['React', 'JavaScript', 'Frontend'],
-        language: 'English',
-        date: '2024-11-15',
-        author: {
-          id: '20000000002',
-          nickname: 'react_enthusiast',
-          profile: 'https://example.com/profiles/react_enthusiast'
-        }
-      }
-    ],
-    page: {
-      current: page,
-      max: 5
-    }
-  });
-};
-
-// 특정 Lotus 조회
-export const mockGetLotusDetail = ({
-  request,
-  params
-}: {
-  request: StrictRequest<DefaultBodyType>;
-  params: PathParams;
-}) => {
-  const authorization = request.headers.get('Authorization');
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return new HttpResponse('Unauthorized: Invalid or missing token', {
-      status: 401,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-  }
-
-  const { lotusId } = params;
-
-  if (!lotusId) {
-    return new HttpResponse('Bad Request', {
-      status: 400,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-  }
-
-  return HttpResponse.json({
-    id: '10000000001',
-    title: 'Exploring the Depths of TypeScript',
-    tags: ['TypeScript', 'Programming', 'Web Development'],
-    language: 'English',
-    date: '2024-11-16',
-    isPublic: true,
-    author: {
-      id: '20000000001',
-      nickname: 'dev_master',
-      profile: 'https://example.com/profiles/dev_master'
-    },
-    files: [
-      {
-        filename: 'index.tsx',
-        language: 'ts',
-        content: 'const a = 1;\nconsole.log(a);\n'
-      }
-    ]
-  });
-};
-
-interface HistoryType {
-  status: 'SUCCESS' | 'ERROR' | 'PENDING';
-  date: string;
-  filename: string;
-  input?: string[];
-  output?: string;
-}
-
-const historyList = new MockRepository<HistoryType>();
+const historyList = new MockRepository<Omit<HistoryDto, 'id'>>();
 
 const insertHistory = () => {
-  const historyMock: HistoryType[] = [
+  const historyMock: HistoryDto[] = [
     {
+      id: '2000001',
       status: 'SUCCESS',
       date: '2024-11-15T14:30:00Z',
       filename: 'main.js',
-      input: ['1', '2'],
+      input: '11',
       output: '3'
     },
     {
+      id: '2000002',
       status: 'SUCCESS',
       date: '2024-11-16T12:00:00Z',
       filename: 'index.js',
-      input: ['3', '4'],
+      input: '12',
       output: 'console.log(7)'
     },
     {
+      id: '2000003',
       status: 'ERROR',
       date: '2024-11-14T16:45:00Z',
       filename: 'main.js',
-      input: ['5', '6'],
+      input: '13',
       output: 'Error: Cannot find module'
     }
   ];
@@ -173,7 +40,7 @@ const insertHistory = () => {
 insertHistory();
 
 // Lotus History 목록 조회
-export const mockGetHistoryList = async ({
+export const getHistoryList = async ({
   request,
   params
 }: {
@@ -193,25 +60,25 @@ export const mockGetHistoryList = async ({
       }
     });
   }
-
-  const list = await historyList.findMany({ page });
+  const { data, maxPage: max } = await historyList.findMany({ page });
+  const list = data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return HttpResponse.json({
     list,
     page: {
       current: page,
-      max: 3
+      max
     }
   });
 };
 
 // 코드 실행
 interface PostCodeRunBody {
-  input?: string[];
+  input?: string;
   execFileName: string;
 }
 
-export const mockPostCodeRun = async ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
+export const postCodeRun = async ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
   const body = (await request.json()) as PostCodeRunBody;
 
   if (!body?.execFileName)
@@ -226,7 +93,8 @@ export const mockPostCodeRun = async ({ request }: { request: StrictRequest<Defa
     filename: body.execFileName,
     date: new Date().toISOString(),
     status: 'PENDING',
-    input: body.input
+    input: body?.input ?? '',
+    output: ''
   });
 
   setTimeout(() => {
@@ -245,7 +113,7 @@ export const mockPostCodeRun = async ({ request }: { request: StrictRequest<Defa
 };
 
 // 해당 히스토리 정보
-export const mockGetHistory = async ({ params }: { params: PathParams }) => {
+export const getHistory = async ({ params }: { params: PathParams }) => {
   const { lotusId, historyId } = params;
 
   if (!lotusId || !historyId) {
@@ -262,165 +130,8 @@ export const mockGetHistory = async ({ params }: { params: PathParams }) => {
   return HttpResponse.json(history);
 };
 
-// Lotus 생성
-interface PostCreateLotusBody {
-  title: string;
-  isPublic: boolean;
-  tag: string[];
-  gistUuid: string;
-}
-
-export const mockPostCreateLotus = async ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
-  const authorization = request.headers.get('Authorization');
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return new HttpResponse('Unauthorized: Invalid or missing token', {
-      status: 401,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-  }
-
-  try {
-    const body = (await request.json()) as PostCreateLotusBody;
-
-    if (!body) throw new Error('body 형식이 올바르지 않음');
-
-    return HttpResponse.json({
-      id: '1234567890',
-      user: {
-        id: '9876543210',
-        nickname: 'coding_expert',
-        profile: 'https://example.com/profiles/coding_expert'
-      },
-      title: 'Understanding TypeScript Generics',
-      isPublic: true,
-      createAt: '2024-11-16T10:00:00Z',
-      tag: [
-        {
-          tagName: 'TypeScript'
-        },
-        {
-          tagName: 'Generics'
-        },
-        {
-          tagName: 'Programming'
-        }
-      ]
-    });
-  } catch (error) {
-    console.error(error);
-    return new HttpResponse('Bad Request', {
-      status: 400,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-  }
-};
-
-// Lotus 수정
-interface PatchLotusBody {
-  title: string;
-  tag: string[];
-  isPublic: boolean;
-}
-
-export const mockPatchLotus = async ({
-  request,
-  params
-}: {
-  request: StrictRequest<DefaultBodyType>;
-  params: PathParams;
-}) => {
-  const authorization = request.headers.get('Authorization');
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return new HttpResponse('Unauthorized: Invalid or missing token', {
-      status: 401,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-  }
-
-  try {
-    const { id } = params;
-    const body = (await request.json()) as PatchLotusBody;
-
-    if (!body || !id) throw new Error('요청 형식이 올바르지 않음');
-
-    return HttpResponse.json({
-      id: '1234567890',
-      user: {
-        id: '9876543210',
-        nickname: 'coding_expert',
-        profile: 'https://example.com/profiles/coding_expert'
-      },
-      title: 'Understanding TypeScript Generics',
-      isPublic: true,
-      createAt: '2024-11-16T10:00:00Z',
-      tag: [
-        {
-          tagName: 'TypeScript'
-        },
-        {
-          tagName: 'Generics'
-        },
-        {
-          tagName: 'Programming'
-        }
-      ]
-    });
-  } catch (error) {
-    console.error(error);
-    return new HttpResponse('Bad Request', {
-      status: 400,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-  }
-};
-
-// Lotus 삭제
-export const mockDeleteLotus = async ({
-  request,
-  params
-}: {
-  request: StrictRequest<DefaultBodyType>;
-  params: PathParams;
-}) => {
-  const authorization = request.headers.get('Authorization');
-
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return new HttpResponse('Unauthorized: Invalid or missing token', {
-      status: 401,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-  }
-
-  const { id } = params;
-
-  if (!id) {
-    return new HttpResponse('Bad Request', {
-      status: 400,
-      headers: {
-        'Content-Type': 'text/plain'
-      }
-    });
-  }
-
-  return HttpResponse.json({
-    message: '삭제 성공'
-  });
-};
-
 // 태그 조회
-export const mockGetTagList = ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
+export const getTagList = ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
   const authorization = request.headers.get('Authorization');
 
   if (!authorization || !authorization.startsWith('Bearer ')) {
@@ -464,7 +175,7 @@ interface PostTagBody {
   tag: string;
 }
 
-export const mockPostTag = async ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
+export const postTag = async ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
   const authorization = request.headers.get('Authorization');
 
   if (!authorization || !authorization.startsWith('Bearer ')) {

@@ -51,7 +51,7 @@ jobs:
               docker rm froxy-container
             fi
             docker pull ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest && \
-            docker run --network froxy-network -d --name froxy-container -p 3000:3000 -v /var/run/docker.sock:/var/run/docker.sock ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest
+            docker run --network host -d --name froxy-container -v /var/run/docker.sock:/var/run/docker.sock ${{ secrets.DOCKER_USERNAME }}/froxy-server:latest
             docker image prune -f
             "
           

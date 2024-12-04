@@ -1,5 +1,5 @@
 import { ComponentProps, HTMLProps, ReactNode, createContext, useContext } from 'react';
-import { Badge, Text } from '@froxy/design/components';
+import { Badge, Button, Text } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
 import { Link } from '@tanstack/react-router';
 import { LotusModel } from '.';
@@ -22,7 +22,7 @@ export function LotusTitle(props: LotusTitleProps) {
   const { title } = useLotusContext();
 
   return (
-    <Text size="md" variant="bold" {...props}>
+    <Text size="md" variant="bold" {...props} data-testid="lotus-title">
       {title}
     </Text>
   );
@@ -63,7 +63,7 @@ export function LotusLink({ children, className }: LotusLinkProps) {
   const { id: lotusId } = useLotusContext();
 
   return (
-    <Link to={'/lotus/$lotusId'} params={{ lotusId }} className={className}>
+    <Link to={'/lotus/$lotusId'} params={{ lotusId }} className={className} data-testid="lotus-link">
       {children}
     </Link>
   );
@@ -74,13 +74,20 @@ type LotusGistLinkProps = {
   children?: ReactNode;
 };
 
+// a태그 내부에서 사용될 가능성이 높아 Button 컴포넌트로 사용
 export function LotusGistLink({ className, children }: LotusGistLinkProps) {
   const { gistUrl } = useLotusContext();
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    location.href = gistUrl;
+  };
+
   return (
-    <a href={gistUrl} target="_blank" rel="noreferrer" className={className}>
+    <Button variant={null} onClick={handleClick} rel="noreferrer" className={cn('w-7 h-7', className)}>
       {children}
-    </a>
+    </Button>
   );
 }
 

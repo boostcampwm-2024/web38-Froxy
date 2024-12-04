@@ -4,6 +4,7 @@ import { Button, Heading, Skeleton } from '@froxy/design/components';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useQueryClient, useQueryErrorResetBoundary, useSuspenseQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { FaGithub } from 'react-icons/fa';
 import { GoPencil } from 'react-icons/go';
 import { UserInfoInputForm } from '@/feature/user/component';
 import { useUserMutation, userQueryOptions } from '@/feature/user/query';
@@ -47,38 +48,33 @@ export function SuspenseUserInfoBox() {
   };
 
   return (
-    <div className="flex items-center gap-16 w-full p-10 border-2 border-slate-200 rounded-xl shadow-sm">
-      {/* TODO: 나중에 프로필 사진 부분 하나의 feature로 합치기 */}
-      <img className="w-44 h-44 rounded-full" src={user.profile} alt="프로필 사진" />
-      <div className="flex items-center gap-10">
-        <div className="grid grid-cols-3 items-end gap-5">
-          <Text size="2xl" className="min-w-64 text-gray-400 font-semibold">
-            NICKNAME
-          </Text>
-          <div className="col-span-2">
-            {isEdit ? (
-              <UserInfoInputForm
-                disabled={isPending}
-                value={user.nickname}
-                onToggleIsEdit={onToggleIsEdit}
-                onEditValue={(value) => onEditUserInfo(value)}
-              />
-            ) : (
-              <div className="flex items-center gap-10">
-                <Text size="3xl" className="font-semibold">
-                  {user.nickname}
-                </Text>
-                <GoPencil className="w-6 h-6" onClick={() => setIsEdit(true)} />
-              </div>
-            )}
-          </div>
-          <Text size="2xl" className="text-gray-400 font-semibold">
-            GIST ADDRESS
-          </Text>
-          <Text size="3xl" className="col-span-2 font-semibold">
-            {user.gistUrl}
-          </Text>
-        </div>
+    <div className="flex flex-col justify-center items-center gap-10 w-full p-4">
+      <div className="relative bg-white p-4 rounded-full shadow-lg">
+        <img className="w-44 h-44 rounded-full" src={user.profile} alt="프로필 사진" data-testid="user-profile" />
+        <a
+          href={user.gistUrl}
+          className="absolute bottom-0 right-0 bg-white p-3 rounded-full shadow-lg hover:shadow-neutral-400"
+        >
+          <FaGithub size={30} />
+        </a>
+      </div>
+      <div className="flex items-center gap-5">
+        {isEdit ? (
+          <UserInfoInputForm
+            disabled={isPending}
+            value={user.nickname}
+            onToggleIsEdit={onToggleIsEdit}
+            onEditValue={(value) => onEditUserInfo(value)}
+          />
+        ) : (
+          <>
+            <div className="w-6 h-6"></div>
+            <Text size="3xl" className="font-semibold" data-testid="user-nickname">
+              {user.nickname}
+            </Text>
+            <GoPencil className="w-6 h-6 cursor-pointer" onClick={() => setIsEdit(true)} />
+          </>
+        )}
       </div>
     </div>
   );
@@ -86,15 +82,15 @@ export function SuspenseUserInfoBox() {
 
 function SkeletonUserInfoBox() {
   return (
-    <div className="flex items-center gap-16 w-full p-10 border-2 border-slate-200 rounded-xl shadow-sm">
-      <Skeleton className="w-44 h-44 rounded-full" />
-      <div className="flex items-center gap-10">
-        <div className="grid grid-cols-3 items-end gap-5">
-          <Skeleton className="min-w-64 h-6" />
-          <Skeleton className="col-span-2 h-10 w-full" />
-          <Skeleton className="h-6" />
-          <Skeleton className="col-span-2 h-10 w-full" />
-        </div>
+    <div className="flex flex-col justify-center items-center gap-10 w-full p-4">
+      <div className="relative bg-white p-4 rounded-full shadow-lg">
+        <Skeleton className="w-44 h-44 rounded-full" />
+        <Skeleton className="absolute bottom-0 right-0 bg-white w-14 h-14 rounded-full shadow-lg hover:shadow-neutral-400" />
+      </div>
+      <div className="flex items-center gap-5">
+        <div className="w-6 h-6"></div>
+        <Skeleton className="w-48 h-6" />
+        <Skeleton className="w-6 h-6" />
       </div>
     </div>
   );

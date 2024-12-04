@@ -3,6 +3,7 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { Comment } from '@/comment/comment.entity';
 import { History } from '@/history/history.entity';
 import { Lotus } from '@/lotus/lotus.entity';
+import { LotusTag } from '@/relation/lotus.tag.entity';
 import { Tag } from '@/tag/tag.entity';
 import { User } from '@/user/user.entity';
 
@@ -13,6 +14,7 @@ export const typeORMConfig = async (configService: ConfigService): Promise<TypeO
   username: configService.get<string>('MYSQL_USER'),
   password: configService.get<string>('MYSQL_PASSWORD'),
   database: configService.get<string>('MYSQL_DATABASE'),
-  entities: [User, Lotus, Comment, Tag, History],
-  synchronize: true //todo: env로 release에서는 false가 되도록 해야함
+  entities: [User, Lotus, Comment, Tag, History, LotusTag]
+  //dropSchema: true,
+  //synchronize: true //todo: env로 release에서는 false가 되도록 해야함
 });

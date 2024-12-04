@@ -1,2 +1,2 @@
-export * from './SuspenseLotusCardList';
+export * from './SuspenseLotusList';
 export * from './LotusSearchBar';

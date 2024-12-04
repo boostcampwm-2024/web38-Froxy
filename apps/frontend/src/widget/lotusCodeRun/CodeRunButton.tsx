@@ -1,5 +1,6 @@
 import { Button } from '@froxy/design/components';
 import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { LotusRunCodeForm } from './LotusRunCodeForm';
 import { lotusHistoryQueryOptions, useCodeRunMutation } from '@/feature/history/query';
 import { ModalBox } from '@/shared';
@@ -7,6 +8,8 @@ import { useOverlay } from '@/shared/overlay';
 import { useToast } from '@/shared/toast';
 
 export function CodeRunButton({ lotusId }: { lotusId: string }) {
+  const navigate = useNavigate();
+
   const { open, exit } = useOverlay();
 
   const { toast } = useToast();
@@ -25,6 +28,7 @@ export function CodeRunButton({ lotusId }: { lotusId: string }) {
           toast({ description: '코드가 실행되었습니다.', variant: 'success', duration: 2000 });
 
           queryClient.invalidateQueries(lotusHistoryQueryOptions.list({ id: lotusId }));
+          navigate({ to: '/lotus/$lotusId', params: { lotusId } });
         },
         onError: () => {
           toast({

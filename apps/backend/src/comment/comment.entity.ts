@@ -17,11 +17,11 @@ export class Comment {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @ManyToOne(() => User, (user) => user.comments)
+  @ManyToOne(() => User, (user) => user.comments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' }) // 외래키 이름 설정
   user: User;
 
-  @ManyToOne(() => Lotus, (lotus) => lotus.comments)
+  @ManyToOne(() => Lotus, (lotus) => lotus.comments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'lotus_id' }) // 외래키 이름 설정
   lotus: Lotus;
 }
