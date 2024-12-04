@@ -1,24 +1,6 @@
 import { DefaultBodyType, HttpResponse, StrictRequest } from 'msw';
-import { MockRepository } from './MockRepository';
+import { MOCK_CODE, MOCK_UUID, userRepository } from '@/app/mock/repository/userRepository';
 import { UserDto } from '@/feature/user';
-
-const MOCK_CODE = 'mock-code';
-const MOCK_UUID = 'mock-uuid';
-
-const userList = new MockRepository<Omit<UserDto, 'id'>>();
-
-const insertUser = () => {
-  const userMock: UserDto = {
-    id: '1',
-    nickname: 'mockUser',
-    profile: '/image/exampleImage.jpeg',
-    gistUrl: 'https://github.com'
-  };
-
-  userList.create(userMock);
-};
-
-insertUser();
 
 // github 사용자 기본 정보 조회 api
 export const getUserInfo = async ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
@@ -35,13 +17,12 @@ export const getUserInfo = async ({ request }: { request: StrictRequest<DefaultB
     });
   }
 
-  const user = await userList.findOne({ id: '0' });
+  const user = await userRepository.findOne({ id: '0' });
 
   return HttpResponse.json(user);
 };
 
 // 사용자 프로필 수정 api - 일단 닉네임만 수정되도록
-
 export const patchUserInfo = async ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
   const authorization = request.headers.get('Authorization');
 
@@ -57,9 +38,9 @@ export const patchUserInfo = async ({ request }: { request: StrictRequest<Defaul
   try {
     const body = (await request.json()) as Partial<UserDto>;
 
-    const user = await userList.findOne({ id: '0' });
+    const user = await userRepository.findOne({ id: '0' });
 
-    const updatedUser = await userList.update(user, body);
+    const updatedUser = await userRepository.update(user, body);
 
     return HttpResponse.json(updatedUser);
   } catch (error) {

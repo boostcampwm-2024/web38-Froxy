@@ -2,7 +2,7 @@ export type Identifiable<T> = T & { id: string };
 
 export class MockRepository<T> {
   private _autoId = 0;
-  private memory: Identifiable<T>[] = [];
+  protected memory: Identifiable<T>[] = [];
 
   private isMatch(owner: Partial<T>, target: Partial<T>): boolean {
     for (const key in target) {
@@ -16,29 +16,11 @@ export class MockRepository<T> {
     return true;
   }
 
-  private isPartialMatch(owner: Partial<T>, target: Partial<T>): boolean {
-    for (const key in target) {
-      if (!Object.prototype.hasOwnProperty.call(owner, key)) return false;
-
-      const ownerValue = owner[key as keyof T];
-      const targetValue = target[key as keyof T];
-
-      if (typeof ownerValue === 'boolean' && ownerValue !== targetValue) {
-        return false;
-      }
-
-      if (typeof targetValue === 'string' && !(ownerValue as string)?.includes(targetValue)) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   private generateId() {
     return String(this._autoId++);
   }
 
-  private paginate(items: Identifiable<T>[], page: number, size: number) {
+  protected paginate(items: Identifiable<T>[], page: number, size: number) {
     const start = (page - 1) * size;
     const end = start + size;
     const data = items.slice(start, end);
@@ -87,10 +69,5 @@ export class MockRepository<T> {
     if (!data) throw new Error('Not found');
 
     return data;
-  }
-
-  async search({ query, page = 1, size = 10 }: { query?: Partial<Identifiable<T>>; page?: number; size?: number }) {
-    const filtered = query ? this.memory.filter((item) => this.isPartialMatch(item, query)) : this.memory;
-    return this.paginate(filtered, page, size);
   }
 }

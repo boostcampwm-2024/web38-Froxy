@@ -1,6 +1,6 @@
 import { http } from 'msw';
-import { getGistDetail, getUserGistList } from './gistResolvers';
-import { getHistory, getHistoryList, getTagList, postCodeRun, postTag } from './historyResolvers';
+import { getGistDetail, getUserGistList } from './controller/gistController';
+import { getHistory, getHistoryList, postCodeRun } from './controller/historyController';
 import {
   deleteLotus,
   getLotusDetail,
@@ -8,8 +8,8 @@ import {
   getUserLotusList,
   patchLotus,
   postCreateLotus
-} from './lotusResolvers';
-import { getLogin, getUserInfo, patchUserInfo } from './userResolvers';
+} from './controller/lotusController';
+import { getLogin, getUserInfo, patchUserInfo } from './controller/userController';
 
 const apiUrl = (path: string) => `${import.meta.env.VITE_API_URL}${path}`;
 
@@ -19,6 +19,7 @@ export const handlers = [
   http.patch(apiUrl(`/api/user`), patchUserInfo),
   http.get(apiUrl(`/api/user/login/callback`), getLogin),
   http.get(apiUrl(`/api/user/lotus`), getUserLotusList),
+  // gist
   http.get(apiUrl(`/api/user/gist`), getUserGistList),
   http.get(apiUrl(`/api/user/gist/:gistId`), getGistDetail),
   // lotus
@@ -30,8 +31,5 @@ export const handlers = [
   // history
   http.get(apiUrl(`/api/lotus/:lotusId/history`), getHistoryList),
   http.post(apiUrl(`/api/lotus/:lotusId/history`), postCodeRun),
-  http.get(apiUrl(`/api/lotus/:lotusId/history/:historyId`), getHistory),
-  // tag
-  http.get(apiUrl(`/api/tag`), getTagList),
-  http.post(apiUrl(`/api/tag`), postTag)
+  http.get(apiUrl(`/api/lotus/:lotusId/history/:historyId`), getHistory)
 ];
