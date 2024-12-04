@@ -26,7 +26,7 @@ export class DockerProducer implements OnApplicationBootstrap {
     const c = this.cnt;
     try {
       const job = await this.dockerQueue.add(
-        'multipleIO-docker-run',
+        'always-docker-run',
         {
           gitToken,
           gistId: gistId,
