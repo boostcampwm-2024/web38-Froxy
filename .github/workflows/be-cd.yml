@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - deploy
-      - feature-#151-dockerscheduling
 
 jobs:
   be-cd:
