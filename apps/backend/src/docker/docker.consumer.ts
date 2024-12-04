@@ -234,7 +234,7 @@ export class DockerConsumer {
         AttachStdin: false,
         AttachStdout: true,
         AttachStderr: true,
-        Cmd: ['sh', '-c', `rm -rf /tmp`]
+        Cmd: ['sh', '-c', `rm -rf /tmp/*`]
       });
       const stream = await exec.start();
       return new Promise((resolve, reject) => {
