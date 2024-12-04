@@ -15,4 +15,4 @@ WORKDIR /app/apps/backend
 CMD ["pnpm", "run", "start:prod"]
 
 # 외부에서 접근할 수 있도록 포트 노출
-EXPOSE 3002
+EXPOSE 3000

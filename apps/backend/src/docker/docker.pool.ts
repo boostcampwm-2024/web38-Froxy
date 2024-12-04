@@ -10,14 +10,14 @@ export class DockerContainerPool implements OnApplicationBootstrap {
   lock = false;
   async onApplicationBootstrap() {
     await this.clearContainer();
-    await this.createSingleContainer();
+    await this.createAlwaysContainer();
   }
 
   async clearContainer() {
     const containersToDelete = await this.docker.listContainers({ all: true });
     await Promise.all(
       containersToDelete
-        .filter((container) => container.Names.some((name) => name.startsWith('/single-run')))
+        .filter((container) => container.Names.some((name) => name.startsWith('/froxy-run')))
         .map(async (container) => {
           const removeContainer = await this.docker.getContainer(container.Id);
           await removeContainer.remove({ force: true });
@@ -33,7 +33,7 @@ export class DockerContainerPool implements OnApplicationBootstrap {
         AttachStdout: true,
         AttachStderr: true,
         Env: ['NODE_DISABLE_COLORS=true', 'TERM=dumb'],
-        name: `single${i + 1}`,
+        name: `froxy-run${i + 1}`,
         HostConfig: {
           Memory: 1024 * 1024 * 1024,
           MemorySwap: 1024 * 1024 * 1024
@@ -55,7 +55,7 @@ export class DockerContainerPool implements OnApplicationBootstrap {
           'NODE_DISABLE_COLORS=true', // 색상 비활성화
           'TERM=dumb' // dumb 터미널로 설정하여 색상 비활성화
         ],
-        name: `always${i + 1}`,
+        name: `froxy-run${i + 1}`,
         HostConfig: {
           Memory: 1024 * 1024 * 1024,
           MemorySwap: 1024 * 1024 * 1024,

@@ -10,7 +10,7 @@ import { GistModule } from '@/gist/gist.module';
   imports: [
     GistModule,
     BullModule.registerQueue({
-      name: 's-queue'
+      name: 'froxy-queue'
     })
   ],
   controllers: [DockerController],
