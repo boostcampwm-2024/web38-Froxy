@@ -5,7 +5,7 @@ import { MAX_CONTAINER_CNT } from '@/constants/constants';
 
 @Injectable()
 export class DockerContainerPool implements OnApplicationBootstrap {
-  docker = new Docker({ socketPath: '/var/run/docker.sock' });
+  docker = new Docker();
   pool: Container[] = [];
   lock = false;
   async onApplicationBootstrap() {

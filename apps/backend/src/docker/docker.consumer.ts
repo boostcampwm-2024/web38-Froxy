@@ -48,7 +48,7 @@ export class DockerConsumer {
     }
   }
 
-  @Process({ name: 'always-docker-run', concurrency: MAX_CONTAINER_CNT })
+  @Process({ name: 'always-docker-run', concurrency: 5 })
   async alwaysDockerRun(job: Job) {
     const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
     let container;
@@ -101,10 +101,8 @@ export class DockerConsumer {
       await this.packageInstall(container);
     }
     const exec = await this.dockerExcution(inputs, mainFileName, container);
-    console.log('dockerExcution');
     let output = '';
     const stream = await exec.start({ hijack: true, stdin: true });
-    console.log('exec.start');
     return new Promise((resolve, reject) => {
       let time = null;
 
