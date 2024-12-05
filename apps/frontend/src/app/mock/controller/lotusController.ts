@@ -1,5 +1,6 @@
 import { DefaultBodyType, HttpResponse, PathParams, StrictRequest } from 'msw';
 import { lotusRepository } from '@/app/mock/repository/lotusRepository';
+import { userRepository } from '@/app/mock/repository/userRepository';
 import { LotusDto } from '@/feature/lotus';
 
 const MOCK_UUID = 'mock-uuid';
@@ -76,10 +77,12 @@ type CreateLotusDto = {
 export const postCreateLotus = async ({ request }: { request: StrictRequest<DefaultBodyType> }) => {
   const body = (await request.json()) as CreateLotusDto;
 
+  const author = await userRepository.findOne({ id: '0' });
+
   const lotus = await lotusRepository.create({
     ...body,
     date: new Date().toISOString(),
-    author: { id: '1', nickname: 'js_master', profile: 'https://devblog.com/authors/js_master', gistUrl: '' },
+    author,
     logo: '/image/exampleImage.jpeg',
     link: 'https://devblog.com/articles/1000000001',
     isPublic: false,
