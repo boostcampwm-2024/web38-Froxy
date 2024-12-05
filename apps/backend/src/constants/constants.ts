@@ -16,4 +16,4 @@ export enum SUPPORTED_LANGUAGES {
   JS = '.js'
 }
 
-export const MAX_CONTAINER_CNT = 6;
+export const MAX_CONTAINER_CNT = 10;

@@ -2,10 +2,12 @@ import { Slot, SlotComponentProps } from '@froxy/design/components';
 import { cn } from '@froxy/design/utils';
 
 export const formatDate = {
-  day: (date: Date, locales: Intl.LocalesArgument) => date.toLocaleDateString(locales, { weekday: 'long' }),
-  'YYYY.MM.DD.': (date: Date, locales: Intl.LocalesArgument) => date.toLocaleDateString(locales).split('T')[0],
+  day: (date: Date, locales: Intl.LocalesArgument) =>
+    date.toLocaleDateString(locales, { weekday: 'long', timeZone: 'UCT' }),
+  'YYYY.MM.DD.': (date: Date, locales: Intl.LocalesArgument) =>
+    date.toLocaleDateString(locales, { timeZone: 'UTC' }).split('T')[0],
   'YYYY-MM-DD': (date: Date, locales: Intl.LocalesArgument) =>
-    date.toLocaleDateString(locales).slice(0, 11).replaceAll('. ', '-')
+    date.toLocaleDateString(locales, { timeZone: 'UTC' }).replaceAll('.', '-').slice(0, 11).replaceAll(' ', '')
 } as const;
 
 export type FormatDateKey = keyof typeof formatDate;

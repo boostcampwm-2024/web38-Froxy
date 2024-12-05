@@ -9,14 +9,8 @@ import { GistModule } from '@/gist/gist.module';
 @Module({
   imports: [
     GistModule,
-    BullModule.forRoot({
-      redis: {
-        host: '211.188.48.24', // Redis 호스트 주소
-        port: 6379 // Redis 포트
-      }
-    }),
     BullModule.registerQueue({
-      name: 'docker-queue' // 큐 이름
+      name: 'froxy-queue'
     })
   ],
   controllers: [DockerController],

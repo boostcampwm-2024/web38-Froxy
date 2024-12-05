@@ -28,6 +28,11 @@ export const handlers = [
   http.post(apiUrl(`/api/lotus`), postCreateLotus),
   http.patch(apiUrl(`/api/lotus/:id`), patchLotus),
   http.delete(apiUrl(`/api/lotus/:id`), deleteLotus),
+  http.get(apiUrl(`/api/lotus`), getPublicLotusList),
+  http.get(apiUrl(`/api/lotus/:lotusId`), getLotusDetail),
+  http.post(apiUrl(`/api/lotus`), postCreateLotus),
+  http.patch(apiUrl(`/api/lotus/:id`), patchLotus),
+  http.delete(apiUrl(`/api/lotus/:id`), deleteLotus),
   // history
   http.get(apiUrl(`/api/lotus/:lotusId/history`), getHistoryList),
   http.post(apiUrl(`/api/lotus/:lotusId/history`), postCodeRun),

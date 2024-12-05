@@ -1,6 +1,7 @@
-import { Process, Processor } from '@nestjs/bull';
+import { OnQueueError, OnQueueFailed, Process, Processor } from '@nestjs/bull';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Job } from 'bull';
+import { error } from 'console';
 import { Container } from 'dockerode';
 import * as tar from 'tar-stream';
 import { DockerContainerPool } from './docker.pool';
@@ -24,13 +25,14 @@ interface GistFile {
   attr: GistFileAttributes;
 }
 
-@Processor('docker-queue')
+@Processor('froxy-queue')
 @Injectable()
 export class DockerConsumer {
+  queue_num = false;
   constructor(private gistService: GistService, private dockerContainerPool: DockerContainerPool) {}
 
-  @Process({ name: 'docker-run', concurrency: MAX_CONTAINER_CNT })
-  async handleDockerRun(job: Job) {
+  @Process({ name: 'dynamic-docker-run' })
+  async dynamicDockerRun(job: Job) {
     const { gitToken, gistId, commitId, mainFileName, inputs } = job.data;
     let container;
     try {
@@ -41,7 +43,41 @@ export class DockerConsumer {
     } catch (error) {
       throw new Error(`Execution failed: ${error.message}`);
     } finally {
-      await this.dockerContainerPool.returnContainer(container);
+      await this.cleanWorkDir(container);
+      this.dockerContainerPool.returnContainer(container);
+    }
+  }
+
+  @Process({ name: 'always-docker-run', concurrency: MAX_CONTAINER_CNT })
+  async alwaysDockerRun(job: Job) {
+    const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
+    let container;
+    try {
+      container = await this.dockerContainerPool.getContainer();
+      const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
+      await this.cleanWorkDir(container);
+      this.dockerContainerPool.pool.push(container);
+      return result;
+    } catch (error) {
+      await this.cleanWorkDir(container);
+      this.dockerContainerPool.pool.push(container);
+      throw new Error(`Execution failed: ${error.message}`);
+    }
+  }
+
+  @Process({ name: 'multipleIO-docker-run', concurrency: MAX_CONTAINER_CNT })
+  async multipleIODockerRun(job: Job) {
+    const { gitToken, gistId, commitId, mainFileName, inputs, c } = job.data;
+    let container;
+    try {
+      container = await this.dockerContainerPool.pool[0];
+      await this.initWorkDir(container, c);
+      const result = await this.runGistFiles(container, gitToken, gistId, commitId, mainFileName, inputs);
+      await this.cleanWorkDir(container);
+      return result;
+    } catch (error) {
+      await this.cleanWorkDir(container);
+      throw new Error(`Execution failed: ${error}`);
     }
   }
   async runGistFiles(
@@ -59,34 +95,61 @@ export class DockerConsumer {
     }
     //desciption: 컨테이너 시작
     const tarBuffer = await this.parseTarBuffer(files);
-
     //desciption: tarBuffer를 Docker 컨테이너에 업로드
-    await container.putArchive(tarBuffer, { path: '/tmp' });
+    await container.putArchive(tarBuffer, { path: `/tmp` });
     if (files.some((file) => file.fileName === 'package.json')) {
       await this.packageInstall(container);
     }
-    const stream = await this.dockerExcution(inputs, mainFileName, container);
+    const exec = await this.dockerExcution(inputs, mainFileName, container);
+    console.log('dockerExcution');
     let output = '';
-    const timeout = setTimeout(async () => {
-      console.log('timeout');
-      stream.destroy(new Error('Timeout'));
-    }, 5000);
-    //desciption: 스트림 종료 후 결과 반환
+    const stream = await exec.start({ hijack: true, stdin: true });
+    console.log('exec.start');
     return new Promise((resolve, reject) => {
-      //desciption: 스트림에서 데이터 수집
+      let time = null;
+
+      const onStreamClose = async () => {
+        try {
+          let result = await this.filterAnsiCode(output);
+          clearTimeout(time);
+          if (inputs.length !== 0) {
+            result = result.split('\n').slice(1).join('\n');
+          }
+          resolve(result);
+        } catch (err) {
+          reject(err);
+        }
+      };
+
+      // Timeout 설정
+      time = setTimeout(() => {
+        stream.destroy(new Error('Timeout'));
+      }, 10000);
+
+      // 스트림에서 데이터 수집
       stream.on('data', (chunk) => {
         output += chunk.toString();
       });
-      stream.on('close', async () => {
-        let result = await this.filterAnsiCode(output);
-        clearTimeout(timeout);
-        if (inputs.length !== 0) {
-          result = result.split('\n').slice(1).join('\n');
-        }
-        this.initWorkDir(container);
-        resolve(result);
+
+      // 스트림 종료 대기
+      stream.on('close', onStreamClose);
+      stream.on('end', onStreamClose);
+      stream.on('error', (err) => {
+        reject(err);
       });
-      stream.on('error', reject);
+
+      (async () => {
+        try {
+          for (const input of inputs) {
+            if (!stream.destroyed && stream.writable) {
+              await stream.write(input + '\n');
+            }
+            await this.delay(100); //각 입력 term
+          }
+        } catch (err) {
+          reject(err);
+        }
+      })();
     });
   }
 
@@ -140,16 +203,10 @@ export class DockerConsumer {
       AttachStderr: true,
       Tty: inputs.length !== 0, //true
       Cmd: ['node', mainFileName],
-      workingDir: '/tmp'
+      workingDir: `/tmp`
     });
-    //todo: 입력값이 없으면 스킵
-    const stream = await exec.start({ hijack: true, stdin: true });
-    for (const input of inputs) {
-      await stream.write(input + '\n');
-      await this.delay(100); //각 입력 term
-    }
-    // stream.end();
-    return stream;
+
+    return exec;
   }
 
   async packageInstall(container: Container): Promise<void> {
@@ -158,7 +215,7 @@ export class DockerConsumer {
       AttachStdout: true,
       AttachStderr: true,
       Cmd: ['npm', 'install'],
-      workingDir: '/tmp'
+      workingDir: `/tmp`
     });
 
     const stream = await exec.start();
@@ -171,13 +228,13 @@ export class DockerConsumer {
     });
   }
 
-  async initWorkDir(container: Container): Promise<void> {
+  async cleanWorkDir(container: Container): Promise<void> {
     try {
       const exec = await container.exec({
         AttachStdin: false,
         AttachStdout: true,
         AttachStderr: true,
-        Cmd: ['rm', '-rf', '/tmp/*']
+        Cmd: ['sh', '-c', `rm -rf /tmp`]
       });
       const stream = await exec.start();
       return new Promise((resolve, reject) => {
@@ -185,6 +242,31 @@ export class DockerConsumer {
           const c = chunk;
         });
         stream.on('end', resolve);
+        stream.on('error', reject);
+      });
+    } catch (error) {
+      console.log(error.message);
+      throw new Error('container tmp init failed');
+    }
+  }
+
+  async initWorkDir(container: Container, dirId: any): Promise<void> {
+    try {
+      const exec = await container.exec({
+        AttachStdin: false,
+        AttachStdout: true,
+        AttachStderr: true,
+        Cmd: ['mkdir', `/tmp/${dirId}`]
+      });
+      const stream = await exec.start();
+      return new Promise((resolve, reject) => {
+        stream.on('data', (chunk) => {
+          const c = chunk;
+        });
+        stream.on('end', () => {
+          console.log(`${dirId}번째 디렉토리 생성`);
+          resolve();
+        });
         stream.on('error', reject);
       });
     } catch (error) {

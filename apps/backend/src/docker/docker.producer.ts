@@ -1,14 +1,19 @@
 import { InjectQueue } from '@nestjs/bull';
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, OnApplicationBootstrap } from '@nestjs/common';
+import { Queue } from 'bull';
 import { DockerContainerPool } from './docker.pool';
 
 @Injectable()
-export class DockerProducer {
+export class DockerProducer implements OnApplicationBootstrap {
+  cnt = 0;
   constructor(
-    @InjectQueue('docker-queue')
-    private readonly dockerQueue,
+    @InjectQueue('froxy-queue')
+    private readonly dockerQueue: Queue,
     private dockerContainerPool: DockerContainerPool
   ) {}
+  onApplicationBootstrap() {
+    this.dockerQueue.setMaxListeners(1000);
+  }
 
   async getDocker(
     gitToken: string,
@@ -17,25 +22,29 @@ export class DockerProducer {
     mainFileName: string,
     inputs: any[]
   ): Promise<string> {
-    const job = await this.dockerQueue.add(
-      'docker-run',
-      {
-        gitToken,
-        gistId,
-        commitId,
-        mainFileName,
-        inputs
-      },
-      { removeOnComplete: true, removeOnFail: true }
-    );
-    // Job 완료 대기 및 결과 반환
-    return new Promise((resolve, reject) => {
-      job
-        .finished()
-        .then((result) => {
-          resolve(result);
-        })
-        .catch((error) => reject(error));
-    });
+    this.cnt++;
+    const c = this.cnt;
+    try {
+      const job = await this.dockerQueue.add(
+        'multipleIO-docker-run',
+        {
+          gitToken,
+          gistId: gistId,
+          commitId: commitId,
+          mainFileName,
+          inputs,
+          c
+        },
+        {
+          jobId: `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`,
+          removeOnComplete: true,
+          removeOnFail: true
+        }
+      );
+      console.log('jobId추가 :', job.id);
+      return await job.finished();
+    } catch (error) {
+      throw error;
+    }
   }
 }

@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - deploy
-
 jobs:
   fe-cd:
     runs-on: ubuntu-20.04
