@@ -1,5 +1,5 @@
 import { DefaultBodyType, HttpResponse, PathParams, StrictRequest } from 'msw';
-import { lotusRepository } from '@/app/mock/repository/lotusRepository';
+import { lotusMockFileData, lotusRepository } from '@/app/mock/repository/lotusRepository';
 import { userRepository } from '@/app/mock/repository/userRepository';
 import { LotusDto } from '@/feature/lotus';
 
@@ -61,9 +61,9 @@ export const getPublicLotusList = async ({ request }: { request: StrictRequest<D
 export const getLotusDetail = async ({ params }: { params: Record<string, string> }) => {
   const lotusId = params.lotusId;
 
-  const lotus = await lotusRepository.findLotusDetail({ id: lotusId });
+  const lotus = await lotusRepository.findOne({ id: lotusId });
 
-  return HttpResponse.json(lotus);
+  return HttpResponse.json({ ...lotus, ...lotusMockFileData });
 };
 
 type CreateLotusDto = {
